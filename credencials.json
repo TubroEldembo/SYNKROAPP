@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "projecto-synkroapp",
+  "private_key_id": "50ed38d753d1694c3b4db1f36f343bb92577b640",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCY3ESzp7btE9AS\ns54C/QvWXto/n2ykRa2pVmrC3JszNSxIxugPM/6qklsR9Y5ZAoAU7nB2BAJ4x6c2\nWgZ+lMO18Kzj+d8s/hnoW444gbikcAZHlqe0LWPOliMYpoKULMddqwlshG7t0zCe\nBRtg779ao9XoyArsAIkEFy8l0UTHlPszUYm365YUc0lkNG+c50MOw4czwT1HXwNq\nlbAlX177ACcc+M+qITbRlwjmKS9HJtTX81jHAbufdkiq5wNe2SY5rlDaOlNsZWXs\nfdQ12y+v4Wuf6pJOTuhLcAH5G4DVK5Y3pFkIpxP/EEYgCT1iqlQ+qGztev1qrjv2\nWzdBslwJAgMBAAECggEAAVlVehNleLdty0un/fh1mzu+wWrhM2lRzfaCay7otLc7\nQvb0ZpvyGz2+5xkezp5hx62B/9yefypESYvAvNG7XdBRqkWS4iuc49Eyn43vglrI\n7c1NZ6uyrFV+JxiWR7bGDKE2uSBjEGvs2CjzekCRx8ikQBFlEHrOh4l2PYDYn0oO\nPKNTk/cofshkYrwRXbZZWDUyd+Z+dpQNf3QyXba1baaf0SdKyiZxG7CnLA+9K31n\n9cRSkCWZw3uhkoEBwnMC0U3mDCdRbFzY/oPucb4H9t0w6fQkMZ6b+NbWLn41D7YO\n4qB0jc4cJFXzhLRbdiYQ+GzzQU65q+vF5PFUjcE5HQKBgQDTfeoCZD06hdRUc7zc\nCnNGT96JV4VwSZIhgk0/TG33xfSxZd8ccB79lGtXr4S6VG2jmGJWYChR+uKK1HG/\nOgMUPXaNgvSR7YE2GbgFBI+pRo1uRWmEK4mJUyGmdWmOa3108P4twm0opq8MZo0p\nKuxUPhTAawJT3Hb4SD0/2GCadQKBgQC5B5iy3Su1SLCLIwl4RSO7373weLkVZa43\n17sNoBjj2ZgwV2uGXluFsM4XR4vauFmayQkbKKcJJ6q2UclROJzwttO52GfIaMtf\ntgi7ZWeKh7Z8jExy4CFgir/L6Mx1g6He17S337R8u1WruTrZXcZQKu2gZmqvKBRV\nW0nbC32AxQKBgBkqJEwAjWCHSAp8cv5jp++31SzWYyRHPMIL9REREQyoW0M4ceG6\nXZWisVsPoWViYmFS4nCQpHuMtKP8P0SXrIIeBhs0d9FdR0Cessy2DDoCERYL4FA/\nte/HGnvqAJNXqufdPQFI3yA1JSL+mNFLMC+d624xzWcZFnbYcaFFJ8l5AoGAdFm1\niMwRXxbNhUDMBKgdd1eTvfJ8GFtvOUhcJI5G+Ihs7gEa6UzOanwqrHLeG/SOzAmc\nw0pF9zjNXYaCfKOH9MpSy2usn1ZehNoYFZcHjBIZC6rBq/8KngXB47yJTWAv2sxz\npKh0e3blwW1h9yvDt8e204Vzkp82YhJcl/RawC0CgYEAj6g+rbZdJj//qGWEp9J0\nqRUVhcLg283zt1LCHQGaA4EVGDPL4jG8QkHIPqiAyxu1lRCQERdctQBlK6Vn4atN\nwlDBqPqU6LgUTxXapR8e5fbRKVGrMClmvaBcAzOIb2j4RTv+5Lpv3uwcrHAtQhD+\nLKy5Jw2rh8r1Al1YF6LCUsA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@projecto-synkroapp.iam.gserviceaccount.com",
+  "client_id": "106159987818696825327",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40projecto-synkroapp.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
