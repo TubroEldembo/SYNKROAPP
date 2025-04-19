@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace SYNKROAPP.CLASES
 {
-    class Empreses
+    [FirestoreData] 
+    public class Empreses
     {
         [FirestoreProperty]
-        public int EmpresaID { get; set; }  
+        public string EmpresaID { get; set; }  
 
         [FirestoreProperty]
         public bool EstatVerificacio { get; set; }
@@ -35,7 +36,7 @@ namespace SYNKROAPP.CLASES
 
         public Empreses() { }
 
-        public Empreses(int empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<int> magatzems, List<int> usuaris, Adreça ubicacio, string fotoEmpresalUrl)
+        public Empreses(string empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<int> magatzems, List<int> usuaris, Adreça ubicacio, string fotoEmpresalUrl)
         {
             EmpresaID = empresaID;
             EstatVerificacio = estatVerificacio;

@@ -15,11 +15,10 @@
         </Grid.Background>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <!-- Imagen de logo -->
-            <Image Source="C:\Users\Fernando\Desktop\PROYECTO FINAL\PROJECT\SYNKROAPP\IMAGES\logo.png"
+            <Image Source="C:\Users\ferna\Desktop\SYNKRO\IMAGES\logo.png"
                    Width="120"
                    Height="120"
-                   HorizontalAlignment="Center"
-                   Margin="0,0,0,10"/>
+                   />
             <TextBlock Text="Bienvenido a Synkro"
                        FontSize="36"
                        FontWeight="Bold"
@@ -33,7 +32,7 @@
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0" >
                 <Button Content="Iniciar sesión"
-                        Name="btnLogin"
+                        x:Name="btnLogin"
                         Width="150"
                         Height="45"
                         FontSize="16"
@@ -45,7 +44,7 @@
                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
 
                 <Button Content="Registrarse"
-                        Name="btnRegistrarse"
+                        x:Name="btnRegistrarse"
                         Width="150"
                         Height="45"
                         FontSize="16"
@@ -54,7 +53,9 @@
                         FontWeight="SemiBold"
                         Click="btnRegistrarse_Click"
                         Cursor="Hand"
-                        BorderThickness="0"/>
+                        BorderThickness="0"
+                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+
             </StackPanel>
         </StackPanel>
     </Grid>

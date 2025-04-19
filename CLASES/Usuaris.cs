@@ -11,7 +11,7 @@ namespace SYNKROAPP.CLASES
     public class Usuaris
     {
         [FirestoreProperty]
-        public int UsuariID { get; set; }
+        public string UsuariID { get; set; }
 
         [FirestoreProperty]
         public string Nom { get; set; }
@@ -29,14 +29,14 @@ namespace SYNKROAPP.CLASES
         public string Rol { get; set; }
 
         [FirestoreProperty]
-        public int EmpresaID { get; set; }
+        public string EmpresaID { get; set; }
 
         [FirestoreProperty]
         public string FotoPerfilUrl { get; set; } 
 
         public Usuaris() { }
 
-        public Usuaris(int usuariID, string nom, string cognoms, string email, string password, string rol, int empresaID, string fotoPerfilUrl = "")
+        public Usuaris(string usuariID, string nom, string cognoms, string email, string password, string rol, string empresaID, string fotoPerfilUrl = "")
         {
             UsuariID = usuariID;
             Nom = nom;

@@ -49,7 +49,7 @@ namespace SYNKROAPP.Vistes
                 Email = txtEmail.Text,
                 Password = txtPassword.Password,
                 Rol = "Usuario", 
-                EmpresaID = 0, 
+                EmpresaID = "", 
                 FotoPerfilUrl = "" 
             };
 

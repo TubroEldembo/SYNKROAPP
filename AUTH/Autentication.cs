@@ -16,19 +16,21 @@ namespace SYNKROAPP.AUTH
         private static FirebaseApp firebaseApp = InitializeFirebase();
         private static FirebaseApp InitializeFirebase()
         {
-            var credential = GoogleCredential.FromFile("C:\\Users\\Fernando\\Desktop\\PROYECTO FINAL\\PROJECT\\SYNKROAPP\\credencials.json");
+            var credential = GoogleCredential.FromFile("credencials.json");
             return FirebaseApp.Create(new AppOptions()
             {
                 Credential = credential,
             });
         }
-        private static string apiKey = "AIzaSyDyghNf8kSUMUyp7o1LalrSMjk48beOxxQ";
+        private static string apiKey = "AIzaSyApcm4sO8-2QxgUxAUZu2j9PSLjtu9snWo";
+
         public static async Task<FirebaseAuthLink> SignIn(string email, string password)
         {
             var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
             FirebaseAuthLink auth = await authProvider.SignInWithEmailAndPasswordAsync(email, password);
             return auth;
         }
+
         public static async Task<FirebaseAuthLink> SignUp(string email, string password)
         {
             var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
@@ -50,6 +52,7 @@ namespace SYNKROAPP.AUTH
                 auth = null;
             }
         }
+
         #region MODIFICAR DADES USUARI
         public static async Task ChangeUserPasswordAsync(FirebaseAuthLink auth, string newPassword)
         {

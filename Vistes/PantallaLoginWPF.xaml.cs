@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Firebase.Auth;
+using SYNKROAPP.AUTH;
+using SYNKROAPP.CLASES;
+using SYNKROAPP.DAO;
+using SYNKROAPP.Vistes.Vista_Home;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,14 +24,12 @@ namespace SYNKROAPP.Vistes
     /// </summary>
     public partial class PantallaLoginWPF : Window
     {
+        IDAO? dao;
+        Usuaris loggedUser;
+
         public PantallaLoginWPF()
         {
             InitializeComponent();
-        }
-
-        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
         }
 
         private void txtRegister_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -34,6 +37,64 @@ namespace SYNKROAPP.Vistes
             PantallaRegisterWPF pantallaRegister = new PantallaRegisterWPF();
             pantallaRegister.Show(); ;
             this.Close();
+        }
+
+        private async void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            string userEmail = txtUser.Text;
+            string password = txtPassword.Password;
+
+            if (string.IsNullOrWhiteSpace(userEmail) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Si us plau, introdueix el correu i la contrasenya.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                FirebaseAuthLink authLink = await Autentication.SignIn(userEmail, password);
+                if (authLink != null)
+                {
+                    FirebaseAuth auth = authLink;
+
+                    dao = DAOFactory.CreateDAO(auth.FirebaseToken, "projecto-synkroapp");
+
+                    Usuaris loggedUser = await dao.GetUsuariByEmail(auth.User.Email);
+
+                    if(loggedUser == null)
+{
+                        loggedUser = new Usuaris(
+                            auth.User.LocalId,
+                            auth.User.FirstName ?? "",
+                            auth.User.LastName ?? "",
+                            auth.User.Email,
+                            "",             // No almacenes la contraseña
+                            "Empleado",
+                            ""              // No tienes EmpresaID aquí, así que déjalo vacío
+                        );
+                        await dao.AddUsuari(loggedUser);
+                    }
+
+
+                    PantallaHomeWPF homeWindow = new PantallaHomeWPF(loggedUser, auth, authLink, dao);
+                    homeWindow.Show();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Error en l'autenticació.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show($"S'ha produït un error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+
+        private void txtForgotPsswd_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

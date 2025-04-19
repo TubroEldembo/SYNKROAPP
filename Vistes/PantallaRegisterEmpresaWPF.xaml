@@ -43,11 +43,9 @@
                 <TextBox x:Name="txtTipoEmpresa" Height="35" Background="Transparent" Foreground="Black" Padding="5"/>
 
                 <TextBlock Text="Tipo de Vía" Foreground="Black" FontWeight="SemiBold"/>
-                <ComboBox x:Name="cmbTipoVia" Height="35" Background="Transparent" Foreground="Black" Padding="5">
-                    <ComboBoxItem Content="Carrer"/>
-                    <ComboBoxItem Content="Avenida"/>
-                    <ComboBoxItem Content="Plaza"/>
-                </ComboBox>
+                <ComboBox x:Name="cmbTipoVia" Height="35" Background="Transparent" Foreground="Black" Padding="5"/>
+
+
 
                 <TextBlock Text="Nombre de la Calle" Foreground="Black" FontWeight="SemiBold"/>
                 <TextBox x:Name="txtNomCalle" Height="35" Background="Transparent" Foreground="Black" Padding="5"/>

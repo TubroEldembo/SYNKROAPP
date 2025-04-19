@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:SYNKROAPP"
              StartupUri="PantallaInicialAplicacion.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="RESOURCES/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
