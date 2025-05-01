@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP"
         mc:Ignorable="d"
-        Title="PantallaInicialAplicacion" Height="450" Width="800">
+        Title="PantallaInicialAplicacion" Height="450" Width="800"
+        WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -15,7 +16,7 @@
         </Grid.Background>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <!-- Imagen de logo -->
-            <Image Source="C:\Users\ferna\Desktop\SYNKRO\IMAGES\logo.png"
+            <Image Source="C:\Users\Fernando\Desktop\PROYECTO FINAL\PROJECT\SYNKROAPP\IMAGES\logo.png"
                    Width="120"
                    Height="120"
                    />

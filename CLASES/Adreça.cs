@@ -60,5 +60,10 @@ namespace SYNKROAPP.CLASES
             Provincia = provincia;
             Pais = pais;
         }
+        public override string ToString()
+        {
+            return $" {TipusVia} {Nom}, {Numero}, {CodiPostal}, {Provincia}, {Pais}";
+        }
+
     }
 }

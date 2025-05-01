@@ -86,7 +86,24 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnAlmacenes_Click(object sender, RoutedEventArgs e)
         {
-            contentArea.Content = new Vista_Almacenes.VistaAlmacenes();
+            if (isMenuVisible)
+            {
+                isMenuVisible = false;
+                sliderBar.Visibility = Visibility.Collapsed;
+                overlay.Visibility = Visibility.Collapsed;
+            }
+
+            var vista = new Vista_Almacenes.VistaAlmacenes(dao, loggedUser);
+
+            // Suscribimos al evento para quitar el UserControl cuando se cierre
+            vista.OnCerrar += () =>
+            {
+                contentArea.Content = null; // Esto "cierra" el UserControl
+            };
+
+            contentArea.Content = vista;
+            
+
         }
 
         private void btnMovimientos_Click(object sender, RoutedEventArgs e)

@@ -5,18 +5,139 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Almacenes"
         mc:Ignorable="d"
-        Title="PantallaCrearAlmacenWPF" Height="450" Width="800" Background="#6F7ABC">
-    <Grid Margin="40">
-        <StackPanel>
-            <TextBlock Text="AGREGAR NUEVO ALMACÉN"
-                       FontSize="28" FontWeight="Bold"
-                       Foreground="Black" Margin="0,0,0,30"/>
+        Title="PantallaCrearAlmacenWPF"
+        Background="#6F7ABC"
+        WindowStartupLocation="CenterScreen"
+        Height="832" Width="1280">
 
-            <TextBlock Text="DETALLES DEL NUEVO ALMACÉN"
-                       FontSize="20" FontWeight="SemiBold"
-                       Margin="0,0,0,20"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        </StackPanel>
-        
+        <!-- CONTENIDO PRINCIPAL -->
+        <Grid Grid.Row="0" Margin="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Columna izquierda -->
+            <ScrollViewer Grid.Column="0" Background="#F2F2F2">
+                <StackPanel Margin="0,0,30,0">
+                    <TextBlock Text="AGREGAR NUEVO ALMACÉN" FontSize="28" FontWeight="Bold" Foreground="Black" Margin="0,0,0,30"/>
+                    <TextBlock Text="DETALLES DEL NUEVO ALMACÉN" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,20"/>
+
+                    <!-- Nombre del almacén -->
+                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="541">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Nombre del almacén *" FontWeight="DemiBold" FontSize="20"/>
+                            <TextBox Height="40" Margin="0,10,0,0" Name="txtNombreAlmacen"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Ubicación -->
+                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="538">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Ubicación *" FontWeight="SemiBold" FontSize="20"/>
+                            <WrapPanel Margin="0,10,0,0">
+                                
+                                <StackPanel Width="300">
+                                    <TextBlock Text="Tipo de vía" FontSize="16"/>
+                                    <ComboBox Height="40" Margin="0,5,20,0" Name="cmbTipoVia"/>
+                                </StackPanel>
+                                
+                                <StackPanel Width="300">
+                                    <TextBlock Text="Nombre de la calle" FontSize="16"/>
+                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtNombreCalle"/>
+                                </StackPanel>
+                                
+                                <StackPanel Width="150">
+                                    <TextBlock Text="Número" FontSize="16"/>
+                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtNumero"/>
+                                </StackPanel>
+                                
+                                <StackPanel Width="150">
+                                    <TextBlock Text="Código Postal" FontSize="16"/>
+                                    <TextBox Height="40" Margin="0,5,0,0" Name="txtCodigoPostal"/>
+                                </StackPanel>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Configuración del Almacén -->
+                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="537">
+                        <Border.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Configuración del Almacén *" FontWeight="SemiBold" FontSize="20" Margin="0,0,0,10"/>
+                            <WrapPanel Margin="0,0,0,10">
+                                <StackPanel Width="300">
+                                    <TextBlock Text="Capacidad total de productos" FontSize="16"/>
+                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtCapacidadTotal"/>
+                                </StackPanel>
+                            </WrapPanel>
+                            
+                            <WrapPanel>
+                                <StackPanel Width="300">
+                                    <TextBlock Text="¿Almacén por defecto?" FontSize="16"/>
+                                    <CheckBox Content="Sí" Height="40" Margin="0,5,0,0" Name="chkPorDefecto"/>
+                                </StackPanel>
+                                <StackPanel Width="300">
+                                    <TextBlock Text="Empresa perteneciente (ID)" FontSize="16"/>
+                                    <TextBox Height="40" Margin="0,5,0,0" Name="txtEmpresaPert"/>
+                                </StackPanel>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Columna derecha modificada -->
+            <StackPanel Grid.Column="1" Background="#F2F2F2" Name="zonaDerechaPanel" Visibility="Collapsed">
+                <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,114,0,20" Width="568">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Zonas del Almacén" FontWeight="DemiBold" FontSize="20" Margin="0,0,0,20"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0,30,0,30" FontSize="16">
+                            Las zonas del almacén se podrán configurar una vez creado el almacén principal. 
+                        Complete los datos del almacén y presione "Guardar" para continuar con la configuración de zonas.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- BOTONES INFERIORES -->
+        <Border Grid.Row="1" Background="#D9D9D9" Padding="20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Cancelar" Width="120" Height="40"
+                        Margin="0,0,10,0" Background="#CCC" Name="btnCancelar"/>
+                
+                <Button x:Name="btnGuardar"
+                        Content="Guardar"
+                        Width="120" Height="40"
+                        Background="#28A745" Foreground="White" FontWeight="Bold"
+                        Click="btnGuardar_Click"/>
+
+                <Button x:Name="btnSoloGuardar"
+                        Content="Guardar y salir"
+                        Width="140" Height="40"
+                        Margin="10,0,0,0"
+                        Visibility="Collapsed"
+                        Background="#007BFF" Foreground="White" FontWeight="Bold"
+                        Click="btnSoloGuardar_Click"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

@@ -1,0 +1,140 @@
+﻿<Window x:Class="SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1Zona.PantallaAgregarProductoA1ZonaWPF"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Agregar Producto" Height="832" Width="1280"
+        Background="#6F7ABC"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        ResizeMode="NoResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+            <Button x:Name="btnRegresar" Width="73" Height="32" Background="White" BorderThickness="0" Click="btnRegresar_Click">
+                <TextBlock Text="←" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="27,0,27,0">
+            <TextBlock FontSize="28" FontWeight="Bold" Foreground="White">
+                <Run Text="AGREGAR PRODUCTO EN LA ZONA - " />
+                <Run Text="{Binding NomZona}" />
+            </TextBlock>
+
+            <!-- Dentro de <Border> en Grid.Row="1" -->
+            <Border Background="White" CornerRadius="4" Margin="0,54,0,20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="40">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Columna izquierda -->
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0" Background="#F2F2F2">
+                            <TextBlock Text="DETALLES DEL NUEVO PRODUCTO" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,30" />
+
+                            <!-- Nombre del producto -->
+                            <TextBlock Text="Nombre del producto *" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                            <TextBox Height="40" Width="442" Margin="0,0,0,10" Text="{Binding NombreProducto, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <!-- Descripción -->
+                            <TextBlock Text="Descripción del producto" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
+                            <TextBox Height="45" Width="446" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding DescripcionProducto, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <!-- Categoría -->
+                            <TextBlock Text="Categoría del producto *" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
+                            <StackPanel Orientation="Horizontal">
+                                <ComboBox x:Name="cmbCategoriaProducto" Width="234" Height="40"
+                              ItemsSource="{Binding ListaCategorias}"
+                              SelectedItem="{Binding CategoriaSeleccionada}" />
+                                <Button x:Name="btnAgregarCategoria" Width="147" Height="40" Margin="10,0,0,0"
+                                        Background="#D7D6D6" BorderThickness="0" Click="btnAgregarCategoria_Click">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Categoría" VerticalAlignment="Center" />
+                                        <Canvas Width="24" Height="24" Margin="8,0,0,0">
+                                            <Path Data="M570 467V479M576 473H564" Stroke="#000" StrokeThickness="2" />
+                                        </Canvas>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Subcategoría -->
+                            <TextBlock Text="Subcategoría del producto" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
+                            <ComboBox x:Name="cmbSubcategoriaProducto" Width="234" Height="40" HorizontalAlignment="Left"
+                                      ItemsSource="{Binding ListaSubcategoriasFiltradas}"
+                                      SelectedItem="{Binding SubcategoriaSeleccionada}" IsEditable="False" IsReadOnly="True" /> 
+
+                            <!-- Estado del producto -->
+                            <TextBlock Text="Estado del producto *" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                <RadioButton Content="Nuevo" GroupName="EstadoProducto" IsChecked="{Binding EsNuevo}" />
+                                <RadioButton Content="Seminuevo" GroupName="EstadoProducto" IsChecked="{Binding EsSeminuevo}" Margin="35,0,0,0" />
+                            </StackPanel>
+
+                            <!-- SKU -->
+                            <TextBlock Text="SKU" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Height="40" IsEnabled="False" Margin="0,0,10,20"
+                             Text="{Binding SKU}" />
+                                <Button Grid.Column="1" x:Name="btnGenerarSKU" Content="Auto-generate SKU" Height="40"
+                            Background="#D7D6D6" BorderThickness="0" Margin="0,0,0,20" Click="btnGenerarSKU_Click" />
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Columna derecha -->
+                        <StackPanel Grid.Column="1" Background="#F2F2F2">
+                            <TextBlock Text="Almacén" FontWeight="DemiBold" FontSize="16" Margin="0,50,0,10" />
+                            <ComboBox x:Name="cmbAlmacen" Height="40" Margin="0,0,0,20"
+                                      ItemsSource="{Binding ListaAlmacenes}"
+                                      SelectedItem="{Binding AlmacenSeleccionado}"
+                                      SelectionChanged="cmbAlmacen_SelectionChanged" IsEnabled="False" />
+
+                            <TextBlock Text="Zona de Almacenamiento" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                            <ComboBox x:Name="cmbZonaAlmacenamiento" Height="40" Margin="0,0,0,20"
+                                      ItemsSource="{Binding ListaZonas}"
+                                      SelectedItem="{Binding ZonaSeleccionada}" IsEnabled="False" />    
+
+                            <TextBlock Text="Cantidad Inicial:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                            <TextBox x:Name="txtCantidadInicial" Height="40" Width="150" Margin="0,0,0,20"
+                                     Text="{Binding CantidadInicial}" />
+
+                            <CheckBox Content="¿Está en venta?" Margin="0,0,0,10" IsChecked="{Binding EstaEnVenta}" />
+
+                            <StackPanel Margin="0,0,0,20"
+                                        Visibility="{Binding EstaEnVenta, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <TextBlock Text="Precio del producto:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                                <TextBox Height="40" Width="150" Text="{Binding PrecioProducto}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+
+        </Grid>
+        <!-- BOTONES INFERIORES -->
+        <Border Grid.Row="2" Background="#D9D9D9" Padding="20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="btnGuardarProducto" Content="Guardar Producto" Width="171" Height="45"
+                        Margin="0,0,25,0" Background="#28A745" Foreground="White" FontWeight="Bold" 
+                        BorderThickness="0"  Click="btnGuardarProducto_Click"/>
+
+                <Button x:Name="btnCancelar" Content="Cancelar" Width="110" Height="45"
+                        Background="#CCCCCC" BorderThickness="0" Click="btnCancelar_Click_1"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

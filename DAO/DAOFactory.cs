@@ -14,5 +14,6 @@ namespace SYNKROAPP.DAO
             dao = new DAOImpl(token, projectName);
             return dao;
         }
+
     }
 }

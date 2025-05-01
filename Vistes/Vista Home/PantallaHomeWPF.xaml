@@ -7,7 +7,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="832" d:DesignWidth="1280"
       Title="PantallaHomeWPF"
-      Background="#6F7ABC">
+      Background="#6F7ABC"
+      WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
     
     <Grid>
         <Grid.ColumnDefinitions>

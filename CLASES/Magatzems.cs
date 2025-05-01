@@ -10,11 +10,11 @@ namespace SYNKROAPP.CLASES
     [FirestoreData]
     public class Magatzems
     {
-        [FirestoreProperty]
-        public int IdMagatzem { get; set; }
+        [FirestoreDocumentId]
+        public string MagatzemID { get; set; }
 
         [FirestoreProperty]
-        public int EmpresaPertanyent { get; set; }
+        public string EmpresaPertanyentID { get; set; }
 
         [FirestoreProperty]
         public string NomMagatzem { get; set; }
@@ -23,17 +23,20 @@ namespace SYNKROAPP.CLASES
         public Adreça Ubicacio { get; set; }
 
         [FirestoreProperty]
-        public List<int> Zones { get; set; } = new List<int>();
+        public List<string> Zones { get; set; } = new List<string>();
+
+        public int NumeroDeZonas => Zones?.Count ?? 0;
+
 
         [FirestoreProperty]
         public bool MagatzemPerDefecte { get; set; }
 
         public Magatzems() { }
 
-        public Magatzems(int idMagatzem, int empresaPertanyent, string nomMagatzem, Adreça ubicacio, List<int> zones, bool magatzemPerDefecte)
+        public Magatzems(string idMagatzem, string empresaPertanyent, string nomMagatzem, Adreça ubicacio, List<string> zones, bool magatzemPerDefecte)
         {
-            IdMagatzem = idMagatzem;
-            EmpresaPertanyent = empresaPertanyent;
+            MagatzemID = idMagatzem;
+            EmpresaPertanyentID = empresaPertanyent;
             NomMagatzem = nomMagatzem;
             Ubicacio = ubicacio;
             Zones = zones;

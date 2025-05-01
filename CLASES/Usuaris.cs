@@ -10,7 +10,7 @@ namespace SYNKROAPP.CLASES
     [FirestoreData]
     public class Usuaris
     {
-        [FirestoreProperty]
+        [FirestoreDocumentId]
         public string UsuariID { get; set; }
 
         [FirestoreProperty]

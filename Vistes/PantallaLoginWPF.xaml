@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes"
         mc:Ignorable="d"
-        Title="PantallaLoginWPF" Height="450" Width="800">
+        Title="PantallaLoginWPF" Height="450" Width="800"
+        WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
     <Grid Background="#6F7ABC">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-43,0,0">
             <Grid Width="120" Height="120">
-                <Image Source="C:\Users\ferna\Desktop\SYNKRO\IMAGES\logo.png" Stretch="Uniform"/>
+                <Image Source="C:\Users\Fernando\Desktop\PROYECTO FINAL\PROJECT\SYNKROAPP\IMAGES\logo.png" Stretch="Uniform"/>
                 <Rectangle  RadiusX="10" RadiusY="10"/>
             </Grid>
 

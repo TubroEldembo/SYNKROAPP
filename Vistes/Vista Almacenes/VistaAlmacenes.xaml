@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Almacenes"
              mc:Ignorable="d" 
              d:DesignHeight="832" d:DesignWidth="1280"
              Background="#6F7ABC">
-    <Grid>
+
+    <Grid Margin="40,30,40,30">
+        <!-- Margen lateral y superior como en la otra ventana -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -16,42 +17,78 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Título -->
         <TextBlock Text="GESTIÓN DE ALMACENES" 
-                   FontSize="24"
+                   FontSize="28"
+                   Foreground="White"
                    HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Grid.Row="0"
-                   Margin="0,10,0,0"/>
+                   FontWeight="Bold"
+                   Margin="0,0,0,20"/>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Margin="10" >
-            <TextBox Width="250" Height="35"  Margin="10,0"/>
-            <Button Content="CREAR ALMACÉN" Width="150" Height="35" Margin="10,0" Name="btnCrearAlmacen" Click="btnCrearAlmacen_Click"/>
-        </StackPanel>
+        <!-- Crear Almacén -->
+        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="1" Margin="0,0,0,20">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+            </Border.Effect>
+            <WrapPanel HorizontalAlignment="Left">
+                <TextBox Width="250" Height="35" Margin="0,0,10,0"/>
+                <Button Content="CREAR ALMACÉN ➕" Width="160" Height="35" Background="Black" Foreground="White" Click="btnCrearAlmacen_Click"/>
+            </WrapPanel>
+        </Border>
 
-        <!-- Información de Estadísticas Generales -->
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Grid.Row="2" Margin="10">
-            <TextBlock Text="ESTADÍSTICAS GENERALES" FontSize="18" FontWeight="Bold"/>
-            <TextBlock Text="TOTAL ALMACENES: {Binding TotalAlmacenes}" />
-            <TextBlock Text="MOVIMIENTOS RECIENTES: {Binding MovimientosRecientes}" />
-            <TextBlock Text="PRODUCTOS EN ALMACENES: {Binding ProductosEnAlmacenes}"/>
-        </StackPanel>
+        <!-- Estadísticas Generales -->
+        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="2" Margin="0,0,0,20">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="ESTADÍSTICAS GENERALES" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <WrapPanel>
+                    <StackPanel Width="300" Margin="0,0,20,10">
+                        <TextBlock Text="TOTAL ALMACENES:" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TotalAlmacenes}" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel Width="300" Margin="0,0,20,10">
+                        <TextBlock Text="MOVIMIENTOS RECIENTES:" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding MovimientosRecientes}" FontSize="16"/>
+                    </StackPanel>
+                    <StackPanel Width="300">
+                        <TextBlock Text="CAPACIDAD OCUPADA:" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding CapacidadOcupada}" FontSize="16"/>
+                    </StackPanel>
+                </WrapPanel>
+                <TextBlock Margin="0,10,0,0" Text="PRODUCTOS EN ALMACENES: {Binding ProductosEnAlmacenes}" FontWeight="Bold"/>
+            </StackPanel>
+        </Border>
 
-        <StackPanel Orientation="Vertical" Grid.Row="3" Margin="10">
-            <TextBlock Text="LISTA DE ALMACENES" FontSize="18" FontWeight="Bold"/>
-            <ListBox Height="150" Margin="0,10" HorizontalAlignment="Stretch">
-                <!-- Actualmente vacío, se llenará dinámicamente -->
-            </ListBox>
-        </StackPanel>
+        <!-- Lista de Almacenes -->
+        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="3" Margin="0,0,0,20">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="LISTA DE ALMACENES" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <DataGrid ItemsSource="{Binding Almacenes}" AutoGenerateColumns="False" HeadersVisibility="Column"
+                          IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
+                          Height="180" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="DataGrid_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ALMACÉN" Binding="{Binding NomMagatzem}" Width="*"/>
+                        <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding Ubicacio}" Width="*"/>
+                        <DataGridTextColumn Header="ZONAS" Binding="{Binding NumeroDeZonas}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
 
-        <StackPanel Orientation="Vertical" Grid.Row="4" Margin="10">
-            <TextBlock Text="MOVIMIENTOS RECIBIDOS" FontSize="18" FontWeight="Bold"/>
-            <ListBox Height="150" Margin="0,10" HorizontalAlignment="Stretch">
-                <!-- Actualmente vacío, se llenará dinámicamente -->
-            </ListBox>
-        </StackPanel>
-
-
+        <!-- Movimientos Recibidos -->
+        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="4">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="MOVIMIENTOS RECIBIDOS" FontSize="20" FontWeight="SemiBold"/>
+                <ListBox Height="150" Margin="0,10,0,0"/>
+            </StackPanel>
+        </Border>
     </Grid>
-    
-
 </UserControl>

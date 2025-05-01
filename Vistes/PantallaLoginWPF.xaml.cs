@@ -35,7 +35,7 @@ namespace SYNKROAPP.Vistes
         private void txtRegister_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             PantallaRegisterWPF pantallaRegister = new PantallaRegisterWPF();
-            pantallaRegister.Show(); ;
+            pantallaRegister.Show(); 
             this.Close();
         }
 

@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes"
         mc:Ignorable="d"
-        Title="PantallaRegisterUserWPF" Height="450" Width="800">
+        Title="PantallaRegisterUserWPF" Height="450" Width="800"
+        WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
+    
     <Grid Background="#6F7ABC">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-43,0,0">
             <!-- Título -->

@@ -10,26 +10,39 @@ namespace SYNKROAPP.CLASES
     [FirestoreData]
     public class ZonaEmmagatzematge
     {
-        [FirestoreProperty]
-        public int ZonaEmmagatzematgeID { get; set; }  // idZonaEmmagatzematge
+        [FirestoreDocumentId]
+        public string ZonaEmmagatzematgeID { get; set; }  // idZonaEmmagatzematge
 
         [FirestoreProperty]
         public string Nom { get; set; }  // nom
 
         [FirestoreProperty]
-        public int MagatzemPertanyent { get; set; }  // idMagatzem (relación con Magatzem)
+        public string MagatzemPertanyent { get; set; }  // idMagatzem (relación con Magatzem)
 
         [FirestoreProperty]
-        public List<int> Productes { get; set; } = new List<int>();  // Relación con ProducteInventari (lista de IDs)
+        public string EmpresaID { get; set; }  // idMagatzem (relación con Magatzem)
+
+        [FirestoreProperty]
+        public int Capacitat { get; set; }  
+
+
+        [FirestoreProperty]
+        public List<string> Productes { get; set; } = new List<string>();
+
+        public int NProductos => Productes?.Count ?? 0;
+
+        public string AlmacenPerteneciente => MagatzemPertanyent;
 
         public ZonaEmmagatzematge() { }
 
-        public ZonaEmmagatzematge(int idZonaEmmagatzematge, string nom, int magatzemPertanyent, List<int> productes)
+        public ZonaEmmagatzematge(string idZonaEmmagatzematge, string empresaID ,string nom, string magatzemPertanyent, List<string> productes, int capacitat)
         {
             ZonaEmmagatzematgeID = idZonaEmmagatzematge;
+            EmpresaID = empresaID;
             Nom = nom;
             MagatzemPertanyent = magatzemPertanyent;
             Productes = productes;
+            Capacitat = capacitat;
         }
     }
 }
