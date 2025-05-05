@@ -27,24 +27,22 @@ namespace SYNKROAPP.Vistes.Vista_Home
         private FirebaseAuth auth;
         private FirebaseAuthLink authLink;
         private IDAO dao;
-        private Usuaris usuari;
         private bool isMenuVisible = false;
+        private Empreses empresa;
 
-        public PantallaHomeWPF()
-        {
-            InitializeComponent();
-        }
-
-        public PantallaHomeWPF(Usuaris usuari, FirebaseAuthLink auth, IDAO dao)
+        public PantallaHomeWPF(Usuaris usuari, FirebaseAuthLink auth, IDAO dao, Empreses empresa)
         {
             InitializeComponent();
 
-            this.usuari = usuari;
+            this.loggedUser = usuari;
             this.auth = auth;
             this.dao = dao;
+            this.empresa = empresa;
+
+            contentArea.Content = new VistaResumen(dao, empresa);
         }
 
-        public PantallaHomeWPF(Usuaris loggedUser, FirebaseAuth auth, FirebaseAuthLink authLink, IDAO dao)
+        public PantallaHomeWPF(Usuaris loggedUser, FirebaseAuth auth, FirebaseAuthLink authLink, IDAO dao, Empreses empresa)
         {
             InitializeComponent();
 
@@ -52,7 +50,12 @@ namespace SYNKROAPP.Vistes.Vista_Home
             this.auth = auth;
             this.authLink = authLink;
             this.dao = dao;
+            this.empresa = empresa;
+
+            contentArea.Content = new VistaResumen(dao, empresa);
         }
+
+       
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -93,7 +96,7 @@ namespace SYNKROAPP.Vistes.Vista_Home
                 overlay.Visibility = Visibility.Collapsed;
             }
 
-            var vista = new Vista_Almacenes.VistaAlmacenes(dao, loggedUser);
+            var vista = new Vista_Almacenes.VistaAlmacenes(dao, empresa);
 
             // Suscribimos al evento para quitar el UserControl cuando se cierre
             vista.OnCerrar += () =>

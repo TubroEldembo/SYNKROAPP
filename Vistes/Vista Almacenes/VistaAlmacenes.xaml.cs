@@ -26,31 +26,27 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
     {
         private IDAO dao;
         private Usuaris loggedUser;
-
+        private Empreses empresa;
         public event Action OnCerrar;
-        public VistaAlmacenes()
-        {
-            InitializeComponent();
-          
-        }
 
-        public VistaAlmacenes(IDAO dao, Usuaris loggedUser)
+        public VistaAlmacenes(IDAO dao, Empreses empresa)
         {
             InitializeComponent();
             this.dao = dao;
             this.DataContext = new AlmacenesViewModel(dao);
             this.loggedUser = loggedUser;
+            this.empresa = empresa;
             DetallesAlmacenes();
         }
 
         private async void DetallesAlmacenes()
         {
-            await ((AlmacenesViewModel)this.DataContext).CargarDetallesAlmacenes(loggedUser);
+            await ((AlmacenesViewModel)this.DataContext).CargarDetallesAlmacenes(empresa);
         }
 
         private void btnCrearAlmacen_Click(object sender, RoutedEventArgs e)
         {
-            PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(dao, loggedUser)
+            PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(dao, empresa)
             {
                 WindowState = WindowState.Maximized, 
                 ResizeMode = ResizeMode.NoResize,

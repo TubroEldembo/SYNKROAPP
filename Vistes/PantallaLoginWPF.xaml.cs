@@ -75,8 +75,10 @@ namespace SYNKROAPP.Vistes
                         await dao.AddUsuari(loggedUser);
                     }
 
+                    Empreses empresa = await dao.GetEmpresaByID(loggedUser.EmpresaID);
 
-                    PantallaHomeWPF homeWindow = new PantallaHomeWPF(loggedUser, auth, authLink, dao);
+
+                    PantallaHomeWPF homeWindow = new PantallaHomeWPF(loggedUser, auth, authLink, dao, empresa);
                     homeWindow.Show();
                     this.Close();
                 }

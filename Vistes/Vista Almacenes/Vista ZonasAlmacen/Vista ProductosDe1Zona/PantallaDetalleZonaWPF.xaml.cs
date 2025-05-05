@@ -14,12 +14,13 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
     {
         public IDAO _dao;
         ZonaEmmagatzematge _zona;
-        public PantallaDetalleZonaWPF(DetalleDe1ZonaViewModel viewModel)
+        public  PantallaDetalleZonaWPF(DetalleDe1ZonaViewModel viewModel)
         {
             InitializeComponent();
             this.DataContext = viewModel;
             _zona = viewModel._zonaSeleccionada;
             _dao = viewModel._dao;
+            CargarListas();
         }
 
         private async void dgProductosDeLaZona_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -29,6 +30,12 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
                 var viewModel = new DetalleDe1ZonaViewModel(_dao, _zona);
                 await viewModel.CargarProductos();
            }
+        }
+
+        private async void CargarListas()
+        {
+            var viewModel = (DetalleDe1ZonaViewModel)this.DataContext;
+            await viewModel.CargarListasParaCombosAsync();
         }
 
         private void btnAgregarZona_Click(object sender, RoutedEventArgs e)

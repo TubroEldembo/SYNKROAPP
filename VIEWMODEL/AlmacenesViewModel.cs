@@ -91,7 +91,7 @@ namespace SYNKROAPP.VIEWMODEL
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public async Task CargarDetallesAlmacenes(Usuaris empresa)
+        public async Task CargarDetallesAlmacenes(Empreses empresa)
         {
             List<Magatzems> almacenes = await _dao.DetallesAlmacenes(empresa);
 

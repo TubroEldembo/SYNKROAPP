@@ -9,7 +9,7 @@
       Title="PantallaHomeWPF"
       Background="#6F7ABC"
       WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -28,7 +28,7 @@
             BorderThickness="0"
             FontSize="20"
             Grid.Column="0"/>
-        
+
         <!-- Menu lateral -->
         <Border
             x:Name="sliderBar"
@@ -60,9 +60,9 @@
                     <Button Tag="⚙️" Content="Configuración" Style="{StaticResource MenuButtonStyle}" Click="btnConfiguracion_Click"/>
 
                 </StackPanel>
-                
+
             </DockPanel>
-           
+
         </Border>
 
         <Grid Grid.Column="1" Margin="10">
@@ -73,7 +73,5 @@
                        Panel.ZIndex="1"/>
             <ContentControl x:Name="contentArea" Panel.ZIndex="0"/>
         </Grid>
-
-        
     </Grid>
 </Window>

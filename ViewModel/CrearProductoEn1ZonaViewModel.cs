@@ -11,12 +11,13 @@ using System.Windows;
 
 namespace SYNKROAPP.ViewModel
 {
-    public class CrearProductoEn1ZonaViewModel: INotifyPropertyChanged
+    public class CrearProductoEn1ZonaViewModel : INotifyPropertyChanged
     {
         public IDAO _dao;
         private ZonaEmmagatzematge zona;
         private Dictionary<string, List<string>> _diccionarioSubcategorias = new();
         private Dictionary<string, string> _mapCategoriaNombreToID = new();
+        private Dictionary<string, string> _mapSubcategoriaNombreToID = new();
 
         public CrearProductoEn1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zona)
         {
@@ -87,7 +88,6 @@ namespace SYNKROAPP.ViewModel
             set { _cantidadInicial = value; OnPropertyChanged(nameof(CantidadInicial)); }
         }
 
-        // Combos
         public ObservableCollection<string> ListaCategorias { get; set; } = new ObservableCollection<string>();
         private string _categoriaSeleccionada;
         public string CategoriaSeleccionada
@@ -122,8 +122,6 @@ namespace SYNKROAPP.ViewModel
             set { _subcategoriaSeleccionada = value; OnPropertyChanged(nameof(SubcategoriaSeleccionada)); }
         }
 
-
-
         public ObservableCollection<string> ListaAlmacenes { get; set; } = new ObservableCollection<string>();
         private string _almacenSeleccionado;
         public string AlmacenSeleccionado
@@ -134,7 +132,6 @@ namespace SYNKROAPP.ViewModel
 
         public ObservableCollection<string> ListaZonas { get; set; } = new ObservableCollection<string>();
         private string _zonaSeleccionada;
-
         public string ZonaSeleccionada
         {
             get => _zonaSeleccionada;
@@ -155,30 +152,38 @@ namespace SYNKROAPP.ViewModel
                 AlmacenSeleccionado = zona.MagatzemPertanyent;
                 ZonaSeleccionada = zona.ZonaEmmagatzematgeID;
 
-                // Cargar categorías genéricas
+                // Genéricas
                 var (categoriasGenericas, subcategoriasGenericas) = await _dao.ObtenirCategoriesGeneriques();
                 foreach (var cat in categoriasGenericas)
                 {
                     ListaCategorias.Add(cat.Nom);
                     _mapCategoriaNombreToID[cat.Nom] = cat.CategoriaID;
 
-                    _diccionarioSubcategorias[cat.Nom] =
-                        subcategoriasGenericas.TryGetValue(cat.CategoriaID, out var subs)
-                        ? subs.Select(s => s.Nom).ToList()
-                        : new List<string>();
+                    if (subcategoriasGenericas.TryGetValue(cat.CategoriaID, out var subs))
+                    {
+                        _diccionarioSubcategorias[cat.Nom] = subs.Select(s => s.Nom).ToList();
+                        foreach (var sub in subs)
+                        {
+                            _mapSubcategoriaNombreToID[sub.Nom] = sub.SubCategoriaID;
+                        }
+                    }
                 }
 
-                // Cargar categorías personalizadas
+                // Personalizadas
                 var (categoriasPers, subcategoriasPers) = await _dao.ObtenirCategoriesPersonalitzades(zona.EmpresaID);
                 foreach (var cat in categoriasPers)
                 {
                     ListaCategorias.Add(cat.Nom);
                     _mapCategoriaNombreToID[cat.Nom] = cat.CategoriaID;
 
-                    _diccionarioSubcategorias[cat.Nom] =
-                        subcategoriasPers.TryGetValue(cat.CategoriaID, out var subs)
-                        ? subs.Select(s => s.Nom).ToList()
-                        : new List<string>();
+                    if (subcategoriasPers.TryGetValue(cat.CategoriaID, out var subs))
+                    {
+                        _diccionarioSubcategorias[cat.Nom] = subs.Select(s => s.Nom).ToList();
+                        foreach (var sub in subs)
+                        {
+                            _mapSubcategoriaNombreToID[sub.Nom] = sub.SubCategoriaID;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -187,10 +192,8 @@ namespace SYNKROAPP.ViewModel
             }
         }
 
-
         public async Task<bool> GuardarProductoEnZona()
         {
-            // Validación básica
             if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(SKU) || PrecioProducto <= 0 || CantidadInicial < 0)
             {
                 MessageBox.Show("Por favor, complete todos los campos requeridos correctamente.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -204,8 +207,8 @@ namespace SYNKROAPP.ViewModel
                     Nom = NombreProducto,
                     CodiReferencia = SKU,
                     Descripcio = DescripcionProducto,
-                    CategoriaID = "XXX",
-                    SubCategoriaID = "",
+                    CategoriaID = CategoriaSeleccionada,
+                    SubCategoriaID = SubcategoriaSeleccionada,
                     SKU = SKU,
                 };
 
@@ -214,7 +217,6 @@ namespace SYNKROAPP.ViewModel
                     Preu = PrecioProducto,
                     Disponible = CantidadInicial > 0,
                     EnVenda = EstaEnVenta
-
                 };
 
                 ProductesInventari inventari = new ProductesInventari
@@ -250,13 +252,10 @@ namespace SYNKROAPP.ViewModel
 
         public void GenerarSKU()
         {
-            // Ejemplo simple: basado en timestamp + random
             SKU = $"SKU-{DateTime.Now:yyyyMMddHHmmss}-{new Random().Next(100, 999)}";
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

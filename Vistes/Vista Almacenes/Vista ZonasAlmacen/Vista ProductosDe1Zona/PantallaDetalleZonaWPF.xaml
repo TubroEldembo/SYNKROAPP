@@ -105,12 +105,12 @@
 
                                 <StackPanel>
                                     <TextBlock Text="Categoría" FontWeight="Bold"/>
-                                    <ComboBox Width="150" ItemsSource="{Binding Categories}" SelectedItem="{Binding CategoriaSeleccionada}"/>
+                                    <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}" Width="136" />
                                 </StackPanel>
 
                                 <StackPanel>
                                     <TextBlock Text="Subcategoría" FontWeight="Bold"/>
-                                    <ComboBox Width="136" ItemsSource="{Binding Subcategories}" SelectedItem="{Binding SubCategoriaSeleccionada}"/>
+                                    <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}" Width="136" />
                                 </StackPanel>
 
                                 <StackPanel>

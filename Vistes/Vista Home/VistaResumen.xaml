@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="SYNKROAPP.Vistes.Vista_Home.VistaResumen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tchart="clr-namespace:Steema.TeeChart.WPF;assembly=TeeChart.WPF"
+             xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Home"
+             mc:Ignorable="d" 
+             d:DesignHeight="832" d:DesignWidth="1280"
+             Background="#6F7ABC">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Título -->
+        <TextBlock FontSize="30" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2C2C2C">
+            <Run Text="Resumen general de " />
+            <Run Text="{Binding NomEmpresa}" />  
+        </TextBlock>
+
+
+        <!-- Tarjetas adaptadas con efecto -->
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,20" HorizontalAlignment="Stretch">
+            <!-- Estilo reutilizable -->
+            <UniformGrid.Resources>
+                <Style TargetType="Border" x:Key="CardStyle">
+                    <Setter Property="CornerRadius" Value="14"/>
+                    <Setter Property="Padding" Value="20"/>
+                    <Setter Property="Margin" Value="10"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="BorderBrush" Value="#DDD"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </UniformGrid.Resources>
+
+            <!-- Tarjetas -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Productos" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
+                    <TextBlock Text="{Binding TotalProductos}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="En Movimiento" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
+                    <TextBlock Text="{Binding ProductosEnMovimiento}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Almacenes" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
+                    <TextBlock Text="{Binding TotalAlmacenes}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="Capacidad Usada" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
+                    <TextBlock Text="{Binding CapacidadUsadaPorcentaje}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Sección Gráficos -->
+        <!-- Sección Gráficos con TÍTULOS -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Columna Izquierda: Detalles Catálogo -->
+            <Grid Grid.Column="0" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <!-- Ocupa el resto del espacio -->
+                </Grid.RowDefinitions>
+
+                <!-- Título -->
+                <TextBlock Text="Detalles Catálogo"
+               FontSize="18"
+               FontWeight="SemiBold"
+               Foreground="#2C2C2C"
+               Margin="5,0,0,10"/>
+
+                <!-- Gráfico que se ajusta -->
+                <Border Grid.Row="1"
+                        Background="White"
+                        Padding="10"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+
+                    <tchart:TChart x:Name="tchartPie"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"
+                                   />    
+                </Border>
+            </Grid>
+
+
+            <!-- Columna Derecha: Otro Título -->
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Actividad Reciente"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="#2C2C2C"
+                   Margin="5,0,0,10"/>
+
+                <Border>
+                    <TextBlock Text="(Aquí podría ir un gráfico de movimientos por fecha, por ejemplo)"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="Black" FontStyle="Italic"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -59,8 +59,8 @@ namespace SYNKROAPP.Vistes
                     EstatVerificacio = false,
                     NomEmpresa = txtNombreEmpresa.Text,
                     Tipus = txtTipoEmpresa.Text,
-                    Magatzems = new List<int>(),
-                    Usuaris = new List<int>(),
+                    Magatzems = new List<string>(),
+                    Usuaris = new List<string>(),
                     Ubicacio = direccioEmpresa,
                     FotoEmpresalUrl = "" // Si subes imagen, puedes poner aquí la URL
                 };
@@ -68,7 +68,7 @@ namespace SYNKROAPP.Vistes
 
                 await dao.RegistrarUsuariAmbEmpresa(usuari, novaEmpresa);
                 MessageBox.Show("Empresa i usuari registrats correctament!");
-                PantallaHomeWPF homeWindow = new PantallaHomeWPF(usuari,auth, dao);
+                PantallaHomeWPF homeWindow = new PantallaHomeWPF(usuari,auth, dao, novaEmpresa);
                 homeWindow.Show();
                 this.Close();
               

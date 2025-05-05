@@ -63,13 +63,11 @@ namespace SYNKROAPP.DAO
             }
         }
 
-
-
         public Task AddUsuari(Usuaris unUsuari)
         {
             throw new NotImplementedException();
         }
-        public Task AddEmpresa(Usuaris unaEmpresa)
+        public Task AddEmpresa(Empreses unaEmpresa)
         {
             throw new NotImplementedException();
         }
@@ -113,12 +111,33 @@ namespace SYNKROAPP.DAO
             throw new NotImplementedException();
         }
 
+        public async Task<Empreses> GetEmpresaByID(string empresaID)
+        {
+            try
+            {
+                var docRef = db.Collection("Empreses").Document(empresaID);
+                var snapshot = await docRef.GetSnapshotAsync();
+
+                if (snapshot.Exists)
+                {
+                    Empreses empresa = snapshot.ConvertTo<Empreses>();
+                    return empresa;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception($"Error al obtener empresa con ID {empresaID}", ex);
+            }
+        }
+
         public Task UpdateUsuari(Usuaris unUsuari)
         {
             throw new NotImplementedException();
         }
 
-        public async Task AddAlmacen(Usuaris unaEmpresa, Magatzems unMagatzem)
+        public async Task AddAlmacen(Empreses unaEmpresa, Magatzems unMagatzem)
         {
             try
             {
@@ -131,7 +150,7 @@ namespace SYNKROAPP.DAO
             }
         }
 
-        public async Task<Magatzems> CrearAlmacen(Usuaris unaEmpresa, Magatzems nouMagatzem)
+        public async Task<Magatzems> CrearAlmacen(Empreses unaEmpresa, Magatzems nouMagatzem)
         {
             try
             {
@@ -141,7 +160,7 @@ namespace SYNKROAPP.DAO
                 if (nouMagatzem == null)
                     throw new Exception("Los datos del almacén no son válidos.");
 
-                DocumentReference empresaRef = db.Collection("Empreses").Document(unaEmpresa.EmpresaID);
+                DocumentReference empresaRef = db.Collection("Empreses").Document((string)unaEmpresa.EmpresaID);
                 CollectionReference almacenesRef = empresaRef.Collection("Magatzems");
 
                 QuerySnapshot snapshot = await almacenesRef.WhereEqualTo("NomMagatzem", nouMagatzem.NomMagatzem).GetSnapshotAsync();
@@ -204,14 +223,14 @@ namespace SYNKROAPP.DAO
             }
         }
 
-        public async Task<List<Magatzems>> DetallesAlmacenes(Usuaris empresa)
+        public async Task<List<Magatzems>> DetallesAlmacenes(Empreses empresa)
         {
             try
             {
                 if (string.IsNullOrEmpty(empresa.EmpresaID))
                     throw new Exception("El ID de la empresa no es válido");
 
-                DocumentReference empresaRef = db.Collection("Empreses").Document(empresa.EmpresaID);
+                DocumentReference empresaRef = db.Collection("Empreses").Document((string)empresa.EmpresaID);
                 CollectionReference almacenesRef = empresaRef.Collection("Magatzems");
 
                 // Obtener todos los documentos (almacenes) de la colección
@@ -373,6 +392,7 @@ namespace SYNKROAPP.DAO
             return await docRef.GetSnapshotAsync();
         }
 
+
         /// <summary>
         /// Se utiliza diccionario para luego a la hora de filtrar manualmente las subcategorias de un categoria,
         /// de esta manera ya asociamos la subcategoria directamente a la categoria. Y no hace irlo filtrando
@@ -421,7 +441,7 @@ namespace SYNKROAPP.DAO
 
             foreach (var doc in snapshot.Documents)
             {
-                var categoria = doc.ConvertTo<Categories>();
+                Categories categoria = doc.ConvertTo<Categories>();
                 categoria.CategoriaID = doc.Id;
                 catList.Add(categoria);
 
@@ -433,5 +453,97 @@ namespace SYNKROAPP.DAO
             }
             return (catList, subCatDict);
         }
+
+        public async Task<List<Magatzems>> ObtenerLosAlmacenesTotalesDeLaEmpresa(string empresaID)
+        {
+            try
+            {
+                List<Magatzems> almacenes = new List<Magatzems>();
+                CollectionReference magatzemRef = db.Collection("Empreses").Document(empresaID).Collection("Magatzems");
+                var snapshot = await magatzemRef.GetSnapshotAsync();
+
+                foreach (var doc in snapshot.Documents)
+                {
+                    if (doc.Exists)
+                    {
+                        Magatzems almmacen = doc.ConvertTo<Magatzems>();
+                        almacenes.Add(almmacen);
+                    }
+                }
+
+                return almacenes;
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception($"Error al obtener los almacenes de la empresa {empresaID}", ex);
+            }
+          
+        }
+
+        public async Task<Dictionary<string, int>> ObtenerProductosEnVentaPorCategoria(string empresaID)
+        {
+            Dictionary<string, int> productosPorCategoria = new Dictionary<string, int>();
+
+            var magatzemSnap = await db.Collection("Empreses")
+                                       .Document(empresaID)
+                                       .Collection("Magatzems")
+                                       .GetSnapshotAsync();
+
+            foreach (var magatzemDoc in magatzemSnap.Documents)
+            {
+                // Obtener todas las zonas del magatzem
+                var zonesSnap = await magatzemDoc.Reference
+                                                 .Collection("ZonesEmmagatzematge")
+                                                 .GetSnapshotAsync();
+
+                foreach (var zonaDoc in zonesSnap.Documents)
+                {
+                    // Obtener productos de inventario de cada zona
+                    var inventariSnap = await zonaDoc.Reference
+                                             .Collection("ProductesInventari")
+                                             .GetSnapshotAsync();
+
+                    foreach (var inventariDoc in inventariSnap.Documents)
+                    {
+                        ProductesInventari inventari = inventariDoc.ConvertTo<ProductesInventari>();
+                        if (inventari?.ProducteID == null)
+                            continue;
+
+                        //  Obtener el ProducteGeneral correspondiente
+                        var producteGeneralDoc = await db.Collection("ProducteGeneral")
+                                                .Document(inventari.ProducteID)
+                                                .GetSnapshotAsync();
+
+                        if (!producteGeneralDoc.Exists)
+                            continue;
+
+                        ProducteGeneral producteGeneral = producteGeneralDoc.ConvertTo<ProducteGeneral>();
+                        string categoriaID = producteGeneral?.CategoriaID ?? "Sin categoría";
+
+                        //  Obtener el detalle del producto y verificar si está en venta
+                        var detallSnap = await producteGeneralDoc.Reference
+                                                        .Collection("DetallProducte")
+                                                        .GetSnapshotAsync();
+
+                        DetallProducte detall = detallSnap.Documents.FirstOrDefault()?.ConvertTo<DetallProducte>();
+
+                        if (detall != null && detall.EnVenda)
+                        {
+                            if (productosPorCategoria.ContainsKey(categoriaID))
+                                productosPorCategoria[categoriaID]++;
+                            else
+                                productosPorCategoria[categoriaID] = 1;
+                        }
+
+                    }
+                }
+            }
+
+            return productosPorCategoria;
+
+        }
+
+
+
     }
 }

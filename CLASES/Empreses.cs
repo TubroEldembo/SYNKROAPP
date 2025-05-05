@@ -23,10 +23,10 @@ namespace SYNKROAPP.CLASES
         public string Tipus { get; set; } 
 
         [FirestoreProperty]
-        public List<int> Magatzems { get; set; } = new List<int>(); 
+        public List<string> Magatzems { get; set; } = new List<string>(); 
 
         [FirestoreProperty]
-        public List<int> Usuaris { get; set; } = new List<int>(); 
+        public List<string> Usuaris { get; set; } = new List<string>(); 
 
         [FirestoreProperty]
         public Adreça Ubicacio { get; set; }
@@ -36,7 +36,7 @@ namespace SYNKROAPP.CLASES
 
         public Empreses() { }
 
-        public Empreses(string empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<int> magatzems, List<int> usuaris, Adreça ubicacio, string fotoEmpresalUrl)
+        public Empreses(string empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<string> magatzems, List<string> usuaris, Adreça ubicacio, string fotoEmpresalUrl)
         {
             EmpresaID = empresaID;
             EstatVerificacio = estatVerificacio;

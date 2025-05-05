@@ -23,10 +23,7 @@ namespace SYNKROAPP.Vistes
     {
         public PantallaRegisterWPF()
         {
-            InitializeComponent();
-            
-            
-            
+            InitializeComponent();  
         }
 
         private void btnUploadImg_Click(object sender, RoutedEventArgs e)

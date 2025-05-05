@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SYNKROAPP.ViewModel
 {
@@ -15,6 +16,12 @@ namespace SYNKROAPP.ViewModel
     {
         public IDAO _dao;
         public readonly ZonaEmmagatzematge _zonaSeleccionada;
+        public ObservableCollection<Categories> Categories { get; set; } = new();
+        public ObservableCollection<Subcategories> Subcategories { get; set; } = new();
+
+        private Dictionary<string, List<Subcategories>> _diccionarioSubcategorias;
+
+
         public DetalleDe1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zonaSeleccionada)
         {
             _dao = dao;
@@ -109,6 +116,56 @@ namespace SYNKROAPP.ViewModel
             }
         }
 
+
+        private ObservableCollection<string> _estats = new();
+        public ObservableCollection<string> Estats
+        {
+            get => _estats;
+            set
+            {
+                _estats = value;
+                OnPropertyChanged(nameof(Estats));
+            }
+        }
+
+
+        private string _estatSeleccionat;
+        public string EstatSeleccionat
+        {
+            get => _estatSeleccionat;
+            set
+            {
+                _estatSeleccionat = value;
+                OnPropertyChanged(nameof(EstatSeleccionat));
+            }
+        }
+
+        private Categories _categoriaSeleccionada;
+        public Categories CategoriaSeleccionada
+        {
+            get => _categoriaSeleccionada;
+            set
+            {
+                _categoriaSeleccionada = value;
+                OnPropertyChanged(nameof(CategoriaSeleccionada));
+                ActualizarSubcategorias();
+            }
+        }
+
+        private void ActualizarSubcategorias()
+        {
+            Subcategories.Clear();
+
+            if (_categoriaSeleccionada != null && _diccionarioSubcategorias.TryGetValue(_categoriaSeleccionada.CategoriaID, out var lista))
+            {
+                foreach (var subcat in lista)
+                {
+                    Subcategories.Add(subcat);
+                }
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -148,5 +205,93 @@ namespace SYNKROAPP.ViewModel
             NProductos = _zonaSeleccionada.NProductos;
             Capacitat = _zonaSeleccionada.Capacitat;
         }
+
+        public async Task CargarListasParaCombosAsync()
+        {
+            try
+            {
+                // Inicializar el diccionario de subcategorías
+                _diccionarioSubcategorias = new Dictionary<string, List<Subcategories>>();
+                Categories.Clear();
+
+                // 1. Cargar categorías genéricas
+                var (categoriasGenericas, subcategoriasGenericasDictionary) = await _dao.ObtenirCategoriesGeneriques();
+
+                // Convertir categorías genéricas al formato Categories y agregarlas
+                foreach (var categoriaGenerica in categoriasGenericas)
+                {
+                    var categoria = new Categories
+                    {
+                        CategoriaID = categoriaGenerica.CategoriaID,
+                        Nom = categoriaGenerica.Nom + " (Genérica)" // Opcional: añadir indicador que es genérica
+                                                                    // Otros campos necesarios
+                    };
+
+                    Categories.Add(categoria);
+
+                    // Convertir y añadir subcategorías genéricas al diccionario
+                    var listaSubcategorias = new List<Subcategories>();
+                    if (subcategoriasGenericasDictionary.TryGetValue(categoriaGenerica.CategoriaID, out var subList))
+                    {
+                        foreach (var subcategoriaGenerica in subList)
+                        {
+                            listaSubcategorias.Add(new Subcategories
+                            {
+                                SubCategoriaID = subcategoriaGenerica.SubCategoriaID,
+                                Nom = subcategoriaGenerica.Nom,
+                                CategoriaID = categoriaGenerica.CategoriaID
+                                // Otros campos necesarios
+                            });
+                        }
+
+                        _diccionarioSubcategorias[categoriaGenerica.CategoriaID] = listaSubcategorias;
+                    }
+                }
+
+                // 2. Cargar categorías personalizadas si hay una empresa válida
+                string empresaID = _zonaSeleccionada.EmpresaID;
+
+                if (!string.IsNullOrEmpty(empresaID))
+                {
+                    var (categoriasPersonalizadas, subcategoriasPersonalizadasDictionary) = await _dao.ObtenirCategoriesPersonalitzades(empresaID);
+
+                    // Agregar categorías personalizadas
+                    foreach (var categoriaPersonalizada in categoriasPersonalizadas)
+                    {
+                        // Opcional: marcar como personalizada en el nombre
+                        // categoriaPersonalizada.Nom += " (Personalizada)";
+
+                        Categories.Add(categoriaPersonalizada);
+
+                        // Añadir subcategorías personalizadas al diccionario
+                        if (subcategoriasPersonalizadasDictionary.TryGetValue(categoriaPersonalizada.CategoriaID, out var subcategorias))
+                        {
+                            _diccionarioSubcategorias[categoriaPersonalizada.CategoriaID] = subcategorias;
+                        }
+                    }
+                }
+
+                // 3. Cargar estados disponibles
+                Estats.Clear();
+                Estats.Add("Todos");
+                Estats.Add("Nuevo");
+                Estats.Add("Usado");
+                Estats.Add("Defectuoso");
+                Estats.Add("En reparación");
+                EstatSeleccionat = "Todos"; // Estado por defecto
+
+                // Si ya hay una categoría seleccionada, actualizar las subcategorías
+                if (CategoriaSeleccionada != null)
+                {
+                    ActualizarSubcategorias();
+                }
+            }
+            catch (Exception ex)
+            {
+               MessageBox.Show($"Error cargando listas para combos: {ex.Message}");
+            }
+        }
+
+
     }
 }

@@ -25,7 +25,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
     public partial class PantallaCrearAlmacenWPF : Window
     {
         private IDAO dao;
-        private Usuaris loggedUser;
+        private Empreses empresa;
         private ZonasAlmacenViewModel viewModel;
         private Magatzems magatzemCreat;
 
@@ -34,12 +34,12 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
             InitializeComponent();
         }
 
-        public PantallaCrearAlmacenWPF(IDAO dao, Usuaris loggedUser)
+        public PantallaCrearAlmacenWPF(IDAO dao, Empreses empresa)
         {
             InitializeComponent();
             this.dao = dao;
-            this.loggedUser = loggedUser;
-            txtEmpresaPert.Text = loggedUser.EmpresaID;
+            this.empresa = empresa;
+            txtEmpresaPert.Text = empresa.EmpresaID;
             cmbTipoVia.ItemsSource = Enum.GetValues(typeof(TipusVia));
             cmbTipoVia.SelectedIndex = 0; // O el que quieras como predeterminado
 
@@ -89,7 +89,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
                         Ubicacio = direccioMagatzem
                     };
 
-                    magatzemCreat = await dao.CrearAlmacen(loggedUser, nouMagatzem);
+                    magatzemCreat = await dao.CrearAlmacen(empresa, nouMagatzem);
 
                     if (magatzemCreat != null)
                     {
