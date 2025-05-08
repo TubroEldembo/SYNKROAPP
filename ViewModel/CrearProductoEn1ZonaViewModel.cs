@@ -4,10 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.ViewModel
 {
@@ -138,6 +141,27 @@ namespace SYNKROAPP.ViewModel
             set { _zonaSeleccionada = value; OnPropertyChanged(nameof(ZonaSeleccionada)); }
         }
 
+        private string _rutaImagenLocal;
+        public string RutaImagenLocal
+        {
+            get => _rutaImagenLocal;
+            set { _rutaImagenLocal = value; OnPropertyChanged(nameof(RutaImagenLocal)); }
+        }
+
+        private ImageSource _imagenProducto;
+        public ImageSource ImagenProducto
+        {
+            get => _imagenProducto;
+            set { _imagenProducto = value; OnPropertyChanged(nameof(ImagenProducto)); }
+        }
+
+        private bool _tieneImagen;
+        public bool TieneImagen
+        {
+            get => _tieneImagen;
+            set { _tieneImagen = value; OnPropertyChanged(nameof(TieneImagen)); }
+        }
+
         public async Task InicializarCamposAsync()
         {
             try
@@ -202,6 +226,14 @@ namespace SYNKROAPP.ViewModel
 
             try
             {
+                string urlImagen = null;
+                if (!string.IsNullOrWhiteSpace(RutaImagenLocal) && File.Exists(RutaImagenLocal)) 
+                {
+                    string nombreArchivo = Path.GetFileName(RutaImagenLocal);
+                    string nombreFirebase = $"{SKU}_{NombreProducto}.jpg";
+                    urlImagen = await _dao.StoreImage(RutaImagenLocal, nombreFirebase); 
+                }
+
                 ProducteGeneral producteGeneral = new ProducteGeneral
                 {
                     Nom = NombreProducto,
@@ -209,6 +241,7 @@ namespace SYNKROAPP.ViewModel
                     Descripcio = DescripcionProducto,
                     CategoriaID = CategoriaSeleccionada,
                     SubCategoriaID = SubcategoriaSeleccionada,
+                    ImatgeURL = urlImagen,
                     SKU = SKU,
                 };
 
@@ -253,6 +286,39 @@ namespace SYNKROAPP.ViewModel
         public void GenerarSKU()
         {
             SKU = $"SKU-{DateTime.Now:yyyyMMddHHmmss}-{new Random().Next(100, 999)}";
+        }
+
+        public void SeleccionarImagen()
+        {
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Archivos de imagen|*.jpg;*.jpeg;*.png;*.bmp",
+                Title = "Seleccionar imagen"
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                try
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(dlg.FileName);
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.EndInit();
+                    ImagenProducto = bitmap;
+                    RutaImagenLocal = dlg.FileName;
+                    TieneImagen = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cargar la imagen: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        public void EliminarImagen()
+        {
+            ImagenProducto = null;
+            TieneImagen = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

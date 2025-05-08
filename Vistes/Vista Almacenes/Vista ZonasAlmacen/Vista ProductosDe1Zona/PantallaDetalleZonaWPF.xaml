@@ -5,10 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1Zona"
         mc:Ignorable="d"
-        Title="PantallaDetalleZonaWPF"  Height="832" Width="1280" 
-        Background="#6F7ABC" 
+        Title="PantallaDetalleZonaWPF" Height="832" Width="1280" 
+        Background="#f0f2f5" 
         WindowStyle="SingleBorderWindow" 
-        WindowStartupLocation="CenterScreen"  WindowState="Maximized" ResizeMode="NoResize">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,150 +25,161 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Encabezado -->
-        <StackPanel Grid.Row="0" Margin="40,30,40,20">
-            <TextBlock FontSize="28" FontWeight="Bold" Foreground="White">
-                <Run Text="DETALLES DE LA ZONA - " />
-                <Run Text="{Binding NomZona}" />
-            </TextBlock>
-
-            <TextBlock x:Name="txtSubtitulo" Text="Vista detallada de los productos que hay en esta zona" 
-                 FontSize="18" Foreground="White" Margin="0,10,0,0"/>
-        </StackPanel>
+        <!-- Encabezado con gradiente -->
+        <Border Grid.Row="0" Padding="20,10,20,15">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#2563eb" Offset="0"/>
+                    <GradientStop Color="#3b82f6" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <StackPanel>
+                <TextBlock FontSize="28" FontWeight="Bold" Foreground="White">
+                    <Run Text="DETALLES DE LA ZONA - " />
+                    <Run Text="{Binding NomZona}" />
+                </TextBlock>
+                <TextBlock FontSize="15" Foreground="#e0f2fe" Margin="0,10,0,0"
+                           Text="Vista detallada de los productos que hay en esta zona"/>
+            </StackPanel>
+        </Border>
 
         <!-- Contenido principal -->
-        <Grid Grid.Row="1" Margin="40,0,40,20">
-            <Border Background="#F2F2F2" CornerRadius="10">
+        <Grid Grid.Row="1" Margin="40,25,40,25">
+            <Border Background="White" CornerRadius="12">
                 <Border.Effect>
-                    <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                    <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
                 </Border.Effect>
 
-                <Grid Margin="20">
+                <Grid Margin="25">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <!-- Detalles de la zona -->
-                    <Border Grid.Row="0" Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20">
+                    <Border Grid.Row="0" Background="#f8fafc" CornerRadius="10" Padding="25" Margin="0,0,0,15">
                         <StackPanel>
-                            <TextBlock Text="DETALLES DE LA ZONA" FontWeight="SemiBold" FontSize="20" Margin="0,0,0,10"/>
-                            <WrapPanel ItemHeight="Auto" ItemWidth="Auto">
-                                <StackPanel Width="300" Margin="0,0,20,10">
-                                    <TextBlock Text="Nombre de la zona:" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock FontSize="16">
-                                        <Run Text="{Binding NomZona}" />
-                                    </TextBlock>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                <Border Background="#3b82f6" Width="4" Height="24" CornerRadius="2" Margin="0,0,8,0"/>
+                                <TextBlock Text="INFORMACIÓN DE LA ZONA" FontWeight="Bold" FontSize="19" Foreground="#1e3a8a"/>
+                            </StackPanel>
+                            <UniformGrid Columns="3" Rows="2" Margin="0,10,0,0">
+                                <StackPanel Margin="0,0,20,10">
+                                    <TextBlock Text="Nombre de la zona" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
+                                    <TextBlock Text="{Binding NomZona}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
                                 </StackPanel>
 
-                                <StackPanel Width="300" Margin="0,0,20,10">
-                                    <TextBlock Text="Capacidad:" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock FontSize="16">
+                                <StackPanel Margin="0,0,20,10">
+                                    <TextBlock Text="Capacidad" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
+                                    <TextBlock>
                                         <Run Text="{Binding Capacitat}" />
-                                        <Run Text="productos" />
+                                        <Run Text=" productos"/>
                                     </TextBlock>
                                 </StackPanel>
 
-                                <StackPanel Width="300" Margin="0,0,20,10">
-                                    <TextBlock Text="Nº Productos almacenados:" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock FontSize="16">
-                                        <Run Text="{Binding NProductos}" />
-                                    </TextBlock>
+                                <StackPanel Margin="0,0,20,10">
+                                    <TextBlock Text="Nº Productos almacenados" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
+                                    <TextBlock Text="{Binding NProductos}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
                                 </StackPanel>
 
-
-                                <StackPanel Width="150">
-                                    <TextBlock Text="Zona ID:" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock FontSize="16">
-                                        <Run Text="{Binding ZonaID}" />
-                                    </TextBlock>
+                                <StackPanel Margin="0,0,20,10">
+                                    <TextBlock Text="Zona ID" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
+                                    <TextBlock Text="{Binding ZonaID}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
                                 </StackPanel>
 
-                                
-
-                                <StackPanel Width="300" Margin="0,0,20,10">
-                                    <TextBlock Text="ID Almacén:" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock FontSize="16">
-                    <Run Text="{Binding AlmacenID}" />
-                                    </TextBlock>
+                                <StackPanel Margin="0,0,20,10">
+                                    <TextBlock Text="ID Almacén" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
+                                    <TextBlock Text="{Binding AlmacenID}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
                                 </StackPanel>
-                            </WrapPanel>
+                            </UniformGrid>
                         </StackPanel>
                     </Border>
 
-                    <!-- Productos de la Zona -->
-                    <Grid Grid.Row="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <!-- Productos de la zona -->
+                    <Grid Grid.Row="1" Margin="0">
+                        <Border Background="White" CornerRadius="12">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
+                            </Border.Effect>
 
-                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                          
-                            <TextBlock FontSize="20" FontWeight="SemiBold" Foreground="Black">
-                                <Run Text="LISTA DE PRODUCTOS EN LA ZONA - " />
-                                <Run Text="{Binding NomZona}" />
-                            </TextBlock>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Grid Margin="25">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Filtros -->
+                                    <RowDefinition Height="*"/>
+                                    <!-- DataGrid -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Botón -->
+                                </Grid.RowDefinitions>
 
-                                <StackPanel>
-                                    <TextBlock Text="Categoría" FontWeight="Bold"/>
-                                    <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}" Width="136" />
+                                <!-- Filtros -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="Categoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
+                                        <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}"
+                                                  Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                    </StackPanel>
+
+                                    <StackPanel>
+                                        <TextBlock Text="Subcategoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
+                                        <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}"
+                              Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                    </StackPanel>
+
+                                    <StackPanel>
+                                        <TextBlock Text="Estado" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
+                                        <ComboBox ItemsSource="{Binding Estats}" SelectedItem="{Binding EstatSeleccionat}"
+                              Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                    </StackPanel>
                                 </StackPanel>
 
-                                <StackPanel>
-                                    <TextBlock Text="Subcategoría" FontWeight="Bold"/>
-                                    <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}" Width="136" />
-                                </StackPanel>
+                                <!-- DataGrid -->
+                                <DataGrid Grid.Row="1" x:Name="dgProductosDeLaZona" AutoGenerateColumns="False" 
+                                          Background="White" BorderBrush="#CCC" BorderThickness="1"
+                                          ItemsSource="{Binding Productes}" 
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                          SelectionChanged="dgProductosDeLaZona_SelectionChanged"
+                                          MinHeight="400" Margin="0,0,0,10">
+                                    
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Producto ID" Binding="{Binding ProducteID}" Width="*"/>
+                                        <DataGridTextColumn Header="Nombre Producto" Binding="{Binding Nom}" Width="*"/>
+                                        <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria}" Width="*"/>
+                                        <DataGridTextColumn Header="Subcategoría" Binding="{Binding SubCategoria}" Width="*"/>
+                                        <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantitat}" Width="*"/>
+                                        <DataGridTextColumn Header="Estado" Binding="{Binding Estat}" Width="*"/>
+                                        <DataGridTemplateColumn Width="160">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Button Content="Editar" Margin="0,0,8,0" Width="70"
+                                            Style="{StaticResource EditButton}" Click="btnEditar_Click"/>
+                                                        <Button Content="Eliminar" Width="70"
+                                            Style="{StaticResource DangerButton}" Click="btnEliminar_Click"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
 
-                                <StackPanel>
-                                    <TextBlock Text="Estado" FontWeight="Bold"/>
-                                    <ComboBox Width="136" ItemsSource="{Binding Estats}" SelectedItem="{Binding EstatSeleccionat}"/>
-                                </StackPanel>
-
-
-                            </StackPanel>
-
-                        </StackPanel>
-                       
-                        <DataGrid Grid.Row="1" x:Name="dgProductosDeLaZona" AutoGenerateColumns="False" Margin="0,0,0,20"
-                                  Background="White" BorderBrush="#CCC" BorderThickness="1" ItemsSource="{Binding Productes}" 
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="dgProductosDeLaZona_SelectionChanged">
-
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Producto ID" Binding="{Binding ProducteID}" Width="*"/>
-                                <DataGridTextColumn Header="Nombre Producto" Binding="{Binding Nom}" Width="*"/>
-                                <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria}" Width="*"/>
-                                <DataGridTextColumn Header="Subcategoría" Binding="{Binding SubCategoria}" Width="*"/>
-                                <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantitat}" Width="*"/>
-                                <DataGridTextColumn Header="Estado" Binding="{Binding Estat}" Width="*"/>
-                                <DataGridTemplateColumn Width="120">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Content="Editar" Margin="0,0,5,0" Name="btnEditar" Click="btnEditar_Click"/>
-                                                <Button Content="Eliminar" Name="btnEliminar" Click="btnEliminar_Click"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-
-                        <Button Grid.Row="1" Content="Agregar nuevo producto" Width="194"
-                          HorizontalAlignment="Left" Background="Black" Foreground="White" Name="btnAgregarProducto"
-                          FontWeight="SemiBold" Click="btnAgregarZona_Click" Margin="966,188,0,0" Height="40" VerticalAlignment="Top"/>
+                                <!-- Botón Agregar nuevo producto -->
+                                <Button Grid.Row="2" Content="+ Agregar nuevo producto" Width="200" Height="45"
+                    HorizontalAlignment="Right" Click="btnAgregarZona_Click"
+                    Style="{StaticResource PrimaryButton}"/>
+                            </Grid>
+                        </Border>
                     </Grid>
+
+
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- Botones inferiores -->
-        <Border Grid.Row="2" Background="#D9D9D9" Padding="20" Margin="0,40,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Volver" Width="120" Height="40"
-                  Margin="0,0,10,0" Background="#CCC" Name="btnVolver" Click="btnVolver_Click"/>
+        <!-- Botón inferior -->
+        <Border Grid.Row="2" Background="White" Padding="25" BorderThickness="0,1,0,0" BorderBrush="#e2e8f0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Volver" Width="160" Height="45" Style="{StaticResource SecondaryButton}" Click="btnVolver_Click"/>
             </StackPanel>
         </Border>
     </Grid>

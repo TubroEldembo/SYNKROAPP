@@ -1,10 +1,12 @@
 ﻿using Google.Cloud.Firestore;
 using SYNKROAPP.CLASES;
+using SYNKROAPP.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.DAO
 {
@@ -34,11 +36,15 @@ namespace SYNKROAPP.DAO
         Task<ZonaEmmagatzematge> CrearZonaAlmacen(Magatzems unMagatzem, ZonaEmmagatzematge novaZona);
         Task<List<ZonaEmmagatzematge>> DetallesZonasAlmacen(Magatzems unMagatzem);
         Task<List<ProductesInventari>> ProductosEn1Zona(ZonaEmmagatzematge zona);
+        Task<List<ZonaProductoViewModel>> ObtenerZonasDeProducto(string producteID);
+
+
 
 
         //AGREGAR PRODUCTS:
         Task <bool> AddProducts2Zone(ProducteGeneral producteGeneral, DetallProducte detallProducte, ProductesInventari inventari);
         Task<DocumentSnapshot> GetProducteGeneralPorID(string producteID);
+        Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari inventari);
 
 
         //CARGAR CATEGORIAS Y SUBCATEGORIAS (GENERICAS Y PERSONALIZADAS):
@@ -51,11 +57,22 @@ namespace SYNKROAPP.DAO
         // VISTA RESUMEN (HOME)
         Task<List<Magatzems>> ObtenerLosAlmacenesTotalesDeLaEmpresa(string empresaID);
         Task<Empreses> GetEmpresaByID(string empresaID);
+        //Task<Magatzems> GetMagatzemByID(string magatzemID);
         Task<Dictionary<string, int>> ObtenerProductosEnVentaPorCategoria(string empresaID);
 
 
 
+        // STORAGE 
+        Task<string> StoreImage(string localPath, string nameToStore);
+        BitmapImage LoadImageFromUrl(string url);
+        Task<DocumentSnapshot> GetProducteInventariPorID(string producteID);
 
-        
+        // DetalleProducto
+
+
+
+
+
+
     }
 }

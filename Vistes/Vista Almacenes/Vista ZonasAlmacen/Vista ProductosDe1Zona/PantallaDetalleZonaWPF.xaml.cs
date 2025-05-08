@@ -1,6 +1,8 @@
-﻿using SYNKROAPP.CLASES;
+﻿using Google.Cloud.Firestore;
+using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using SYNKROAPP.ViewModel;
+using SYNKROAPP.VIEWMODEL;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -14,22 +16,44 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
     {
         public IDAO _dao;
         ZonaEmmagatzematge _zona;
+        Magatzems _magatzem;
         public  PantallaDetalleZonaWPF(DetalleDe1ZonaViewModel viewModel)
         {
             InitializeComponent();
             this.DataContext = viewModel;
             _zona = viewModel._zonaSeleccionada;
             _dao = viewModel._dao;
+            _magatzem = viewModel._magatzemSeleccionat;
             CargarListas();
         }
 
         private async void dgProductosDeLaZona_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           if (dgProductosDeLaZona.SelectedItem is ZonaEmmagatzematge zona)
-           {
-                var viewModel = new DetalleDe1ZonaViewModel(_dao, _zona);
-                await viewModel.CargarProductos();
-           }
+            if (dgProductosDeLaZona.SelectedItem is ProducteInventariAmbNom seleccion)
+            {
+                // Cargar el producto general desde Firestore usando el ID
+                DocumentSnapshot docSnap = await _dao.GetProducteGeneralPorID(seleccion.ProducteID);
+                var producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
+
+
+
+                string estado = seleccion.Estat;
+                string descripcion = seleccion.Descripcio;
+                string categoria = seleccion.Categoria;
+                string subcategoria = seleccion.SubCategoria;
+
+                if (producteGeneral != null)
+                {
+                    DetalleDelProductoViewModel viewModel = new DetalleDelProductoViewModel(_dao, producteGeneral, estado, descripcion, categoria, subcategoria, _magatzem, _zona);
+                    PantallaDetalleProductoWPF pantallaDetalleProducto = new PantallaDetalleProductoWPF(viewModel);
+                    pantallaDetalleProducto.ShowDialog();
+                    
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo cargar la información del producto.");
+                }
+            }
         }
 
         private async void CargarListas()

@@ -6,127 +6,384 @@
              xmlns:tchart="clr-namespace:Steema.TeeChart.WPF;assembly=TeeChart.WPF"
              xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Home"
              mc:Ignorable="d" 
-             d:DesignHeight="832" d:DesignWidth="1280"
-             Background="#6F7ABC">
+             d:DesignHeight="832" d:DesignWidth="1280">
 
-    <Grid Margin="30">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <!-- Estilos reutilizables -->
+        <Style x:Key="TitleTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#4A5793"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Margin" Value="5,0,0,15"/>
+        </Style>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ChartContainerStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Fondo con gradiente para un aspecto más moderno -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
+
+    <Grid Margin="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
-        <!-- Título -->
-        <TextBlock FontSize="30" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2C2C2C">
-            <Run Text="Resumen general de " />
-            <Run Text="{Binding NomEmpresa}" />  
-        </TextBlock>
+        <!-- Encabezado con sombra y efecto más moderno -->
+        <Border Grid.Row="0"
+                Background="White"
+                CornerRadius="15"
+                Margin="0,0,0,20"
+                Padding="25,20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
 
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Tarjetas adaptadas con efecto -->
-        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,20" HorizontalAlignment="Stretch">
-            <!-- Estilo reutilizable -->
-            <UniformGrid.Resources>
-                <Style TargetType="Border" x:Key="CardStyle">
-                    <Setter Property="CornerRadius" Value="14"/>
-                    <Setter Property="Padding" Value="20"/>
-                    <Setter Property="Margin" Value="10"/>
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="BorderBrush" Value="#DDD"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </UniformGrid.Resources>
-
-            <!-- Tarjetas -->
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Productos" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
-                    <TextBlock Text="{Binding TotalProductos}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
+                <!-- Título con efecto de texto -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource TitleTextStyle}">
+                        <Run Text="RESUMEN GENERAL DE  "/>
+                        <Run Text="{Binding NomEmpresa}" FontWeight="Bold"/>
+                    </TextBlock>
                 </StackPanel>
-            </Border>
+            </Grid>
+        </Border>
 
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel>
-                    <TextBlock Text="En Movimiento" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
-                    <TextBlock Text="{Binding ProductosEnMovimiento}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
-                </StackPanel>
-            </Border>
+        <!-- Panel de estadísticas -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Almacenes" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
-                    <TextBlock Text="{Binding TotalAlmacenes}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
-                </StackPanel>
-            </Border>
+            <!-- Título de la sección -->
+            <TextBlock Text="ESTADÍSTICAS GENERALES" 
+                       Style="{StaticResource SectionTitleStyle}"
+                       Margin="5,0,0,10"/>
 
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel>
-                    <TextBlock Text="Capacidad Usada" FontSize="15" FontWeight="SemiBold" Foreground="#444"/>
-                    <TextBlock Text="{Binding CapacidadUsadaPorcentaje}" FontSize="30" FontWeight="Bold" Foreground="#5A6ACF" Margin="0,6"/>
-                </StackPanel>
-            </Border>
-        </UniformGrid>
+            <!-- Tarjetas de estadísticas -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- Sección Gráficos -->
-        <!-- Sección Gráficos con TÍTULOS -->
+                <!-- Producto -->
+                <Border Style="{StaticResource CardStyle}" Grid.Column="0" Margin="0,0,10,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F0F2FF" 
+                                CornerRadius="10" 
+                                Width="50" 
+                                Height="50" 
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="📦" 
+                                       FontSize="24" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                            <TextBlock Text="PRODUCTOS" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="Black"/>
+                            <TextBlock Text="{Binding TotalProductos}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+
+                            <!-- Indicador de tendencia (opcional) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="↗" 
+                                           Foreground="#4CAF50" 
+                                           FontSize="14" 
+                                           FontWeight="Bold"/>
+                                <TextBlock Text=" +5% vs mes anterior" 
+                                           Foreground="#666666" 
+                                           FontSize="12" 
+                                           Margin="2,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- En Movimiento -->
+                <Border Style="{StaticResource CardStyle}" Grid.Column="1" Margin="5,0,5,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F0F2FF" 
+                                CornerRadius="10" 
+                                Width="50" 
+                                Height="50" 
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="🔄" 
+                                       FontSize="24" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                            <TextBlock Text="EN MOVIMIENTO" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="Black"/>
+                            <TextBlock Text="{Binding ProductosEnMovimiento}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+
+                            <!-- Indicador de tendencia (opcional) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <TextBlock Text="↗" 
+                                           Foreground="#4CAF50" 
+                                           FontSize="14" 
+                                           FontWeight="Bold"/>
+                                <TextBlock Text=" +12% vs mes anterior" 
+                                           Foreground="#666666" 
+                                           FontSize="12" 
+                                           Margin="2,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Almacenes -->
+                <Border Style="{StaticResource CardStyle}" Grid.Column="2" Margin="5,0,5,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F0F2FF" 
+                                CornerRadius="10" 
+                                Width="50" 
+                                Height="50" 
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="🏢" 
+                                       FontSize="24" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                            <TextBlock Text="ALMACENES" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="Black"/>
+                            
+                            <TextBlock Text="{Binding TotalAlmacenes}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+
+                            <!-- Indicador (estático, por ejemplo) -->
+                            <TextBlock Text="Operativos: 100%" 
+                                       Foreground="#666666" 
+                                       FontSize="12" 
+                                       Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Capacidad Usada -->
+                <Border Style="{StaticResource CardStyle}" Grid.Column="3" Margin="10,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Background="#F0F2FF" 
+                                CornerRadius="10" 
+                                Width="50" 
+                                Height="50" 
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="📊" 
+                                       FontSize="24" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                            <TextBlock Text="CAPACIDAD USADA" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="Black"/>
+                            <TextBlock Text="{Binding CapacidadUsadaPorcentaje}" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+
+                            <!-- Barra de progreso para visualizar capacidad -->
+                            <Grid Margin="0,10,0,0" Height="6">
+                                <Border Background="#EAEAEA" CornerRadius="3"/>
+                                <Border Background="#4A5793" CornerRadius="3" HorizontalAlignment="Left" Width="75"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Barra de carga -->
+        <ProgressBar Grid.Row="1" 
+                    IsIndeterminate="True"
+                    Height="4"
+                    VerticalAlignment="Bottom"
+                    Foreground="#5A6ACF"
+                    Background="Transparent"
+                    Margin="0,0,0,0"
+                    Visibility="{Binding IsCargandoVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <!-- Gráficos -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Columna Izquierda: Detalles Catálogo -->
-            <Grid Grid.Column="0" Margin="10">
+            <!-- Detalles Catálogo (izquierda) -->
+            <Grid Grid.Column="0" Margin="0,0,10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <!-- Ocupa el resto del espacio -->
                 </Grid.RowDefinitions>
 
-                <!-- Título -->
-                <TextBlock Text="Detalles Catálogo"
-               FontSize="18"
-               FontWeight="SemiBold"
-               Foreground="#2C2C2C"
-               Margin="5,0,0,10"/>
+                <!-- Título de sección -->
+                <TextBlock Text="DETALLES DEL CATÁLOGO" 
+                           Style="{StaticResource SectionTitleStyle}"/>
 
-                <!-- Gráfico que se ajusta -->
-                <Border Grid.Row="1"
-                        Background="White"
-                        Padding="10"
-                        CornerRadius="10"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
+                <!-- Gráfico circular -->
+                <Border Grid.Row="1" Style="{StaticResource ChartContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <tchart:TChart x:Name="tchartPie"
-                                   HorizontalAlignment="Stretch"
-                                   VerticalAlignment="Stretch"
-                                   />    
+                        <!-- Selector de período (opcional) -->
+                        <StackPanel Grid.Row="0" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Right" 
+                                    Margin="0,0,0,10">
+                        </StackPanel>
+
+                        <!-- Gráfico Pie -->
+                        <tchart:TChart x:Name="tchartPie"
+                                       Grid.Row="1"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"/>
+
+                        <!-- Leyenda personalizada (opcional) -->
+                        <StackPanel Grid.Row="1" 
+                                    VerticalAlignment="Bottom" 
+                                    HorizontalAlignment="Center" 
+                                    Orientation="Horizontal" 
+                                    Margin="0,0,0,10">
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
 
+            <!-- Distribución de productos (derecha) -->
+            <Grid Grid.Column="1" Margin="10,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <!-- Columna Derecha: Otro Título -->
-            <StackPanel Grid.Column="1">
-                <TextBlock Text="Actividad Reciente"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="#2C2C2C"
-                   Margin="5,0,0,10"/>
+                <!-- Título de sección -->
+                <TextBlock Text="DISTRIBUCIÓN DE PRODUCTOS POR ALMACÉN" 
+                           Style="{StaticResource SectionTitleStyle}"/>
 
-                <Border>
-                    <TextBlock Text="(Aquí podría ir un gráfico de movimientos por fecha, por ejemplo)"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Foreground="Black" FontStyle="Italic"/>
+                <!-- Gráfico de barras -->
+                <Border Grid.Row="1" Style="{StaticResource ChartContainerStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Filtros (opcional) -->
+                        <StackPanel Grid.Row="0" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Right" 
+                                    Margin="0,0,0,10">
+                        </StackPanel>
+
+                        <!-- Gráfico de barras -->
+                        <tchart:TChart x:Name="tchartBar"
+                                       Grid.Row="1"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"/>
+                    </Grid>
                 </Border>
-            </StackPanel>
+            </Grid>
         </Grid>
-
     </Grid>
 </UserControl>

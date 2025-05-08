@@ -55,7 +55,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
             viewModelAddProducts.GenerarSKU();
         }
 
-
         private void btnCancelar_Click_1(object sender, RoutedEventArgs e)
         {
 
@@ -74,6 +73,16 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
         private void cmbAlmacen_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private async void btnSeleccionarImagen_Click(object sender, RoutedEventArgs e)
+        {
+            viewModelAddProducts.SeleccionarImagen();
+        }
+
+        private void btnEliminarImagen_Click(object sender, RoutedEventArgs e)
+        {
+            viewModelAddProducts.EliminarImagen();
         }
     }
 }

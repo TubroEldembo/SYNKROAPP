@@ -44,5 +44,11 @@ namespace SYNKROAPP.CLASES
             Productes = productes;
             Capacitat = capacitat;
         }
+
+        public override string ToString()
+        {
+            return $"{Nom} ";       
+        }
+
     }
 }

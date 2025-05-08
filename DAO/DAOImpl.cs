@@ -1,12 +1,16 @@
-﻿using Google.Cloud.Firestore;
+﻿using Firebase.Storage;
+using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
 using SYNKROAPP.CLASES;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.DAO
 {
@@ -543,6 +547,320 @@ namespace SYNKROAPP.DAO
 
         }
 
+        public async Task<List<ZonaProductoViewModel>> ObtenerZonasDeProducto(string producteID)
+        {
+            List<ZonaProductoViewModel> zonasConProducto = new List<ZonaProductoViewModel>();
+
+            CollectionReference empresesRef = db.Collection("Empreses");
+            QuerySnapshot empresasSnap = await empresesRef.GetSnapshotAsync();
+
+            foreach (var empresaDoc in empresasSnap.Documents)
+            {
+                string empresaId = empresaDoc.Id;
+
+                // Accede a cada magatzem de la empresa
+                CollectionReference magatzemsRef = empresaDoc.Reference.Collection("Magatzems");
+                QuerySnapshot magatzemsSnap = await magatzemsRef.GetSnapshotAsync();
+
+                foreach (var magatzemDoc in magatzemsSnap.Documents)
+                {
+                    string magatzemId = magatzemDoc.Id;
+
+                    // Accede a las zonas de cada magatzem
+                    CollectionReference zonasRef = magatzemDoc.Reference.Collection("ZonesEmmagatzematge");
+                    QuerySnapshot zonasSnap = await zonasRef.GetSnapshotAsync();
+
+                    foreach (var zonaDoc in zonasSnap.Documents)
+                    {
+                        string zonaNombre = zonaDoc.GetValue<string>("Nom");
+
+                        // Obtener todos los documentos de la colección ProductesInventari
+                        QuerySnapshot productesSnap = await zonaDoc.Reference
+                            .Collection("ProductesInventari")
+                            .GetSnapshotAsync();
+
+                        foreach (var inventariDoc in productesSnap.Documents)
+                        {
+                            // Verificar si el campo ProducteGeneralID coincide con el que buscamos
+                            string producteGeneralIdEnInventari = inventariDoc.GetValue<string>("ProducteID");
+
+                            if (producteGeneralIdEnInventari == producteID)
+                            {
+                                int quantitat = inventariDoc.GetValue<int>("Quantitat");
+
+                                zonasConProducto.Add(new ZonaProductoViewModel
+                                {
+                                    Almacen = magatzemId,
+                                    Zona = zonaNombre,
+                                    QuantitatDisponible = quantitat
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            return zonasConProducto;
+
+        }
+
+        #region STORAGE IMAGE
+        public async Task<string> StoreImage(string localPath, string nameToStore)
+        {
+            const string BUCKET = "projecto-synkroapp.firebasestorage.app";
+
+            using var stream = File.Open(localPath, FileMode.Open);
+            var file = new FirebaseStorage(BUCKET)
+                .Child("imatges")
+                .Child($"{nameToStore}")
+                .PutAsync(stream);
+
+            return await file;
+        }
+
+        public BitmapImage LoadImageFromUrl(string url) 
+        {
+            try
+            {
+                var image = new Image();
+                var fullFilePath = @$"{url}";
+
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(fullFilePath, UriKind.Absolute); 
+                bitmap.EndInit();
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading image: {ex.Message}");
+                return null;
+            }
+        }
+
+
+        #endregion
+
+        #region MOVIMIENTO DE PRODUCTOS
+        public async Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari producte)
+        {
+            // Sirve para hacer multiples operaciones a la vez, de esta manera no tendremos
+            // que ir coleccion x coleccion obteniendo los datos.
+
+
+            await db.RunTransactionAsync(async transaction =>
+            {
+                // 1r OPERACIONES DE LECTURA 
+                DocumentReference movimentRef = db.Collection("Empreses")
+                    .Document(movimentTraslado.EmpresaIDOrigen)
+                    .Collection("MovimentsInventari")
+                    .Document();
+
+                // Inicializar variables para almacenar los snapshots
+                DocumentSnapshot origenSnapshot = null;
+                DocumentSnapshot destinoSnapshot = null;
+
+                // Referencias a los documentos que necesitamos leer
+                DocumentReference productoZonaOrigenRef = null;
+                DocumentReference productoZonaDestinoRef = null;
+
+                switch (movimentTraslado.Tipus)
+                {
+                    case TipusMoviment.Entrada:
+                        // Solo leer la zona de destino
+                        productoZonaDestinoRef = db.Collection("Empreses")
+                            .Document(movimentTraslado.EmpresaIDOrigen)
+                            .Collection("Magatzems")
+                            .Document(movimentTraslado.MagatzemIDDesti)
+                            .Collection("ZonesEmmagatzematge")
+                            .Document(movimentTraslado.ZonaDestiID)
+                            .Collection("ProductesInventari")
+                            .Document(movimentTraslado.ProducteInventariID);
+
+                        destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
+                    break;
+
+                    case TipusMoviment.Sortida:
+                        // Solo leer la zona de origen
+                        productoZonaOrigenRef = db.Collection("Empreses")
+                            .Document(movimentTraslado.EmpresaIDOrigen)
+                            .Collection("Magatzems")
+                            .Document(movimentTraslado.MagatzemIDOrigen)
+                            .Collection("ZonesEmmagatzematge")
+                            .Document(movimentTraslado.ZonaOrigenID)
+                            .Collection("ProductesInventari")
+                            .Document(movimentTraslado.ProducteInventariID);
+
+                        origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
+                    break;
+
+                    case TipusMoviment.TrasllatIntern:
+                        // Leer ambas zonas
+                        productoZonaOrigenRef = db.Collection("Empreses")
+                            .Document(movimentTraslado.EmpresaIDOrigen)
+                            .Collection("Magatzems")
+                            .Document(movimentTraslado.MagatzemIDOrigen)
+                            .Collection("ZonesEmmagatzematge")
+                            .Document(movimentTraslado.ZonaOrigenID)
+                            .Collection("ProductesInventari")
+                            .Document(movimentTraslado.ProducteInventariID);
+
+                        productoZonaDestinoRef = db.Collection("Empreses")
+                            .Document(movimentTraslado.EmpresaIDOrigen)
+                            .Collection("Magatzems")
+                            .Document(movimentTraslado.MagatzemIDDesti)
+                            .Collection("ZonesEmmagatzematge")
+                            .Document(movimentTraslado.ZonaDestiID)
+                            .Collection("ProductesInventari")
+                            .Document(movimentTraslado.ProducteInventariID);
+
+                        origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
+                        destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
+                    break;
+                }
+
+                // 2. DESPUÉS TODAS LAS ESCRITURAS (WRITES)
+
+                // Guardar el movimiento
+                movimentTraslado.MovimentID = movimentRef.Id;
+                transaction.Set(movimentRef, movimentTraslado);
+
+                // Actualizar inventarios según tipo de movimiento
+                switch (movimentTraslado.Tipus)
+                {
+                    case TipusMoviment.Entrada:
+                        // Actualizar zona destino
+                        ActualizarZonaEnTransaccion(
+                            transaction,
+                            producte,
+                            productoZonaDestinoRef,
+                            destinoSnapshot,
+                            movimentTraslado.ProducteInventariID,
+                            movimentTraslado.Quantitat,
+                            movimentTraslado.ZonaDestiID);
+                        break;
+
+                    case TipusMoviment.Sortida:
+                        // Actualizar zona origen
+                        ActualizarZonaEnTransaccion(
+                            transaction,
+                            producte,
+                            productoZonaOrigenRef,
+                            origenSnapshot,
+                            movimentTraslado.ProducteInventariID,
+                            -movimentTraslado.Quantitat,
+                            movimentTraslado.ZonaOrigenID);
+                        break;
+
+                    case TipusMoviment.TrasllatIntern:
+                        // Actualizar ambas zonas
+                        ActualizarZonaEnTransaccion(
+                            transaction,
+                            producte,
+                            productoZonaOrigenRef,
+                            origenSnapshot,
+                            movimentTraslado.ProducteInventariID,
+                            -movimentTraslado.Quantitat,
+                            movimentTraslado.ZonaOrigenID);
+
+                        ActualizarZonaEnTransaccion(
+                            transaction,
+                            producte,
+                            productoZonaDestinoRef,
+                            destinoSnapshot,
+                            movimentTraslado.ProducteInventariID,
+                            movimentTraslado.Quantitat,
+                            movimentTraslado.ZonaDestiID);
+                        break;
+                }
+
+            });
+        }
+
+        private void ActualizarZonaEnTransaccion(
+                Transaction transaction,
+                ProductesInventari producte,
+                DocumentReference productoZonaRef,
+                DocumentSnapshot docSnapshot,
+                string producteGeneralID,
+                int cantidadCambio,
+                string zonaID)
+        {
+            if (docSnapshot.Exists)
+            {
+                Dictionary<string, object> productoData = docSnapshot.ToDictionary();
+                int cantidadActual = Convert.ToInt32(productoData["Quantitat"]);
+                int nuevaCantidad = cantidadActual + cantidadCambio;
+
+                // Asegurarse de que la cantidad no sea negativa
+                if (nuevaCantidad < 0)
+                {
+                    throw new Exception($"No hay suficiente stock en la zona {zonaID} para el producto {producteGeneralID}");
+                }
+
+                // Actualizamos solo el campo de cantidad
+                transaction.Update(productoZonaRef, new Dictionary<string, object>
+                {
+                    { "Quantitat", nuevaCantidad }
+                });
+            }
+            else if (cantidadCambio > 0)
+            {
+                // Si el producto no existe en la zona pero estamos añadiendo (solo para entradas o traslados)
+                ProductesInventari nuevoProducto = new ProductesInventari
+                {
+                    ProducteID = producte.ProducteID,
+                    Quantitat = cantidadCambio,
+                    Estat = producte.Estat, // Puedes ajustar esto según tu lógica
+                    CodiReferencia = producte.CodiReferencia, // Si no lo tienes, deja vacío o genera uno
+                    ZonaID = zonaID,
+                    MagatzemID = producte.MagatzemID,
+                    EmpresaID = producte.EmpresaID
+                };
+
+                // Creamos un nuevo documento para el producto en la zona
+                transaction.Set(productoZonaRef, nuevoProducto);
+            }
+            else
+            {
+                // Intentamos restar de un producto que no existe
+                throw new Exception($"No existe el producto {producteGeneralID} en la zona {zonaID}");
+            }
+        }
+
+        public async Task<DocumentSnapshot> GetProducteInventariPorID(string producteID)
+        {
+            CollectionReference empresesRef = db.Collection("Empreses");
+            QuerySnapshot empresasSnap = await empresesRef.GetSnapshotAsync();
+
+            foreach (var empresaDoc in empresasSnap.Documents)
+            {
+                var magatzemsSnap = await empresaDoc.Reference.Collection("Magatzems").GetSnapshotAsync();
+
+                foreach (var magatzemDoc in magatzemsSnap.Documents)
+                {
+                    var zonasSnap = await magatzemDoc.Reference.Collection("ZonesEmmagatzematge").GetSnapshotAsync();
+
+                    foreach (var zonaDoc in zonasSnap.Documents)
+                    {
+                        var productesSnap = await zonaDoc.Reference
+                            .Collection("ProductesInventari")
+                            .WhereEqualTo("ProducteID", producteID)
+                            .Limit(1) // Solo queremos el primero
+                            .GetSnapshotAsync();
+
+                        if (productesSnap.Count > 0)
+                        {
+                            return productesSnap.Documents[0];  // Primer documento que coincide
+                        }
+                    }
+                }
+            }
+
+            return null; // No encontrado
+        }
+
+        #endregion
 
 
     }

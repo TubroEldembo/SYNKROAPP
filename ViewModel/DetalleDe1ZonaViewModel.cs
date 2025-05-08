@@ -9,23 +9,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.ViewModel
 {
     public class DetalleDe1ZonaViewModel: INotifyPropertyChanged
     {
         public IDAO _dao;
+
         public readonly ZonaEmmagatzematge _zonaSeleccionada;
         public ObservableCollection<Categories> Categories { get; set; } = new();
         public ObservableCollection<Subcategories> Subcategories { get; set; } = new();
 
         private Dictionary<string, List<Subcategories>> _diccionarioSubcategorias;
 
+        public readonly Magatzems _magatzemSeleccionat;
 
-        public DetalleDe1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zonaSeleccionada)
+
+        public DetalleDe1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zonaSeleccionada, Magatzems magatzemSeleccionat)
         {
             _dao = dao;
             _zonaSeleccionada = zonaSeleccionada;
+            _magatzemSeleccionat = magatzemSeleccionat;
         }
 
         private string _nomZona;
@@ -191,12 +197,15 @@ namespace SYNKROAPP.ViewModel
                 {
                     ProducteID = item.ProducteID,
                     Nom = nom,
+                    SKU = producteGeneral?.SKU ?? "N/A",
+                    UrlImagen = producteGeneral?.ImatgeURL ?? "",
+                    Descripcio = producteGeneral?.Descripcio ?? "",
                     Estat = item.Estat,
-                    Categoria = producteGeneral.CategoriaID,
+                    Categoria = producteGeneral?.CategoriaID,
                     SubCategoria = subcategoria,
                     Quantitat = item.Quantitat
-
                 });
+
             }
 
             NomZona = _zonaSeleccionada.Nom;

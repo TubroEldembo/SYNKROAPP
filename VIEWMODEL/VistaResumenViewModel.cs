@@ -15,6 +15,8 @@ namespace SYNKROAPP.VIEWMODEL
         private IDAO dao;
         private Empreses empresa;
         public Dictionary<string, int> ProductosPorCategoria { get; private set; } = new Dictionary<string, int>();
+        public Dictionary<string, int> ProductosPorAlmacen { get; private set; } = new Dictionary<string, int>();
+
 
 
         public VistaResumenViewModel(IDAO dao, Empreses empresa)
@@ -79,6 +81,18 @@ namespace SYNKROAPP.VIEWMODEL
             }
         }
 
+        private bool _isCargandoVisible;
+        public bool IsCargandoVisible
+        {
+            get => _isCargandoVisible;
+            set
+            {
+                _isCargandoVisible = value;
+                OnPropertyChanged(nameof(IsCargandoVisible));
+            }
+        }
+
+
         public async Task CargarDatosEmpresa()
         {
             NomEmpresa = empresa.NomEmpresa;
@@ -86,12 +100,11 @@ namespace SYNKROAPP.VIEWMODEL
             List<Magatzems> almacenes = await dao.ObtenerLosAlmacenesTotalesDeLaEmpresa(empresa.EmpresaID);
             TotalAlmacenes = almacenes.Count;
 
-
-            int totalProductos = 0;
             //int productosEnMovimiento = 0; // depende de cómo definas "en movimiento"
             int capacidadTotal = 0;
             int productosTotales = 0;
 
+            ProductosPorCategoria.Clear();
             foreach (Magatzems almacen in almacenes) 
             {
                 List<ZonaEmmagatzematge> zonas = await dao.DetallesZonasAlmacen(almacen);
@@ -102,6 +115,24 @@ namespace SYNKROAPP.VIEWMODEL
                     productosTotales += productosZona;
                     capacidadTotal += zona.Capacitat;
                 }
+            }
+
+            ProductosPorAlmacen.Clear();
+            foreach (Magatzems almacen in almacenes)
+            {
+                List<ZonaEmmagatzematge> zonas = await dao.DetallesZonasAlmacen(almacen);
+
+                int productosEnAlmacen = 0;
+
+                foreach(ZonaEmmagatzematge zona in zonas)
+                {
+                    int productosZona = zona.Productes?.Count ?? 0;
+                    productosEnAlmacen += productosZona;
+                    productosTotales += productosZona;
+                    capacidadTotal += zona.Capacitat;
+                }
+
+                ProductosPorAlmacen[almacen.NomMagatzem] = productosEnAlmacen;
             }
 
             TotalProductos = productosTotales;

@@ -1,9 +1,11 @@
 ﻿using Firebase.Auth;
+using Firebase.Storage;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +31,7 @@ namespace SYNKROAPP.AUTH
             var authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
             FirebaseAuthLink auth = await authProvider.SignInWithEmailAndPasswordAsync(email, password);
             return auth;
+        
         }
 
         public static async Task<FirebaseAuthLink> SignUp(string email, string password)
@@ -76,6 +79,7 @@ namespace SYNKROAPP.AUTH
                 MessageBox.Show($"Error al canviar la contrasenya: {ex.Message}");
             }
         }
+
         public static async Task ChangeUserNameAsync(FirebaseAuthLink auth, string newUserName)
         {
             try

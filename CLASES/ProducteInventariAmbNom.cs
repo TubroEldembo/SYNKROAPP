@@ -10,10 +10,14 @@ namespace SYNKROAPP.CLASES
     {
         public string ProducteID { get; set; }
         public string Nom { get; set; }
+        public string SKU { get; set; }
+        public string UrlImagen { get; set; }
+        public string Descripcio { get; set; }
         public string Estat { get; set; }
         public string SubCategoria { get; set; }
-        public int Quantitat { get; set; }  
+        public int Quantitat { get; set; }
         public string Categoria { get; set; }
     }
+
 
 }

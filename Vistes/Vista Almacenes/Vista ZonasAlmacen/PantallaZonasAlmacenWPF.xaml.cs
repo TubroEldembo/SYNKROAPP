@@ -34,6 +34,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
             this.viewModel = viewModel;
             this.DataContext = viewModel;
             dao = viewModel._dao;
+            this.magatzemSeleccionat = viewModel._almacenSeleccionado;
         }
 
         private void btnAgregarZona_Click(object sender, RoutedEventArgs e)
@@ -47,6 +48,24 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
             agregarZona.ShowDialog();
             this.Close();
+        }
+
+        private async void dgZonasAlmacen_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var dataGrid = sender as DataGrid;
+            ZonaEmmagatzematge zonaSeleccionada = dataGrid.SelectedItem as ZonaEmmagatzematge;
+
+            if (zonaSeleccionada != null)
+            {
+                // Crear el ViewModel y cargar los datos
+                DetalleDe1ZonaViewModel viewModel = new DetalleDe1ZonaViewModel(dao, zonaSeleccionada, magatzemSeleccionat);
+                await viewModel.CargarProductos(); // ✅ ESTA LÍNEA ES LA CLAVE
+
+                // Pasar ese ViewModel ya cargado a la ventana
+                PantallaDetalleZonaWPF detallesDeLaZona = new PantallaDetalleZonaWPF(viewModel);
+                detallesDeLaZona.Show();
+                //OnCerrar?.Invoke();
+            }
         }
 
         private void btnVolver_Click(object sender, RoutedEventArgs e)
@@ -79,22 +98,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
         }
 
-        private async void dgZonasAlmacen_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var dataGrid = sender as DataGrid;
-            ZonaEmmagatzematge zonaSeleccionada = dataGrid.SelectedItem as ZonaEmmagatzematge;
-
-            if (zonaSeleccionada != null)
-            {
-                // Crear el ViewModel y cargar los datos
-                DetalleDe1ZonaViewModel viewModel = new DetalleDe1ZonaViewModel(dao, zonaSeleccionada);
-                await viewModel.CargarProductos(); // ✅ ESTA LÍNEA ES LA CLAVE
-
-                // Pasar ese ViewModel ya cargado a la ventana
-                PantallaDetalleZonaWPF detallesDeLaZona = new PantallaDetalleZonaWPF(viewModel);
-                detallesDeLaZona.Show();
-                //OnCerrar?.Invoke();
-            }
-        }
+        
     }
 }

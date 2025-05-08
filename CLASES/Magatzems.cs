@@ -42,6 +42,11 @@ namespace SYNKROAPP.CLASES
             Zones = zones;
             MagatzemPerDefecte = magatzemPerDefecte;
         }
+
+        public override string ToString()
+        {
+            return $"{NomMagatzem} ";
+        }
     }
 
 }

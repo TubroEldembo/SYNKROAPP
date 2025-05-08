@@ -72,7 +72,7 @@
                             <TextBlock Text="Subcategoría del producto" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
                             <ComboBox x:Name="cmbSubcategoriaProducto" Width="234" Height="40" HorizontalAlignment="Left"
                                       ItemsSource="{Binding ListaSubcategoriasFiltradas}"
-                                      SelectedItem="{Binding SubcategoriaSeleccionada}" IsEditable="False" IsReadOnly="True" /> 
+                                      SelectedItem="{Binding SubcategoriaSeleccionada}" IsEditable="False" IsReadOnly="True" />
 
                             <!-- Estado del producto -->
                             <TextBlock Text="Estado del producto *" FontWeight="DemiBold" FontSize="16" Margin="0,10,0,10" />
@@ -93,6 +93,23 @@
                                 <Button Grid.Column="1" x:Name="btnGenerarSKU" Content="Auto-generate SKU" Height="40"
                             Background="#D7D6D6" BorderThickness="0" Margin="0,0,0,20" Click="btnGenerarSKU_Click" />
                             </Grid>
+
+                            <!-- Sección de Imagen de Producto -->
+                            <TextBlock Text="Imagen del producto" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
+                            <Border Width="200" Height="200" BorderBrush="#CCCCCC" BorderThickness="1" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                <Grid>
+                                    <Image x:Name="imgProducto" Stretch="Uniform" Source="{Binding ImagenProducto}" />
+                                    <TextBlock Text="Sin imagen" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                />
+                                </Grid>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                                <Button x:Name="btnSeleccionarImagen" Content="Seleccionar imagen" Width="150" Height="35"
+                                        Background="#D7D6D6" BorderThickness="0" Click="btnSeleccionarImagen_Click" />
+                                <Button x:Name="btnEliminarImagen" Content="Eliminar" Width="80" Height="35" Margin="10,0,0,0"
+                                        Background="#DC3545" Foreground="White" BorderThickness="0" Click="btnEliminarImagen_Click"
+                                        Visibility="{Binding TieneImagen, Converter={StaticResource BoolToVisibilityConverter}}" />
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- Columna derecha -->
@@ -101,23 +118,23 @@
                             <ComboBox x:Name="cmbAlmacen" Height="40" Margin="0,0,0,20"
                                       ItemsSource="{Binding ListaAlmacenes}"
                                       SelectedItem="{Binding AlmacenSeleccionado}"
-                                      SelectionChanged="cmbAlmacen_SelectionChanged" IsEnabled="False" />
+                                      SelectionChanged="cmbAlmacen_SelectionChanged" IsEnabled="False" Width="312" HorizontalAlignment="Left"/>
 
                             <TextBlock Text="Zona de Almacenamiento" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
                             <ComboBox x:Name="cmbZonaAlmacenamiento" Height="40" Margin="0,0,0,20"
                                       ItemsSource="{Binding ListaZonas}"
-                                      SelectedItem="{Binding ZonaSeleccionada}" IsEnabled="False" />    
+                                      SelectedItem="{Binding ZonaSeleccionada}" IsEnabled="False" Width="312" HorizontalAlignment="Left"/>
 
                             <TextBlock Text="Cantidad Inicial:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
                             <TextBox x:Name="txtCantidadInicial" Height="40" Width="150" Margin="0,0,0,20"
-                                     Text="{Binding CantidadInicial}" />
+                                     Text="{Binding CantidadInicial}" HorizontalAlignment="Left"/>
 
                             <CheckBox Content="¿Está en venta?" Margin="0,0,0,10" IsChecked="{Binding EstaEnVenta}" />
 
                             <StackPanel Margin="0,0,0,20"
                                         Visibility="{Binding EstaEnVenta, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <TextBlock Text="Precio del producto:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,10" />
-                                <TextBox Height="40" Width="150" Text="{Binding PrecioProducto}" />
+                                <TextBox Height="40" Width="150" Text="{Binding PrecioProducto}" HorizontalAlignment="Left"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

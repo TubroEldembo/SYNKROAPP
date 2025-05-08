@@ -4,91 +4,381 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="832" d:DesignWidth="1280"
-             Background="#6F7ABC">
+             d:DesignHeight="832" d:DesignWidth="1280">
+
+    <!-- Fondo con gradiente para un aspecto más moderno -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
 
     <Grid Margin="40,30,40,30">
-        <!-- Margen lateral y superior como en la otra ventana -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Título -->
-        <TextBlock Text="GESTIÓN DE ALMACENES" 
-                   FontSize="28"
-                   Foreground="White"
-                   HorizontalAlignment="Center"
-                   FontWeight="Bold"
-                   Margin="0,0,0,20"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <!-- Crear Almacén -->
-        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="1" Margin="0,0,0,20">
+        <!-- Encabezado con sombra y efecto más moderno -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" 
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
             <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
             </Border.Effect>
-            <WrapPanel HorizontalAlignment="Left">
-                <TextBox Width="250" Height="35" Margin="0,0,10,0"/>
-                <Button Content="CREAR ALMACÉN ➕" Width="160" Height="35" Background="Black" Foreground="White" Click="btnCrearAlmacen_Click"/>
-            </WrapPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Título con efecto de texto -->
+                <TextBlock Text="GESTIÓN DE ALMACENES" 
+                           FontSize="32" 
+                           Foreground="#4A5793"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <!-- Panel de creación de almacén integrado en el encabezado -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <TextBox Width="250" Height="40" 
+                             VerticalContentAlignment="Center"
+                             Margin="0,0,10,0"
+                             FontSize="14"
+                             Padding="10,0"
+                             BorderThickness="1"
+                             BorderBrush="#DDDDDD">
+                        <TextBox.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <Button Content="CREAR ALMACÉN ➕" 
+                            Width="180" Height="40" 
+                            Background="#4A5793" 
+                            Foreground="White" 
+                            FontWeight="SemiBold"
+                            Click="btnCrearAlmacen_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- Estadísticas Generales -->
-        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="2" Margin="0,0,0,20">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-            </Border.Effect>
-            <StackPanel>
-                <TextBlock Text="ESTADÍSTICAS GENERALES" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
-                <WrapPanel>
-                    <StackPanel Width="300" Margin="0,0,20,10">
-                        <TextBlock Text="TOTAL ALMACENES:" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding TotalAlmacenes}" FontSize="16"/>
-                    </StackPanel>
-                    <StackPanel Width="300" Margin="0,0,20,10">
-                        <TextBlock Text="MOVIMIENTOS RECIENTES:" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding MovimientosRecientes}" FontSize="16"/>
-                    </StackPanel>
-                    <StackPanel Width="300">
-                        <TextBlock Text="CAPACIDAD OCUPADA:" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding CapacidadOcupada}" FontSize="16"/>
-                    </StackPanel>
-                </WrapPanel>
-                <TextBlock Margin="0,10,0,0" Text="PRODUCTOS EN ALMACENES: {Binding ProductosEnAlmacenes}" FontWeight="Bold"/>
-            </StackPanel>
-        </Border>
+        <!-- Panel izquierdo: Estadísticas y Lista de Almacenes -->
+        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <!-- Lista de Almacenes -->
-        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="3" Margin="0,0,0,20">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-            </Border.Effect>
-            <StackPanel>
-                <TextBlock Text="LISTA DE ALMACENES" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
-                <DataGrid ItemsSource="{Binding Almacenes}" AutoGenerateColumns="False" HeadersVisibility="Column"
-                          IsReadOnly="True" CanUserAddRows="False" CanUserDeleteRows="False"
-                          Height="180" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="DataGrid_SelectionChanged">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ALMACÉN" Binding="{Binding NomMagatzem}" Width="*"/>
-                        <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding Ubicacio}" Width="*"/>
-                        <DataGridTextColumn Header="ZONAS" Binding="{Binding NumeroDeZonas}" Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </StackPanel>
-        </Border>
+            <!-- Estadísticas Generales con diseño de tarjetas -->
+            <Border Grid.Row="0" Background="#FFFFFF" CornerRadius="15" Padding="20" Margin="0,0,0,20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="ESTADÍSTICAS GENERALES" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="#4A5793"
+                               Margin="0,0,0,15"/>
 
-        <!-- Movimientos Recibidos -->
-        <Border Background="#F2F2F2" CornerRadius="10" Padding="20" Grid.Row="4">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-            </Border.Effect>
-            <StackPanel>
-                <TextBlock Text="MOVIMIENTOS RECIBIDOS" FontSize="20" FontWeight="SemiBold"/>
-                <ListBox Height="150" Margin="0,10,0,0"/>
-            </StackPanel>
-        </Border>
+                    <!-- Cards para estadísticas -->
+                    <UniformGrid Columns="3" Rows="1">
+                        <Border Background="#F8F9FE" CornerRadius="10" Margin="0,0,10,0" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="TOTAL ALMACENES" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#666666" 
+                                           FontSize="12"/>
+                                <TextBlock Text="{Binding TotalAlmacenes}" 
+                                           FontSize="24" 
+                                           FontWeight="Bold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8F9FE" CornerRadius="10" Margin="5,0,5,0" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="MOVIMIENTOS RECIENTES" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#666666" 
+                                           FontSize="12"/>
+                                <TextBlock Text="{Binding MovimientosRecientes}" 
+                                           FontSize="24" 
+                                           FontWeight="Bold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F8F9FE" CornerRadius="10" Margin="10,0,0,0" Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="CAPACIDAD OCUPADA" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#666666" 
+                                           FontSize="12"/>
+                                <TextBlock Text="{Binding CapacidadOcupada}" 
+                                           FontSize="24" 
+                                           FontWeight="Bold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Indicador de productos -->
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="0,15,0,0" Padding="15">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" 
+                                       Text="PRODUCTOS EN ALMACENES:" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666"/>
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding ProductosEnAlmacenes}" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="10,0,0,0"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Lista de Almacenes con diseño mejorado -->
+            <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="LISTA DE ALMACENES" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   Foreground="#4A5793"
+                                   VerticalAlignment="Center"/>
+
+                        <!-- Botón de filtrado opcional -->
+                        <Button Grid.Column="1" 
+                                Content="🔍 Filtrar" 
+                                Width="100" 
+                                Height="32" 
+                                Background="#F0F2FF" 
+                                Foreground="#4A5793" 
+                                BorderThickness="0">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </Grid>
+
+                    <!-- DataGrid con estilo mejorado -->
+                    <DataGrid Grid.Row="1" 
+                              ItemsSource="{Binding Almacenes}" 
+                              AutoGenerateColumns="False" 
+                              HeadersVisibility="Column"
+                              IsReadOnly="True" 
+                              CanUserAddRows="False" 
+                              CanUserDeleteRows="False"
+                              Margin="0,15,0,0"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              RowBackground="#FFFFFF"
+                              AlternatingRowBackground="#F8F9FE"
+                              GridLinesVisibility="None"
+                              VerticalGridLinesBrush="#EEEEEE"
+                              HorizontalGridLinesBrush="#EEEEEE"
+                              RowHeight="40"
+                              SelectionChanged="DataGrid_SelectionChanged">
+                        <DataGrid.Resources>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="Background" Value="#F0F2FF"/>
+                                <Setter Property="Foreground" Value="#4A5793"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Height" Value="40"/>
+                                <Setter Property="Padding" Value="10,0"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ALMACÉN" Binding="{Binding NomMagatzem}" Width="*"/>
+                            <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding Ubicacio}" Width="*"/>
+                            <DataGridTextColumn Header="ZONAS" Binding="{Binding NumeroDeZonas}" Width="0.5*"/>
+                            <DataGridTemplateColumn Header="ACCIONES" Width="0.6*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="👁️" Width="35" Height="30" Margin="0,0,5,0" Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0">
+                                                <Button.Resources>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="CornerRadius" Value="4"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                            </Button>
+                                            <Button Content="✏️" Width="35" Height="30" Margin="5,0" Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0">
+                                                <Button.Resources>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="CornerRadius" Value="4"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                            </Button>
+                                            <Button Content="❌" Width="35" Height="30" Margin="5,0,0,0" Background="#FFF0F0" Foreground="#D04A4A" BorderThickness="0">
+                                                <Button.Resources>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="CornerRadius" Value="4"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Panel derecho: Movimientos Recibidos y estadísticas detalladas -->
+        <Grid Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Margin="10,0,0,0">
+            <Border Background="#FFFFFF" CornerRadius="15" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="MOVIMIENTOS RECIENTES" 
+                                   FontSize="20" 
+                                   FontWeight="Bold" 
+                                   Foreground="#4A5793"
+                                   VerticalAlignment="Center"/>
+
+                        <!-- Combo para filtrar movimientos -->
+                        <ComboBox Grid.Column="1"
+                                  Width="150" 
+                                  Height="32"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="Todos"/>
+                            <ComboBoxItem Content="Entradas"/>
+                            <ComboBoxItem Content="Salidas"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <!-- Lista de movimientos con estilo mejorado -->
+                    <ListView Grid.Row="1" 
+                              Margin="0,15,0,0"
+                              BorderThickness="0"
+                              Background="Transparent">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FE" 
+                                        CornerRadius="8" 
+                                        Padding="15" 
+                                        Margin="0,5" 
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Indicador de tipo movimiento -->
+                                        <Border Grid.Column="0" 
+                                                Width="40" 
+                                                Height="40" 
+                                                Background="#4A5793" 
+                                                CornerRadius="20"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="↓" 
+                                                       FontSize="20" 
+                                                       Foreground="White" 
+                                                       HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <!-- Detalles del movimiento -->
+                                        <StackPanel Grid.Column="1" Margin="15,0">
+                                            <TextBlock Text="Recepción de Mercancía" 
+                                                       FontWeight="SemiBold" 
+                                                       FontSize="16"/>
+                                            <TextBlock Text="Almacén: Centro Logístico Principal" 
+                                                       Foreground="#666666" 
+                                                       Margin="0,5,0,0"/>
+                                            <TextBlock Text="Productos: 25 unidades" 
+                                                       Foreground="#666666"/>
+                                        </StackPanel>
+
+                                        <!-- Fecha/Hora -->
+                                        <StackPanel Grid.Column="2" 
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Right">
+                                            <TextBlock Text="22/04/2025" 
+                                                       Foreground="#666666" 
+                                                       HorizontalAlignment="Right"/>
+                                            <TextBlock Text="15:30" 
+                                                       Foreground="#666666" 
+                                                       HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <!-- Datos de ejemplo -->
+                        <ListViewItem/>
+                        <ListViewItem/>
+                        <ListViewItem/>
+                        <ListViewItem/>
+                    </ListView>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

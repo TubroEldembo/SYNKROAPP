@@ -27,10 +27,13 @@ namespace SYNKROAPP.CLASES
         [FirestoreProperty]
         public string SKU { get; set; }
 
+        [FirestoreProperty]
+        public string ImatgeURL { get; set; }
+
         public ProducteGeneral() { }
 
         public ProducteGeneral(string producteID, string nom, string codiReferencia, string descripcio,
-                               string categoriaID, string subCategoriaID, string sKU)
+                               string categoriaID, string subCategoriaID, string sKU, string imatgeURL)
         {
             ProducteID = producteID ?? Guid.NewGuid().ToString();
             Nom = nom;
@@ -39,6 +42,7 @@ namespace SYNKROAPP.CLASES
             CategoriaID = categoriaID;
             SubCategoriaID = subCategoriaID;
             SKU = sKU;
+            ImatgeURL = imatgeURL;
         }
     }
 }

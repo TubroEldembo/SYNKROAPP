@@ -21,16 +21,14 @@ namespace SYNKROAPP.ViewModel
             _almacenSeleccionado = almacenSeleccionado;
         }
 
-        // Propiedades de la interfaz
-
-        private string _detalleAlmacen;
-        public string DetalleAlmacen
+        private string _nombreAlmacen;
+        public string NombreAlmacen
         {
-            get => _detalleAlmacen;
+            get => _nombreAlmacen;
             set
             {
-                _detalleAlmacen = value;
-                OnPropertyChanged(nameof(DetalleAlmacen));
+                _nombreAlmacen = value;
+                OnPropertyChanged(nameof(NombreAlmacen));
             }
         }
 
@@ -108,7 +106,7 @@ namespace SYNKROAPP.ViewModel
                 ProductosTotales = zonasAlmacen.Sum(z => z.Productes?.Count ?? 0);  
                 NumeroDeZonas = zonasAlmacen.Count;
                 Direccion = _almacenSeleccionado.Ubicacio.Nom;
-                DetalleAlmacen = _almacenSeleccionado.NomMagatzem;
+                NombreAlmacen = _almacenSeleccionado.NomMagatzem;
                 MagatzemID = _almacenSeleccionado.MagatzemID;
                 
             }
