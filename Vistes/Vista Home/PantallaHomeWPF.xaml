@@ -44,10 +44,8 @@
             <DockPanel LastChildFill="True" Margin="12">
 
                 <StackPanel DockPanel.Dock="Top" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <!-- Aquí puedes poner el logo en imagen más adelante -->
-                    <!--<Image Source="ruta/a/tu/logo.png" Width="80" Height="80" />-->
+                    <Image x:Name="logoImageURL" Width="80" Height="80" />
                 </StackPanel>
-
 
                 <StackPanel VerticalAlignment="Center" Margin="10,20,10,10" HorizontalAlignment="Left" Orientation="Vertical">
                     <Button Tag="🏠" Content="Inicio" Style="{StaticResource MenuButtonStyle}" Click="btnInicio_Click"/>

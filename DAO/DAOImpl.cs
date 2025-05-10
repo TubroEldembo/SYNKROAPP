@@ -2,12 +2,8 @@
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
 using SYNKROAPP.CLASES;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -88,6 +84,9 @@ namespace SYNKROAPP.DAO
 
         public async Task<Usuaris> GetUsuariByEmail(string targetEmail)
         {
+            //try catch 
+
+
             CollectionReference colRef = db.Collection("Usuaris");
             Query query = colRef.WhereEqualTo("Email", targetEmail);
             QuerySnapshot snapshot = await query.GetSnapshotAsync();
@@ -95,7 +94,6 @@ namespace SYNKROAPP.DAO
             if (!snapshot.Documents.Any())
             {
                 MessageBox.Show($"No se encontró ningún usuario con el correo: {targetEmail}");
-                return null;
             }
 
             DocumentSnapshot doc = snapshot.Documents.First();
@@ -119,16 +117,16 @@ namespace SYNKROAPP.DAO
         {
             try
             {
-                var docRef = db.Collection("Empreses").Document(empresaID);
-                var snapshot = await docRef.GetSnapshotAsync();
+                DocumentReference docRef = db.Collection("Empreses").Document(empresaID);
+                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+                Empreses empresa = new Empreses();
 
                 if (snapshot.Exists)
                 {
-                    Empreses empresa = snapshot.ConvertTo<Empreses>();
-                    return empresa;
+                    empresa = snapshot.ConvertTo<Empreses>();
                 }
-                else
-                    return null;
+
+                return empresa;
             }
             catch (Exception ex) 
             {
@@ -156,6 +154,8 @@ namespace SYNKROAPP.DAO
 
         public async Task<Magatzems> CrearAlmacen(Empreses unaEmpresa, Magatzems nouMagatzem)
         {
+            Magatzems magatzemCreat = null;
+
             try
             {
                 if (string.IsNullOrEmpty(unaEmpresa.EmpresaID))
@@ -171,29 +171,34 @@ namespace SYNKROAPP.DAO
 
                 if (snapshot.Count > 0)
                 {
-                    DocumentSnapshot existingDoc = snapshot.Documents.First();
-                    return existingDoc.ConvertTo<Magatzems>();
+                    magatzemCreat = snapshot.Documents.First().ConvertTo<Magatzems>();
                 }
+                else
+                {
+                    DocumentReference magatzemDocRef = almacenesRef.Document(); // ID autogenerado
+                    nouMagatzem.MagatzemID = magatzemDocRef.Id;
+                    nouMagatzem.EmpresaPertanyentID = unaEmpresa.EmpresaID;
 
-                DocumentReference magatzemDocRef = almacenesRef.Document(); // ID autogenerado
-                nouMagatzem.MagatzemID = magatzemDocRef.Id;
-                nouMagatzem.EmpresaPertanyentID = unaEmpresa.EmpresaID;
+                    await magatzemDocRef.SetAsync(nouMagatzem);
+                    await empresaRef.UpdateAsync("Magatzems", FieldValue.ArrayUnion(magatzemDocRef.Id));
 
-                await magatzemDocRef.SetAsync(nouMagatzem);
-                await empresaRef.UpdateAsync("Magatzems", FieldValue.ArrayUnion(magatzemDocRef.Id));
-
-                return nouMagatzem;
+                    magatzemCreat = nouMagatzem;
+                }
+               
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al crear el almacén: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
             }
+
+            return magatzemCreat;
         }
 
 
         public async Task<ZonaEmmagatzematge> CrearZonaAlmacen(Magatzems unMagatzem, ZonaEmmagatzematge novaZona)
         {
+            ZonaEmmagatzematge zonaCreada = null;
+
             try
             {
                 if (string.IsNullOrEmpty(unMagatzem.MagatzemID))
@@ -206,25 +211,28 @@ namespace SYNKROAPP.DAO
                 CollectionReference zonesRef = magatzemRef.Collection("ZonesEmmagatzematge");
 
                 QuerySnapshot snapshot = await zonesRef.WhereEqualTo("NomZona", novaZona.Nom).GetSnapshotAsync();
+
                 if (snapshot.Count > 0)
                 {
-                    DocumentSnapshot existingZone = snapshot.Documents.First();
-                    return existingZone.ConvertTo<ZonaEmmagatzematge>();
+                    zonaCreada = snapshot.Documents.First().ConvertTo<ZonaEmmagatzematge>();
                 }
+                else
+                {
+                    DocumentReference zonaDocRef = zonesRef.Document();
+                    novaZona.ZonaEmmagatzematgeID = zonaDocRef.Id;
 
-                DocumentReference zonaDocRef = zonesRef.Document();
-                novaZona.ZonaEmmagatzematgeID = zonaDocRef.Id;
+                    await zonaDocRef.SetAsync(novaZona);
+                    await magatzemRef.UpdateAsync("Zones", FieldValue.ArrayUnion(zonaDocRef.Id));
 
-                await zonaDocRef.SetAsync(novaZona);
-                await magatzemRef.UpdateAsync("Zones", FieldValue.ArrayUnion(zonaDocRef.Id));
-
-                return novaZona;
+                    zonaCreada = novaZona;
+                }
             }
             catch (Exception ex) 
             {
                 MessageBox.Show($"Error al crear la zona: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
             }
+
+            return zonaCreada;
         }
 
         public async Task<List<Magatzems>> DetallesAlmacenes(Empreses empresa)
@@ -252,7 +260,6 @@ namespace SYNKROAPP.DAO
                     }
 
                     return almacenes;
-
                 }
                 else
                 {
@@ -267,13 +274,14 @@ namespace SYNKROAPP.DAO
             }
         }
 
-
         public async Task<List<ZonaEmmagatzematge>> DetallesZonasAlmacen(Magatzems unMagatzem)
         {
+            List<ZonaEmmagatzematge> zonasResultado = null;
+
             try
             {
-                if (string.IsNullOrEmpty(unMagatzem.MagatzemID))
-                    throw new Exception("El ID del almacén no es válido");
+                if (string.IsNullOrEmpty(unMagatzem?.MagatzemID))
+                    throw new Exception("El ID del almacén no es válido.");
 
                 DocumentReference empresaRef = db.Collection("Empreses").Document(unMagatzem.EmpresaPertanyentID);
                 DocumentReference almacenesRef = empresaRef.Collection("Magatzems").Document(unMagatzem.MagatzemID);
@@ -281,29 +289,27 @@ namespace SYNKROAPP.DAO
 
                 QuerySnapshot snapshot = await zonesRef.GetSnapshotAsync();
 
-                if (snapshot.Documents.Any())
-                {
-                    List<ZonaEmmagatzematge> zonesMagatzem = new List<ZonaEmmagatzematge>();
-                    foreach (var document in snapshot.Documents)
-                    {
-                        ZonaEmmagatzematge zonaMagatzem = document.ConvertTo<ZonaEmmagatzematge>();
-                        zonesMagatzem.Add(zonaMagatzem);
-                    }
+                zonasResultado = new List<ZonaEmmagatzematge>();
 
-                    return zonesMagatzem;
-                }
-                else
+                foreach (var document in snapshot.Documents)
                 {
-                    MessageBox.Show("No se encontraron zonas de almacenamiento para esta almacén.");
-                    return new List<ZonaEmmagatzematge>(); // Retornar una lista vacía si no hay almacenes
+                    ZonaEmmagatzematge zona = document.ConvertTo<ZonaEmmagatzematge>();
+                    zonasResultado.Add(zona);
+                }
+
+                if (!zonasResultado.Any())
+                {
+                    MessageBox.Show("No se encontraron zonas de almacenamiento para este almacén.");
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error al obtener las zonas de almacenamiento: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null; // En caso de error, retornar null
             }
+
+            return zonasResultado;
         }
+
 
         public async Task<bool> AddProducts2Zone(ProducteGeneral producteGeneral, DetallProducte detallProducte, ProductesInventari inventari)
         {
@@ -860,8 +866,47 @@ namespace SYNKROAPP.DAO
             return null; // No encontrado
         }
 
+        public async Task<List<MovimentsInventari>> ObtenerMovimientosInventarioPorEmpresa(string empresaID)
+        {
+            QuerySnapshot snapshot = await db.Collection("Empreses")
+                 .Document(empresaID)
+                 .Collection("MovimentsInventari")
+                 .OrderByDescending("Data")
+                 .Limit(50)
+                 .GetSnapshotAsync();
+
+            return snapshot.Documents
+                .Select(doc => doc.ConvertTo<MovimentsInventari>())
+                .ToList();
+        }
+
+        public async Task<List<string>> GetEmpresesAmbProductesEnVenda()
+        {
+            List<string> empresesAmbVenda = new List<string>();
+
+            QuerySnapshot productesSnap = await db.Collection("ProducteGeneral").GetSnapshotAsync();
+            foreach (var producteDoc in productesSnap.Documents)
+            {
+                var detallSnap = await producteDoc.Reference
+                    .Collection("DetallProducte")
+                    .WhereEqualTo("EnVenda", true)
+                    .GetSnapshotAsync();
+
+                foreach (var detallDoc in detallSnap.Documents)
+                {
+                    string empresaID = detallDoc.GetValue<string>("EmpresaID");
+
+                    if (!empresesAmbVenda.Contains(empresaID))
+                    {
+                        empresesAmbVenda.Add(empresaID);
+                    }
+                }
+            }
+
+            return empresesAmbVenda;
+        }
+    }
+
         #endregion
 
-
-    }
 }

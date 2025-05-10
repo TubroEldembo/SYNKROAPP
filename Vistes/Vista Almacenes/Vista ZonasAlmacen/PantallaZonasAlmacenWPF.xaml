@@ -16,6 +16,8 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+    
+
 
 
     <Grid>
@@ -72,12 +74,12 @@
 
                             <UniformGrid Grid.Row="1" Columns="3">
                                 <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Nombre" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Nombre" FontWeight="Medium" FontSize="14" Foreground="Black" Margin="0,0,0,5"/>
                                     <TextBlock Text="{Binding NombreAlmacen}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
                                 </StackPanel>
                                 
                                 <StackPanel>
-                                    <TextBlock Text="ID de Almacén" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
+                                    <TextBlock Text="ID de Almacén" FontWeight="Medium" FontSize="14" Foreground="Black" Margin="0,0,0,5"/>
                                     <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#0f172a">
                                         <Run Text="{Binding MagatzemID}" />
                                     </TextBlock>

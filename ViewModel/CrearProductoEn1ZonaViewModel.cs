@@ -263,10 +263,27 @@ namespace SYNKROAPP.ViewModel
                     CodiReferencia = SKU
                 };
 
+
                 bool resultat = await _dao.AddProducts2Zone(producteGeneral, detall, inventari);
 
                 if (resultat)
                 {
+                    MovimentsInventari movimiento = new MovimentsInventari
+                    {
+                        ProducteInventariID = inventari.IDProducteInventari,
+                        EmpresaIDOrigen = zona.EmpresaID,
+                        EmpresaIDDesti = zona.EmpresaID,
+                        MagatzemIDOrigen = zona.MagatzemPertanyent,
+                        MagatzemIDDesti = zona.MagatzemPertanyent,
+                        ZonaOrigenID = zona.ZonaEmmagatzematgeID,
+                        ZonaDestiID = zona.ZonaEmmagatzematgeID,
+                        Tipus = TipusMoviment.Entrada,
+                        Quantitat = CantidadInicial,
+                        Data = DateTime.UtcNow,
+                        Notes = "Movimiento entrada de nuevos productos"
+                    };
+                    await _dao.GuardarMovimientoInventariAsync(movimiento, inventari);
+
                     MessageBox.Show("Producto agregado correctamente a la zona.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
                     return true;
                 }
@@ -315,6 +332,7 @@ namespace SYNKROAPP.ViewModel
                 }
             }
         }
+
         public void EliminarImagen()
         {
             ImagenProducto = null;

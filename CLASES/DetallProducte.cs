@@ -15,6 +15,10 @@ namespace SYNKROAPP.CLASES
         public string DetallProducteID { get; set; }
 
         [FirestoreProperty]
+        public string EmpresaID { get; set; }
+
+
+        [FirestoreProperty]
         public double Preu { get; set; }
 
         [FirestoreProperty]
@@ -28,12 +32,13 @@ namespace SYNKROAPP.CLASES
 
         public DetallProducte() { }
 
-        public DetallProducte(string? detallProducteID, double preu, bool disponible, bool enVenda)
+        public DetallProducte(string? detallProducteID, double preu, bool disponible, bool enVenda, string empresaID)
         {
             DetallProducteID = detallProducteID ?? Guid.NewGuid().ToString(); // Genera un ID si es null
             Preu = preu;
             Disponible = disponible;
             EnVenda = enVenda;
+            EmpresaID = empresaID;
         }
     }
 

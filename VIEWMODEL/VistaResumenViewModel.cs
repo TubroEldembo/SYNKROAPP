@@ -95,7 +95,7 @@ namespace SYNKROAPP.VIEWMODEL
 
         public async Task CargarDatosEmpresa()
         {
-            NomEmpresa = empresa.NomEmpresa;
+            NomEmpresa = empresa.NomEmpresa.ToUpper();
 
             List<Magatzems> almacenes = await dao.ObtenerLosAlmacenesTotalesDeLaEmpresa(empresa.EmpresaID);
             TotalAlmacenes = almacenes.Count;

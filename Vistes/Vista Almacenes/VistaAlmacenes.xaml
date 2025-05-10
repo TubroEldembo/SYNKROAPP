@@ -5,12 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="832" d:DesignWidth="1280">
+    
+    <UserControl.Resources>
+        <!-- Aquí se incluye el diccionario de recursos -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <!-- Fondo con gradiente para un aspecto más moderno -->
     <UserControl.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#4A5793" Offset="0"/>
             <GradientStop Color="#6F7ABC" Offset="1"/>
+            
         </LinearGradientBrush>
     </UserControl.Background>
 
@@ -161,6 +171,7 @@
                                        Text="PRODUCTOS EN ALMACENES:" 
                                        FontWeight="SemiBold" 
                                        Foreground="#666666"/>
+                            
                             <TextBlock Grid.Column="1" 
                                        Text="{Binding ProductosEnAlmacenes}" 
                                        FontWeight="Bold" 
@@ -312,17 +323,17 @@
                     </Grid>
 
                     <!-- Lista de movimientos con estilo mejorado -->
-                    <ListView Grid.Row="1" 
-                              Margin="0,15,0,0"
-                              BorderThickness="0"
-                              Background="Transparent">
+                    <ListView Grid.Row="1" Margin="0,15,0,0"
+          BorderThickness="0"
+          Background="Transparent"
+          ItemsSource="{Binding Movimientos}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="#F8F9FE" 
-                                        CornerRadius="8" 
-                                        Padding="15" 
-                                        Margin="0,5" 
-                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}">
+                    CornerRadius="8" 
+                    Padding="15" 
+                    Margin="0,5" 
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -331,52 +342,37 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Indicador de tipo movimiento -->
-                                        <Border Grid.Column="0" 
-                                                Width="40" 
-                                                Height="40" 
-                                                Background="#4A5793" 
-                                                CornerRadius="20"
-                                                VerticalAlignment="Center">
-                                            <TextBlock Text="↓" 
-                                                       FontSize="20" 
-                                                       Foreground="White" 
-                                                       HorizontalAlignment="Center" 
-                                                       VerticalAlignment="Center"/>
+                                        <Border Grid.Column="0" Width="40" Height="40" Background="{Binding Tipus, Converter={StaticResource TipusToColorConverter}}" CornerRadius="20" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Tipus, Converter={StaticResource TipusToSymbolConverter}}" FontSize="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
 
                                         <!-- Detalles del movimiento -->
                                         <StackPanel Grid.Column="1" Margin="15,0">
-                                            <TextBlock Text="Recepción de Mercancía" 
-                                                       FontWeight="SemiBold" 
-                                                       FontSize="16"/>
-                                            <TextBlock Text="Almacén: Centro Logístico Principal" 
-                                                       Foreground="#666666" 
-                                                       Margin="0,5,0,0"/>
-                                            <TextBlock Text="Productos: 25 unidades" 
-                                                       Foreground="#666666"/>
+                                            <TextBlock Text="{Binding Notes}" FontWeight="SemiBold" FontSize="16"/>
+                                            <TextBlock>
+                                                <Run Text="Almacén: " />
+                                                <Run Text="{Binding MagatzemIDOrigen}" />   
+                                            </TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Producto: " />
+                                                <Run Text="{Binding ProducteInventariID}" />
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Quantitat, StringFormat='Productos: {0} unidades'}" />
+                                            
                                         </StackPanel>
 
                                         <!-- Fecha/Hora -->
-                                        <StackPanel Grid.Column="2" 
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Right">
-                                            <TextBlock Text="22/04/2025" 
-                                                       Foreground="#666666" 
-                                                       HorizontalAlignment="Right"/>
-                                            <TextBlock Text="15:30" 
-                                                       Foreground="#666666" 
-                                                       HorizontalAlignment="Right"/>
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Data, StringFormat={}{0:dd/MM/yyyy}}" Foreground="#666666"/>
+                                            <TextBlock Text="{Binding Data, StringFormat={}{0:HH:mm}}" Foreground="#666666"/>
                                         </StackPanel>
+
                                     </Grid>
                                 </Border>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        <!-- Datos de ejemplo -->
-                        <ListViewItem/>
-                        <ListViewItem/>
-                        <ListViewItem/>
-                        <ListViewItem/>
                     </ListView>
+
                 </Grid>
             </Border>
         </Grid>

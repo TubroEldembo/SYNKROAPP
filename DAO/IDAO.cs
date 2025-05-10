@@ -57,7 +57,6 @@ namespace SYNKROAPP.DAO
         // VISTA RESUMEN (HOME)
         Task<List<Magatzems>> ObtenerLosAlmacenesTotalesDeLaEmpresa(string empresaID);
         Task<Empreses> GetEmpresaByID(string empresaID);
-        //Task<Magatzems> GetMagatzemByID(string magatzemID);
         Task<Dictionary<string, int>> ObtenerProductosEnVentaPorCategoria(string empresaID);
 
 
@@ -65,9 +64,12 @@ namespace SYNKROAPP.DAO
         // STORAGE 
         Task<string> StoreImage(string localPath, string nameToStore);
         BitmapImage LoadImageFromUrl(string url);
-        Task<DocumentSnapshot> GetProducteInventariPorID(string producteID);
 
-        // DetalleProducto
+        // GET
+        Task<DocumentSnapshot> GetProducteInventariPorID(string producteID);
+        Task<List<MovimentsInventari>> ObtenerMovimientosInventarioPorEmpresa(string empresaID);
+        Task<List<string>> GetEmpresesAmbProductesEnVenda();
+
 
 
 

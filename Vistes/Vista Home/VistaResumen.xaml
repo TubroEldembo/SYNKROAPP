@@ -10,7 +10,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-
+        
         <!-- Estilos reutilizables -->
         <Style x:Key="TitleTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="32"/>
@@ -91,7 +91,7 @@
                 <!-- Título con efecto de texto -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Style="{StaticResource TitleTextStyle}">
-                        <Run Text="RESUMEN GENERAL DE  "/>
+                        <Run Text="RESUMEN GENERAL DE "/>
                         <Run Text="{Binding NomEmpresa}" FontWeight="Bold"/>
                     </TextBlock>
                 </StackPanel>

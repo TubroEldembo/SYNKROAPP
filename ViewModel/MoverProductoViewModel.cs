@@ -106,7 +106,7 @@ namespace SYNKROAPP.ViewModel
             try
             {
                 DocumentSnapshot docSnap = await dao.GetProducteInventariPorID(_productoSeleccionado.ProducteID);
-                var producteInventari = docSnap.Exists ? docSnap.ConvertTo<ProductesInventari>() : null;
+                ProductesInventari producteInventari = docSnap.Exists ? docSnap.ConvertTo<ProductesInventari>() : null;
 
                 MovimentsInventari movimiento = new MovimentsInventari
                 {

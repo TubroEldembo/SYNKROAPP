@@ -24,6 +24,18 @@ namespace SYNKROAPP.VIEWMODEL
             this._almacenes = new List<Magatzems>();
         }
 
+        private List<MovimentsInventari> _movimientos;
+
+        public List<MovimentsInventari> Movimientos
+        {
+            get => _movimientos;
+            set
+            {
+                _movimientos = value;
+                OnPropertyChanged(nameof(Movimientos));
+            }
+        }
+
         public string TotalAlmacenes
         {
             get => _totalAlmacenes;
@@ -89,7 +101,6 @@ namespace SYNKROAPP.VIEWMODEL
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public async Task CargarDetallesAlmacenes(Empreses empresa)
         {
@@ -105,8 +116,13 @@ namespace SYNKROAPP.VIEWMODEL
 
                 // ✅ Calcular el número total de zonas
                 NumeroDeZonas = almacenes.Sum(a => a.Zones?.Count ?? 0);
+
+                Movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(empresa.EmpresaID);
             }
+
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

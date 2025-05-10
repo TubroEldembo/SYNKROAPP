@@ -117,19 +117,19 @@
                                     <StackPanel>
                                         <TextBlock Text="Categoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
                                         <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}"
-                                                  Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                                  Width="140" Height="28"/>
                                     </StackPanel>
 
                                     <StackPanel>
                                         <TextBlock Text="Subcategoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
                                         <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}"
-                              Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                                  Width="140" Height="28" />
                                     </StackPanel>
 
                                     <StackPanel>
                                         <TextBlock Text="Estado" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
                                         <ComboBox ItemsSource="{Binding Estats}" SelectedItem="{Binding EstatSeleccionat}"
-                              Width="140" Height="28" Style="{StaticResource PrimaryComboBox}"/>
+                                                  Width="140" Height="28"/>
                                     </StackPanel>
                                 </StackPanel>
 

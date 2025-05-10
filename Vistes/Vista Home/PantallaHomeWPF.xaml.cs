@@ -1,6 +1,7 @@
 ﻿using Firebase.Auth;
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
+using SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace SYNKROAPP.Vistes.Vista_Home
         private bool isMenuVisible = false;
         private Empreses empresa;
 
+
         public PantallaHomeWPF(Usuaris usuari, FirebaseAuthLink auth, IDAO dao, Empreses empresa)
         {
             InitializeComponent();
@@ -51,6 +53,9 @@ namespace SYNKROAPP.Vistes.Vista_Home
             this.authLink = authLink;
             this.dao = dao;
             this.empresa = empresa;
+
+            BitmapImage logoUrl = dao.LoadImageFromUrl(empresa.FotoEmpresalUrl);
+            logoImageURL.Source = logoUrl;
 
             contentArea.Content = new VistaResumen(dao, empresa);
         }
@@ -74,6 +79,14 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
+            if (isMenuVisible)
+            {
+                isMenuVisible = false;
+                sliderBar.Visibility = Visibility.Collapsed;
+                overlay.Visibility = Visibility.Collapsed;
+            }
+
+            contentArea.Content = new VistaResumen(dao, empresa);
 
         }
 
@@ -116,7 +129,14 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnMercado_Click(object sender, RoutedEventArgs e)
         {
+            if (isMenuVisible)
+            {
+                isMenuVisible = false;
+                sliderBar.Visibility = Visibility.Collapsed;
+                overlay.Visibility = Visibility.Collapsed;
+            }
 
+            contentArea.Content = new PantallaEmpresasEnElMercadoWPF(dao, empresa);
         }
 
         private void btnComandas_Click(object sender, RoutedEventArgs e)
