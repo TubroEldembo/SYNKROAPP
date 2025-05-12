@@ -67,11 +67,6 @@ namespace SYNKROAPP.DAO
         {
             throw new NotImplementedException();
         }
-        public Task AddEmpresa(Empreses unaEmpresa)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task DeleteEmpresa(Empreses unaEmpresa)
         {
             throw new NotImplementedException();
@@ -85,8 +80,6 @@ namespace SYNKROAPP.DAO
         public async Task<Usuaris> GetUsuariByEmail(string targetEmail)
         {
             //try catch 
-
-
             CollectionReference colRef = db.Collection("Usuaris");
             Query query = colRef.WhereEqualTo("Email", targetEmail);
             QuerySnapshot snapshot = await query.GetSnapshotAsync();
@@ -310,65 +303,6 @@ namespace SYNKROAPP.DAO
             return zonasResultado;
         }
 
-
-        public async Task<bool> AddProducts2Zone(ProducteGeneral producteGeneral, DetallProducte detallProducte, ProductesInventari inventari)
-        {
-            try
-            {
-                // Validaciones iniciales
-                if (producteGeneral == null || inventari == null || detallProducte == null)
-                    throw new Exception("Datos del producto no válidos.");
-
-                if (string.IsNullOrEmpty(inventari.EmpresaID) ||
-                    string.IsNullOrEmpty(inventari.MagatzemID) ||
-                    string.IsNullOrEmpty(inventari.ZonaID))
-                    throw new Exception("Faltan IDs de Empresa, Magatzem o Zona.");
-
-                // Paso 1: Crear ProducteGeneral
-                DocumentReference productRef = await db.Collection("ProducteGeneral").AddAsync(producteGeneral);
-                string productID = productRef.Id;
-
-                // Paso 2: Agregar detall como subcolección del producto
-                detallProducte.ProducteID = productID;
-                await productRef.Collection("DetallProducte").AddAsync(detallProducte);
-
-                // Paso 3: Preparar Inventari con el ProducteID
-                inventari.ProducteID = productID;
-
-                // Paso 4: Verificar que la zona ya existe
-                DocumentReference zonaRef = db
-                    .Collection("Empreses").Document(inventari.EmpresaID)
-                    .Collection("Magatzems").Document(inventari.MagatzemID)
-                    .Collection("ZonesEmmagatzematge").Document(inventari.ZonaID);
-
-                DocumentSnapshot zonaSnapshot = await zonaRef.GetSnapshotAsync();
-                if (!zonaSnapshot.Exists)
-                {
-                    throw new Exception("La zona especificada no existe. No se puede añadir el producto.");
-                }
-
-                // Paso 5: Insertar el inventario como subcolección de esa zona
-                DocumentReference inventariRef = zonaRef
-                    .Collection("ProductesInventari")
-                    .Document(); // ID autogenerado
-
-                string inventariID = inventariRef.Id;
-                inventari.IDProducteInventari = inventariID;
-
-                await inventariRef.SetAsync(inventari);
-
-                // Paso 6: Añadir ID a la lista de productos de la zona
-                await zonaRef.UpdateAsync("Productes", FieldValue.ArrayUnion(inventariID));
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al agregar el producto: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-        }
-
         public async Task<List<ProductesInventari>> ProductosEn1Zona(ZonaEmmagatzematge zona)
         {
             DocumentReference zonaRef = db.Collection("Empreses").Document(zona.EmpresaID)
@@ -398,10 +332,9 @@ namespace SYNKROAPP.DAO
 
         public async Task<DocumentSnapshot> GetProducteGeneralPorID(string producteID)
         {
-            var docRef = db.Collection("ProducteGeneral").Document(producteID);
+            DocumentReference docRef = db.Collection("ProducteGeneral").Document(producteID);
             return await docRef.GetSnapshotAsync();
         }
-
 
         /// <summary>
         /// Se utiliza diccionario para luego a la hora de filtrar manualmente las subcategorias de un categoria,
@@ -648,11 +581,10 @@ namespace SYNKROAPP.DAO
         #endregion
 
         #region MOVIMIENTO DE PRODUCTOS
-        public async Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari producte)
+        public async Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari producte, bool productAlreadyExists = false)
         {
             // Sirve para hacer multiples operaciones a la vez, de esta manera no tendremos
             // que ir coleccion x coleccion obteniendo los datos.
-
 
             await db.RunTransactionAsync(async transaction =>
             {
@@ -684,7 +616,7 @@ namespace SYNKROAPP.DAO
                             .Document(movimentTraslado.ProducteInventariID);
 
                         destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
-                    break;
+                        break;
 
                     case TipusMoviment.Sortida:
                         // Solo leer la zona de origen
@@ -698,7 +630,7 @@ namespace SYNKROAPP.DAO
                             .Document(movimentTraslado.ProducteInventariID);
 
                         origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
-                    break;
+                        break;
 
                     case TipusMoviment.TrasllatIntern:
                         // Leer ambas zonas
@@ -722,7 +654,7 @@ namespace SYNKROAPP.DAO
 
                         origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
                         destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
-                    break;
+                        break;
                 }
 
                 // 2. DESPUÉS TODAS LAS ESCRITURAS (WRITES)
@@ -735,15 +667,35 @@ namespace SYNKROAPP.DAO
                 switch (movimentTraslado.Tipus)
                 {
                     case TipusMoviment.Entrada:
-                        // Actualizar zona destino
-                        ActualizarZonaEnTransaccion(
-                            transaction,
-                            producte,
-                            productoZonaDestinoRef,
-                            destinoSnapshot,
-                            movimentTraslado.ProducteInventariID,
-                            movimentTraslado.Quantitat,
-                            movimentTraslado.ZonaDestiID);
+                        // Solo actualizar cantidad si el producto ya existe
+                        if (productAlreadyExists)
+                        {
+                            if (destinoSnapshot.Exists)
+                            {
+                                Dictionary<string, object> productoData = destinoSnapshot.ToDictionary();
+                                int cantidadActual = Convert.ToInt32(productoData["Quantitat"]);
+                                int nuevaCantidad = cantidadActual + movimentTraslado.Quantitat;
+
+                                // Actualizamos solo el campo de cantidad
+                                transaction.Update(productoZonaDestinoRef, new Dictionary<string, object>
+                                {
+                                    { "Quantitat", nuevaCantidad }
+                                });
+                                    }
+                                    // No hacemos nada si el producto no existe, porque ya debería existir
+                        }
+                        else
+                        {
+                            // Comportamiento original - crear o actualizar
+                            ActualizarZonaEnTransaccion(
+                                transaction,
+                                producte,
+                                productoZonaDestinoRef,
+                                destinoSnapshot,
+                                movimentTraslado.ProducteInventariID,
+                                movimentTraslado.Quantitat,
+                                movimentTraslado.ZonaDestiID);
+                        }
                         break;
 
                     case TipusMoviment.Sortida:
@@ -826,6 +778,20 @@ namespace SYNKROAPP.DAO
 
                 // Creamos un nuevo documento para el producto en la zona
                 transaction.Set(productoZonaRef, nuevoProducto);
+
+                // Actualizar el array de IDs en el documento de la zona
+                DocumentReference zonaRef = db.Collection("Empreses")
+                    .Document(producte.EmpresaID)
+                    .Collection("Magatzems")
+                    .Document(producte.MagatzemID)
+                    .Collection("ZonesEmmagatzematge")
+                    .Document(zonaID);
+
+                transaction.Update(zonaRef, new Dictionary<string, object>
+                {
+                    { "Productes", FieldValue.ArrayUnion(producteGeneralID) }
+                });
+
             }
             else
             {
@@ -905,8 +871,98 @@ namespace SYNKROAPP.DAO
 
             return empresesAmbVenda;
         }
-    }
 
         #endregion
+
+        public async Task AddProductoGeneral(ProducteGeneral producto, DetallProducte detall)
+        {
+            DocumentReference productRef = await db.Collection("ProducteGeneral").AddAsync(producto);
+            string productID = productRef.Id;
+
+            // Paso 2: Agregar detall como subcolección del producto
+            detall.ProducteID = productID;
+            await productRef.Collection("DetallProducte").AddAsync(detall);
+        }
+
+        public async Task<List<ProducteAmbDetall>> GetProductosCatagalogoD1Empresa(string empresaID, bool soloEnVenta)
+        {
+            List<ProducteAmbDetall> productos = new List<ProducteAmbDetall>();
+
+            QuerySnapshot productesSnap = await db.Collection("ProducteGeneral").GetSnapshotAsync();
+
+            foreach (var producteDoc in productesSnap.Documents)
+            {
+                // Construir la consulta con los filtros dinámicos
+                var detallRef = producteDoc.Reference.Collection("DetallProducte")
+                                    .WhereEqualTo("EmpresaID", empresaID);
+
+                if (soloEnVenta)
+                    detallRef = detallRef.WhereEqualTo("EnVenda", true);
+
+                QuerySnapshot detallSnap = await detallRef
+                    .Limit(1)
+                    .GetSnapshotAsync();
+
+                if (detallSnap.Count > 0)
+                {
+                    ProducteGeneral producte = producteDoc.ConvertTo<ProducteGeneral>();
+                    producte.ProducteID = producteDoc.Id;
+
+                    DetallProducte detall = detallSnap.Documents.FirstOrDefault().ConvertTo<DetallProducte>();
+
+                    productos.Add(new ProducteAmbDetall
+                    {
+                        Producte = producte,
+                        EmpresaID = detall.EmpresaID,
+                        Preu = detall.Preu
+                    });
+                }
+            }
+
+            return productos;
+        }
+        
+        
+
+        public async Task<ProductesInventari> GetProductoInventario(string empresaID, string magatzemPertanyent, string zonaEmmagatzematgeID, string inventariID)
+        {
+            DocumentReference inventarioRef = db
+              .Collection("Empreses").Document(empresaID)
+              .Collection("Magatzems").Document(magatzemPertanyent)
+              .Collection("ZonesEmmagatzematge").Document(zonaEmmagatzematgeID)
+              .Collection("ProductesInventari").Document(inventariID);
+
+            DocumentSnapshot snapshot = await inventarioRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                return snapshot.ConvertTo<ProductesInventari>();
+            }
+
+            return null;
+        }
+
+        public async Task<string> CheckProductInZona(string productoID, string empresaID, string magazemID, string zonaID)
+        {
+            DocumentReference zonaRef = db
+            .Collection("Empreses").Document(empresaID)
+            .Collection("Magatzems").Document(magazemID)
+            .Collection("ZonesEmmagatzematge").Document(zonaID);
+
+            Query query = zonaRef
+                .Collection("ProductesInventari")
+                .WhereEqualTo("ProducteID", productoID);
+
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+            if (querySnapshot.Documents.Count > 0)
+            {
+                var existingProduct = querySnapshot.Documents.First();
+                return existingProduct.Id;
+            }
+
+            return null;
+        }
+    }
 
 }

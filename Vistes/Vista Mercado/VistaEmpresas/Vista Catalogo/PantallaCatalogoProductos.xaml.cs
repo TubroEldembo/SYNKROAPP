@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SYNKROAPP.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,16 @@ namespace SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas.Vista_Catalogo
     /// </summary>
     public partial class PantallaCatalogoProductos : Window
     {
-        public PantallaCatalogoProductos()
+        public PantallaCatalogoProductos(CatalogoProductosViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
+            _ = vm.CargarProductos();
+        }
+
+        private void CerrarCarrito_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

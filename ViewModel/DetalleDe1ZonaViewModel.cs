@@ -184,7 +184,7 @@ namespace SYNKROAPP.ViewModel
             List<ProductesInventari> productesInventari = await _dao.ProductosEn1Zona(_zonaSeleccionada);
 
             Productes.Clear();
-            foreach (var item in productesInventari)
+            foreach (ProductesInventari item in productesInventari)
             {
                 // Obtener el producto general por ID
                 DocumentSnapshot docSnap = await _dao.GetProducteGeneralPorID(item.ProducteID); // Este método lo creas abajo

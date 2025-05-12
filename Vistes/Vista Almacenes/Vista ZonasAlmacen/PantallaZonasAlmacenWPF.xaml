@@ -126,18 +126,6 @@
                                 <DataGridTextColumn Header="NOMBRE DE ZONA" Binding="{Binding Nom}" Width="1.5*"/>
                                 <DataGridTextColumn Header="CAPACIDAD" Binding="{Binding Capacitat}" Width="*"/>
                                 <DataGridTextColumn Header="Nº PRODUCTOS" Binding="{Binding NProductos}" Width="*"/>
-                                <DataGridTemplateColumn Header="ACCIONES" Width="200">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Content="Editar" Style="{StaticResource EditButton}" Margin="0,0,8,0" 
-                                                        Name="btnEditar" Click="btnEditar_Click" Width="80"/>
-                                                <Button Content="Eliminar" Style="{StaticResource DangerButton}" 
-                                                        Name="btnEliminar" Click="btnEliminar_Click" Width="80"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

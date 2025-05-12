@@ -1,4 +1,5 @@
 ﻿using SYNKROAPP.ViewModel;
+using SYNKROAPP.VIEWMODEL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
     public partial class PantallaAgregarProductoA1ZonaWPF : Window
     {
         private CrearProductoEn1ZonaViewModel viewModelAddProducts;
+        private CrearEntradaProductoExistenteViewModel viewModelProductosExistentes;
 
         public PantallaAgregarProductoA1ZonaWPF(CrearProductoEn1ZonaViewModel viewModelAddProducts)
         {
@@ -30,22 +32,29 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
             Loaded += PantallaAgregarProductoA1ZonaWPF_Loaded;
         }
 
+        public PantallaAgregarProductoA1ZonaWPF(CrearEntradaProductoExistenteViewModel viewModelProductosExistentes)
+        {
+            InitializeComponent();
+            this.viewModelProductosExistentes = viewModelProductosExistentes;
+            this.DataContext = viewModelProductosExistentes;
+            Loaded += PantallaAgregarProductoA1ZonaWPF_Loaded;
+        }
+
+
         private async void PantallaAgregarProductoA1ZonaWPF_Loaded(object sender, RoutedEventArgs e)
         {
-            await viewModelAddProducts.InicializarCamposAsync();
+            if (viewModelAddProducts != null)
+            {
+                await viewModelAddProducts.InicializarCamposAsync();
+            }
+            else if (viewModelProductosExistentes != null)
+            {
+                await viewModelProductosExistentes.InicializarAsync();
+            }
         }
+
 
         private void btnRegresar_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnAgregarCategoria_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -62,12 +71,16 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
 
         private async void btnGuardarProducto_Click(object sender, RoutedEventArgs e)
         {
-            bool productoGuardado = await viewModelAddProducts.GuardarProductoEnZona();
-            if (productoGuardado)
+
+            if (viewModelAddProducts != null)
             {
-                // Puedes cerrar la ventana o mostrar algo adicional
-                this.Close();
+                await viewModelAddProducts.GuardarEntradaAsync();
             }
+            else if (viewModelProductosExistentes != null)
+            {
+                await viewModelProductosExistentes.GuardarEntradaAsync();
+            }
+
         }
 
         private void cmbAlmacen_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -75,14 +88,19 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
 
         }
 
-        private async void btnSeleccionarImagen_Click(object sender, RoutedEventArgs e)
+        private void btnBuscarProducto_Click(object sender, RoutedEventArgs e)
         {
-            viewModelAddProducts.SeleccionarImagen();
+
         }
 
-        private void btnEliminarImagen_Click(object sender, RoutedEventArgs e)
+        private void cmbCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            viewModelAddProducts.EliminarImagen();
+
+        }
+
+        private void dgProductos_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

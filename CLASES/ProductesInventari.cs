@@ -50,43 +50,4 @@ namespace SYNKROAPP.CLASES
             EmpresaID = empresaID;
         }
     }
-
-
-    [FirestoreData]
-    public class QuantitatZona
-    {
-        [FirestoreProperty]
-        public string ZonaID { get; set; }
-
-        [FirestoreProperty]
-        public List<EstatProducteQuantitat> EstatProducteQuantitats { get; set; }
-
-        public QuantitatZona(string zonaID, List<EstatProducteQuantitat> estatProducteQuantitats)
-        {
-            ZonaID = zonaID;
-            EstatProducteQuantitats = estatProducteQuantitats ?? new List<EstatProducteQuantitat>();
-        }
-    }
-
-    [FirestoreData]
-    public class EstatProducteQuantitat
-    {
-        [FirestoreProperty]
-        public string Estat { get; set; }
-
-        [FirestoreProperty]
-        public int Quantitat { get; set; }
-
-        [FirestoreProperty]
-        public List<string> Unidades { get; set; }
-
-        public EstatProducteQuantitat() { } // Constructor vacío para Firestore
-
-        public EstatProducteQuantitat(string estat, int quantitat, List<string> unidades)
-        {
-            Estat = estat;
-            Quantitat = quantitat;
-            Unidades = unidades ?? new List<string>();
-        }
-    }
 }

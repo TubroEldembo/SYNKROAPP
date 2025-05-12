@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.DAO
@@ -21,7 +22,6 @@ namespace SYNKROAPP.DAO
 
         //EMPRESA:
         Task RegistrarUsuariAmbEmpresa(Usuaris usuari, Empreses empresa);
-        Task AddEmpresa(Empreses unaEmpresa);
         Task UpdateEmpresa(Empreses unaEmpresa);
         Task DeleteEmpresa(Empreses unaEmpresa);
 
@@ -38,13 +38,9 @@ namespace SYNKROAPP.DAO
         Task<List<ProductesInventari>> ProductosEn1Zona(ZonaEmmagatzematge zona);
         Task<List<ZonaProductoViewModel>> ObtenerZonasDeProducto(string producteID);
 
-
-
-
         //AGREGAR PRODUCTS:
-        Task <bool> AddProducts2Zone(ProducteGeneral producteGeneral, DetallProducte detallProducte, ProductesInventari inventari);
         Task<DocumentSnapshot> GetProducteGeneralPorID(string producteID);
-        Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari inventari);
+        Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari inventari, bool productAlreadyExists);
 
 
         //CARGAR CATEGORIAS Y SUBCATEGORIAS (GENERICAS Y PERSONALIZADAS):
@@ -59,8 +55,6 @@ namespace SYNKROAPP.DAO
         Task<Empreses> GetEmpresaByID(string empresaID);
         Task<Dictionary<string, int>> ObtenerProductosEnVentaPorCategoria(string empresaID);
 
-
-
         // STORAGE 
         Task<string> StoreImage(string localPath, string nameToStore);
         BitmapImage LoadImageFromUrl(string url);
@@ -69,12 +63,15 @@ namespace SYNKROAPP.DAO
         Task<DocumentSnapshot> GetProducteInventariPorID(string producteID);
         Task<List<MovimentsInventari>> ObtenerMovimientosInventarioPorEmpresa(string empresaID);
         Task<List<string>> GetEmpresesAmbProductesEnVenda();
+        Task<List<ProducteAmbDetall>> GetProductosCatagalogoD1Empresa(string empresaID, bool soloEnVenta);
 
+        //POST
+        Task AddProductoGeneral(ProducteGeneral producto, DetallProducte detall);
+        Task<ProductesInventari> GetProductoInventario(string empresaID, string magatzemPertanyent, string zonaEmmagatzematgeID, string inventariID);
+        Task<string> CheckProductInZona(string productoID, string empresaID, string magazemID, string zonaID);
 
+        #region IMPORTAR PRODUCTOS
 
-
-
-
-
+        #endregion
     }
 }

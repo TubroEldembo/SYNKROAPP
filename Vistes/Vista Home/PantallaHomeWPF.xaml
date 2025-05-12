@@ -6,9 +6,88 @@
       xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Home"
       mc:Ignorable="d" 
       d:DesignHeight="832" d:DesignWidth="1280"
-      Title="PantallaHomeWPF"
-      Background="#6F7ABC"
+      Title="SYNKRO APP"
       WindowState="Maximized" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
+
+    <!-- Recursos globales para la ventana -->
+    <Window.Resources>
+        <!-- Estilo para los botones del menú -->
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#002C5F"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,12"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{TemplateBinding Tag}" 
+                                           Grid.Column="0"
+                                           FontSize="18" 
+                                           Margin="0,0,12,0"
+                                           VerticalAlignment="Center"/>
+                                <ContentPresenter Grid.Column="1"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4A5793"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#6F7ABC"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Animación para deslizar el menú -->
+        <Storyboard x:Key="SlideInMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" 
+                                From="-250,0,0,0" To="0,0,0,0" 
+                                Duration="0:0:0.3">
+                <ThicknessAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut"/>
+                </ThicknessAnimation.EasingFunction>
+            </ThicknessAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="SlideOutMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" 
+                                From="0,0,0,0" To="-250,0,0,0" 
+                                Duration="0:0:0.3">
+                <ThicknessAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn"/>
+                </ThicknessAnimation.EasingFunction>
+            </ThicknessAnimation>
+        </Storyboard>
+    </Window.Resources>
+
+    <!-- Fondo con gradiente para toda la aplicación -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -16,60 +95,155 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Botón para mostrar/ocultar menú con mejor diseño -->
         <Button Name="btnToggleSlider"
-            Content="☰"
-            Width="30"
-            Height="30"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Margin="10"
-            Click="btnToggleSlider_Click"
-            Background="Transparent"
-            BorderThickness="0"
-            FontSize="20"
-            Grid.Column="0"/>
+                Grid.Column="1"
+                Panel.ZIndex="100"
+                Width="45" 
+                Height="45"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="15"
+                Click="btnToggleSlider_Click"
+                Background="#002C5F"
+                Foreground="White"
+                FontSize="22"
+                FontWeight="Bold"
+                Content="☰">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+            <Button.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="10" ShadowDepth="1" Opacity="0.4"/>
+            </Button.Effect>
+        </Button>
 
-        <!-- Menu lateral -->
-        <Border
-            x:Name="sliderBar"
-            Width="150"
-            Background="#002C5F"
-            CornerRadius="6"
-            BorderBrush="Black"
-            BorderThickness="1"
-            Grid.Column="0"
-            Margin="0"
-            Visibility="Collapsed">
+        <!-- Menu lateral con diseño mejorado -->
+        <Border x:Name="sliderBar"
+                Width="250"
+                Grid.Column="0"
+                Margin="-250,0,0,0"
+                Background="#002C5F"
+                CornerRadius="0,20,20,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <DockPanel LastChildFill="True" Margin="12">
+                <!-- Cabecera del menú -->
+                <Border Grid.Row="0" 
+                        Background="#002C5F" 
+                        CornerRadius="0,20,0,30"
+                        Height="160">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Border Width="80" 
+                                    Height="80" 
+                                    Background="White" 
+                                    CornerRadius="40" 
+                                    Margin="0,0,0,10">
+                                <Image x:Name="logoImageURL" 
+                                       Stretch="Uniform"
+                                       Margin="10"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
-                <StackPanel DockPanel.Dock="Top" Height="100" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <Image x:Name="logoImageURL" Width="80" Height="80" />
-                </StackPanel>
+                <!-- Opciones del menú -->
+                <ScrollViewer Grid.Row="1" 
+                              VerticalScrollBarVisibility="Auto"
+                              Margin="0,15">
+                    <StackPanel Margin="15,5">
+                        <!-- Sección Principal -->
+                        <TextBlock Text="PRINCIPAL" 
+                                   Foreground="White" 
+                                   FontSize="12" 
+                                   FontWeight="SemiBold" 
+                                   Margin="10,0,0,5"/>
+                        <Button Tag="🏠" 
+                                Content="Inicio" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnInicio_Click"/>
 
-                <StackPanel VerticalAlignment="Center" Margin="10,20,10,10" HorizontalAlignment="Left" Orientation="Vertical">
-                    <Button Tag="🏠" Content="Inicio" Style="{StaticResource MenuButtonStyle}" Click="btnInicio_Click"/>
-                    <Button Tag="📦" Content="Registrar Artículos" Style="{StaticResource MenuButtonStyle}" Click="btnRegistrarArticulos_Click"/>
-                    <Button Tag="📦" Content="Importar Productos" Style="{StaticResource MenuButtonStyle}" Click="btnImportar_Click"/>
-                    <Button Tag="📄" Content="Almacenes" Style="{StaticResource MenuButtonStyle}" Click="btnAlmacenes_Click"/>
-                    <Button Tag="📄" Content="Movimientos" Style="{StaticResource MenuButtonStyle}" Click="btnMovimientos_Click"/>
-                    <Button Tag="🛒" Content="Mercado" Style="{StaticResource MenuButtonStyle}" Click="btnMercado_Click"/>
-                    <Button Tag="🧾" Content="Comandas" Style="{StaticResource MenuButtonStyle}" Click="btnComandas_Click"/>
-                    <Button Tag="⚙️" Content="Configuración" Style="{StaticResource MenuButtonStyle}" Click="btnConfiguracion_Click"/>
+                        <!-- Sección Productos -->
+                        <TextBlock Text="PRODUCTOS" 
+                                   Foreground="White" 
+                                   FontSize="12" 
+                                   FontWeight="SemiBold" 
+                                   Margin="10,15,0,5"/>
+                        <Button Tag="📦" 
+                                Content="Registrar Artículos" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnRegistrarArticulos_Click"/>
+                        <Button Tag="📥" 
+                                Content="Importar Productos" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnImportar_Click"/>
 
-                </StackPanel>
+                        <!-- Sección Inventario -->
+                        <TextBlock Text="INVENTARIO" 
+                                   Foreground="White" 
+                                   FontSize="12" 
+                                   FontWeight="SemiBold" 
+                                   Margin="10,15,0,5"/>
+                        <Button Tag="🏢" 
+                                Content="Almacenes" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnAlmacenes_Click"/>
+                        <Button Tag="🔄" 
+                                Content="Movimientos" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnMovimientos_Click"/>
 
-            </DockPanel>
+                        <!-- Sección Ventas -->
+                        <TextBlock Text="VENTAS" 
+                                   Foreground="White" 
+                                   FontSize="12" 
+                                   FontWeight="SemiBold" 
+                                   Margin="10,15,0,5"/>
+                        <Button Tag="🛒" 
+                                Content="Mercado" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnMercado_Click"/>
+                        <Button Tag="🧾" 
+                                Content="Comandas" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnComandas_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
 
+                <!-- Pie del menú -->
+                <Border Grid.Row="2" 
+                        Background="#F8F9FE" 
+                        CornerRadius="15" 
+                        Margin="15,0,15,15"
+                        Padding="10">
+                    <Button Tag="⚙️" 
+                            Content="Configuración" 
+                            Style="{StaticResource MenuButtonStyle}" 
+                            Click="btnConfiguracion_Click"/>
+                </Border>
+            </Grid>
         </Border>
 
+        <!-- Contenido principal -->
         <Grid Grid.Column="1" Margin="10">
+            <!-- Overlay para capturar clics fuera del menú -->
             <Rectangle x:Name="overlay"
-                       Fill="Transparent"
+                       Fill="#01000000"
                        Visibility="Collapsed"
                        MouseDown="overlay_MouseDown"
-                       Panel.ZIndex="1"/>
-            <ContentControl x:Name="contentArea" Panel.ZIndex="0"/>
+                       Panel.ZIndex="99"/>
+
+            <!-- Área de contenido -->
+            <ContentControl x:Name="contentArea" 
+                            Panel.ZIndex="0" 
+                            Margin="40,15,15,15"/>
         </Grid>
     </Grid>
 </Window>

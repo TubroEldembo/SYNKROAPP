@@ -1,10 +1,13 @@
 ﻿using GalaSoft.MvvmLight.Command;
+using Google.Cloud.Firestore;
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using static Steema.TeeChart.Styles.SquarifiedMap;
 
 namespace SYNKROAPP.ViewModel
 {
@@ -17,9 +20,7 @@ namespace SYNKROAPP.ViewModel
         {
             this.dao = dao;
             this.empresa = empresa;
-
-            // Comando para volver a la pantalla anterior
-            VolverCommand = new RelayCommand(Volver);
+            ProductosFiltrados = new ObservableCollection<ProducteGeneral>();
         }
 
         private ObservableCollection<ProducteGeneral> _productosFiltrados;
@@ -29,22 +30,21 @@ namespace SYNKROAPP.ViewModel
             set { _productosFiltrados = value; OnPropertyChanged(nameof(ProductosFiltrados)); }
         }
 
-        private string _textoBusqueda;
-        public string TextoBusqueda
+        public async Task CargarProductos()
         {
-            get => _textoBusqueda;
-            set { _textoBusqueda = value; OnPropertyChanged(nameof(TextoBusqueda)); }
+            ProductosFiltrados.Clear();
+
+            List<ProducteAmbDetall> productesAmbDetall = await dao.GetProductosCatagalogoD1Empresa(empresa.EmpresaID, true);
+
+            foreach (var item in productesAmbDetall)
+            {
+                ProductosFiltrados.Add(item.Producte);
+            }
+
+            OnPropertyChanged(nameof(ProductosFiltrados));
         }
 
-        // Comando Volver
-        public ICommand VolverCommand { get; }
 
-        private void Volver()
-        {
-            // Aquí puedes navegar a la pantalla anterior
-            // En el caso de WPF, puedes usar NavigationService si estás en un contexto de navegación
-            MessageBox.Show("Volviendo a la pantalla anterior...");
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string nombre)

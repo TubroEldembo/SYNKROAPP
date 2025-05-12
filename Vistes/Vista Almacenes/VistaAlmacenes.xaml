@@ -252,35 +252,6 @@
                             <DataGridTextColumn Header="ALMACÉN" Binding="{Binding NomMagatzem}" Width="*"/>
                             <DataGridTextColumn Header="UBICACIÓN" Binding="{Binding Ubicacio}" Width="*"/>
                             <DataGridTextColumn Header="ZONAS" Binding="{Binding NumeroDeZonas}" Width="0.5*"/>
-                            <DataGridTemplateColumn Header="ACCIONES" Width="0.6*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Content="👁️" Width="35" Height="30" Margin="0,0,5,0" Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0">
-                                                <Button.Resources>
-                                                    <Style TargetType="{x:Type Border}">
-                                                        <Setter Property="CornerRadius" Value="4"/>
-                                                    </Style>
-                                                </Button.Resources>
-                                            </Button>
-                                            <Button Content="✏️" Width="35" Height="30" Margin="5,0" Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0">
-                                                <Button.Resources>
-                                                    <Style TargetType="{x:Type Border}">
-                                                        <Setter Property="CornerRadius" Value="4"/>
-                                                    </Style>
-                                                </Button.Resources>
-                                            </Button>
-                                            <Button Content="❌" Width="35" Height="30" Margin="5,0,0,0" Background="#FFF0F0" Foreground="#D04A4A" BorderThickness="0">
-                                                <Button.Resources>
-                                                    <Style TargetType="{x:Type Border}">
-                                                        <Setter Property="CornerRadius" Value="4"/>
-                                                    </Style>
-                                                </Button.Resources>
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

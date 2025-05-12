@@ -2,6 +2,7 @@
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas;
+using SYNKROAPP.Vistes.Vista_Productos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -30,7 +32,7 @@ namespace SYNKROAPP.Vistes.Vista_Home
         private IDAO dao;
         private bool isMenuVisible = false;
         private Empreses empresa;
-
+        private bool isMenuOpen = false;
 
         public PantallaHomeWPF(Usuaris usuari, FirebaseAuthLink auth, IDAO dao, Empreses empresa)
         {
@@ -79,11 +81,10 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
-            if (isMenuVisible)
+
+            if (isMenuOpen)
             {
-                isMenuVisible = false;
-                sliderBar.Visibility = Visibility.Collapsed;
-                overlay.Visibility = Visibility.Collapsed;
+                ToggleMenu();
             }
 
             contentArea.Content = new VistaResumen(dao, empresa);
@@ -92,7 +93,12 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnRegistrarArticulos_Click(object sender, RoutedEventArgs e)
         {
+            if (isMenuOpen)
+            {
+                ToggleMenu();
+            }
 
+            contentArea.Content = new VistaProductos(dao, empresa);
         }
 
         private void btnImportar_Click(object sender, RoutedEventArgs e)
@@ -102,11 +108,9 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnAlmacenes_Click(object sender, RoutedEventArgs e)
         {
-            if (isMenuVisible)
+            if (isMenuOpen)
             {
-                isMenuVisible = false;
-                sliderBar.Visibility = Visibility.Collapsed;
-                overlay.Visibility = Visibility.Collapsed;
+                ToggleMenu();
             }
 
             var vista = new Vista_Almacenes.VistaAlmacenes(dao, empresa);
@@ -129,11 +133,9 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnMercado_Click(object sender, RoutedEventArgs e)
         {
-            if (isMenuVisible)
+            if (isMenuOpen)
             {
-                isMenuVisible = false;
-                sliderBar.Visibility = Visibility.Collapsed;
-                overlay.Visibility = Visibility.Collapsed;
+                ToggleMenu();
             }
 
             contentArea.Content = new PantallaEmpresasEnElMercadoWPF(dao, empresa);
@@ -151,16 +153,55 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnToggleSlider_Click(object sender, RoutedEventArgs e)
         {
-            isMenuVisible = !isMenuVisible;
-            sliderBar.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
-            overlay.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
-        }
+            //isMenuVisible = !isMenuVisible;
+            //sliderBar.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
+            //overlay.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
 
+            ToggleMenu();
+        }
         private void overlay_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            isMenuVisible = false;
-            sliderBar.Visibility = Visibility.Collapsed;
-            overlay.Visibility = Visibility.Collapsed;
+            // Cerrar el menú si se hace clic fuera de él
+            if (isMenuOpen)
+            {
+                ToggleMenu();
+            }
+        }
+
+        private void ToggleMenu()
+        {
+            if (isMenuOpen)
+            {
+                // Cerrar menú
+                Storyboard sb = this.FindResource("SlideOutMenu") as Storyboard;
+                if (sb != null)
+                {
+                    sb.Begin(sliderBar);
+                }
+
+                // Ocultar overlay después de la animación
+                overlay.Visibility = Visibility.Collapsed;
+                isMenuOpen = false;
+
+                // Cambiar el contenido del botón
+                btnToggleSlider.Content = "☰";
+            }
+            else
+            {
+                // Abrir menú
+                Storyboard sb = this.FindResource("SlideInMenu") as Storyboard;
+                if (sb != null)
+                {
+                    sb.Begin(sliderBar);
+                }
+
+                // Mostrar overlay
+                overlay.Visibility = Visibility.Visible;
+                isMenuOpen = true;
+
+                // Cambiar el contenido del botón
+                btnToggleSlider.Content = "✕";
+            }
         }
     }
 }

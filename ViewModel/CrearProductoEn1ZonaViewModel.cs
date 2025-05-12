@@ -26,6 +26,7 @@ namespace SYNKROAPP.ViewModel
         {
             this._dao = dao;
             this.zona = zona;
+            ListaProductos = new ObservableCollection<ProducteAmbDetall>();
         }
 
         private string _nomZona;
@@ -56,40 +57,24 @@ namespace SYNKROAPP.ViewModel
             set { _sku = value; OnPropertyChanged(nameof(SKU)); }
         }
 
-        private bool _esNuevo;
-        public bool EsNuevo
-        {
-            get => _esNuevo;
-            set { _esNuevo = value; OnPropertyChanged(nameof(EsNuevo)); }
-        }
-
-        private bool _esSeminuevo;
-        public bool EsSeminuevo
-        {
-            get => _esSeminuevo;
-            set { _esSeminuevo = value; OnPropertyChanged(nameof(EsSeminuevo)); }
-        }
-
-        private bool _estaEnVenta;
-        public bool EstaEnVenta
-        {
-            get => _estaEnVenta;
-            set { _estaEnVenta = value; OnPropertyChanged(nameof(EstaEnVenta)); }
-        }
-
-        private double _precioProducto;
-        public double PrecioProducto
-        {
-            get => _precioProducto;
-            set { _precioProducto = value; OnPropertyChanged(nameof(PrecioProducto)); }
-        }
-
         private int _cantidadInicial;
-        public int CantidadInicial
+        public int CantidadAIngresar
         {
             get => _cantidadInicial;
-            set { _cantidadInicial = value; OnPropertyChanged(nameof(CantidadInicial)); }
+            set { _cantidadInicial = value; OnPropertyChanged(nameof(CantidadAIngresar)); }
         }
+
+        private ProducteAmbDetall _productoSeleccionado;
+        public ProducteAmbDetall ProductoSeleccionado
+        {
+            get => _productoSeleccionado;
+            set
+            {
+                _productoSeleccionado = value;
+                OnPropertyChanged(nameof(ProductoSeleccionado));
+            }
+        }
+
 
         public ObservableCollection<string> ListaCategorias { get; set; } = new ObservableCollection<string>();
         private string _categoriaSeleccionada;
@@ -134,19 +119,17 @@ namespace SYNKROAPP.ViewModel
         }
 
         public ObservableCollection<string> ListaZonas { get; set; } = new ObservableCollection<string>();
-        private string _zonaSeleccionada;
-        public string ZonaSeleccionada
+        private ZonaEmmagatzematge _zonaSeleccionada;
+        public ZonaEmmagatzematge ZonaSeleccionada
         {
             get => _zonaSeleccionada;
-            set { _zonaSeleccionada = value; OnPropertyChanged(nameof(ZonaSeleccionada)); }
+            set
+            {
+                _zonaSeleccionada = value;
+                OnPropertyChanged(nameof(ZonaSeleccionada));
+            }
         }
 
-        private string _rutaImagenLocal;
-        public string RutaImagenLocal
-        {
-            get => _rutaImagenLocal;
-            set { _rutaImagenLocal = value; OnPropertyChanged(nameof(RutaImagenLocal)); }
-        }
 
         private ImageSource _imagenProducto;
         public ImageSource ImagenProducto
@@ -155,11 +138,23 @@ namespace SYNKROAPP.ViewModel
             set { _imagenProducto = value; OnPropertyChanged(nameof(ImagenProducto)); }
         }
 
-        private bool _tieneImagen;
-        public bool TieneImagen
+
+        #region Productos
+
+        public ObservableCollection<ProducteAmbDetall> ListaProductos { get; set; }
+
+        private ObservableCollection<ProducteAmbDetall> _productosFiltrados;
+        public ObservableCollection<ProducteAmbDetall> ProductosFiltrados
         {
-            get => _tieneImagen;
-            set { _tieneImagen = value; OnPropertyChanged(nameof(TieneImagen)); }
+            get => _productosFiltrados;
+            set { _productosFiltrados = value; OnPropertyChanged(nameof(ProductosFiltrados)); }
+        }
+
+        private string _textoBusqueda;
+        public string TextoBusqueda
+        {
+            get => _textoBusqueda;
+            set { _textoBusqueda = value; OnPropertyChanged(nameof(TextoBusqueda)); FiltrarProductos(); }
         }
 
         public async Task InicializarCamposAsync()
@@ -174,7 +169,7 @@ namespace SYNKROAPP.ViewModel
                 ListaZonas.Add(zona.ZonaEmmagatzematgeID);
 
                 AlmacenSeleccionado = zona.MagatzemPertanyent;
-                ZonaSeleccionada = zona.ZonaEmmagatzematgeID;
+                ZonaSeleccionada = zona;
 
                 // Genéricas
                 var (categoriasGenericas, subcategoriasGenericas) = await _dao.ObtenirCategoriesGeneriques();
@@ -209,6 +204,8 @@ namespace SYNKROAPP.ViewModel
                         }
                     }
                 }
+
+                CargarDatosIniciales();
             }
             catch (Exception ex)
             {
@@ -216,61 +213,173 @@ namespace SYNKROAPP.ViewModel
             }
         }
 
-        public async Task<bool> GuardarProductoEnZona()
+        private async void CargarDatosIniciales()
         {
-            if (string.IsNullOrWhiteSpace(NombreProducto) || string.IsNullOrWhiteSpace(SKU) || PrecioProducto <= 0 || CantidadInicial < 0)
+            try
             {
-                MessageBox.Show("Por favor, complete todos los campos requeridos correctamente.", "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var (categoriasGenericas, subcategoriasGenericas) = await _dao.ObtenirCategoriesGeneriques();
+
+                foreach (var cat in categoriasGenericas)
+                {
+                    ListaCategorias.Add(cat.Nom);
+                    _mapCategoriaNombreToID[cat.Nom] = cat.CategoriaID;
+
+                    if (subcategoriasGenericas.TryGetValue(cat.CategoriaID, out var subs))
+                    {
+                        _diccionarioSubcategorias[cat.Nom] = subs.Select(s => s.Nom).ToList();
+                        foreach (var sub in subs)
+                        {
+                            _mapSubcategoriaNombreToID[sub.Nom] = sub.SubCategoriaID;
+                        }
+                    }
+                }
+
+                List<ProducteAmbDetall> productos = await _dao.GetProductosCatagalogoD1Empresa(zona.EmpresaID, false); // deberás implementar este método
+
+                foreach (ProducteAmbDetall prod in productos)
+                {
+                    BitmapImage bitmap = _dao.LoadImageFromUrl(prod.Producte.ImatgeURL);
+
+                    ListaProductos.Add(new ProducteAmbDetall
+                    {
+                        Producte = prod.Producte,
+                        Cantidad = prod.Cantidad,
+                        Preu = prod.Preu,
+                        ImagenProducto = bitmap,
+
+                    });
+                }
+
+                ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(ListaProductos);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error cargando datos: " + ex.Message);
+            }
+        }
+
+        private void FiltrarProductos()
+        {
+
+        }
+
+        #endregion
+
+        //public async Task<bool> GuardarProductoAsync()
+        //{
+        //    bool productoGuardado = false;
+        //    if (CantidadAIngresar <= 0 || string.IsNullOrWhiteSpace(ZonaSeleccionada?.ZonaEmmagatzematgeID) || ProductoSeleccionado == null)
+        //    {
+        //        MessageBox.Show("Complete los campos correctamente.");
+        //        return false;
+        //    }
+        //    try
+        //    {
+        //        var zona = ZonaSeleccionada;
+        //        // Crear el inventario con los detalles del producto seleccionado
+        //        ProductesInventari inventari = new ProductesInventari
+        //        {
+        //            ProducteID = ProductoSeleccionado.Producte.ProducteID,
+        //            EmpresaID = ZonaSeleccionada.EmpresaID,
+        //            Quantitat = CantidadAIngresar,
+        //            Estat = "Nuevo", // O el estado que corresponda
+        //            ZonaID = zona.ZonaEmmagatzematgeID,
+        //            MagatzemID = zona.MagatzemPertanyent,
+        //            CodiReferencia = ProductoSeleccionado.Producte.SKU
+        //        };
+        //        // Guardar el inventario en la zona
+        //        string inventariID = await _dao.AddInventariToZona(inventari);
+        //        if (!string.IsNullOrEmpty(inventariID))
+        //        {
+        //            inventari.IDProducteInventari = inventariID;
+        //            // Crear el movimiento de inventario
+        //            MovimentsInventari moviment = new MovimentsInventari
+        //            {
+        //                ProducteInventariID = inventariID,
+        //                EmpresaIDOrigen = ZonaSeleccionada.EmpresaID,
+        //                EmpresaIDDesti = ZonaSeleccionada.EmpresaID,
+        //                MagatzemIDOrigen = zona.MagatzemPertanyent,
+        //                MagatzemIDDesti = zona.MagatzemPertanyent,
+        //                ZonaOrigenID = zona.ZonaEmmagatzematgeID,
+        //                ZonaDestiID = zona.ZonaEmmagatzematgeID,
+        //                Tipus = TipusMoviment.Entrada,
+        //                Quantitat = CantidadAIngresar,
+        //                Data = DateTime.UtcNow,
+        //                Notes = "Entrada inicial del producto"
+        //            };
+        //            // Pasamos true para indicar que el producto ya existe en el inventario
+        //            await _dao.GuardarMovimientoInventariAsync(moviment, inventari, true);
+        //            productoGuardado = true;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Error al guardar el producto: {ex.Message}");
+        //    }
+        //    return productoGuardado;
+        //}
+
+        public async Task<bool> GuardarEntradaAsync()
+        {
+            bool inventarioAgregado = false;
+            if (CantidadAIngresar <= 0 || string.IsNullOrWhiteSpace(ZonaSeleccionada?.ZonaEmmagatzematgeID))
+            {
+                MessageBox.Show("Complete los campos correctamente.");
                 return false;
             }
 
             try
             {
-                string urlImagen = null;
-                if (!string.IsNullOrWhiteSpace(RutaImagenLocal) && File.Exists(RutaImagenLocal)) 
+                var zona = ZonaSeleccionada;
+                string inventariID;
+                bool productExists;
+                ProductesInventari inventari;
+
+                // Primero verificamos si el producto ya existe en esta zona
+                inventariID = await _dao.CheckProductInZona(
+                    ProductoSeleccionado.Producte.ProducteID,
+                    ZonaSeleccionada.EmpresaID,
+                    zona.MagatzemPertanyent,
+                    zona.ZonaEmmagatzematgeID);
+
+                productExists = !string.IsNullOrEmpty(inventariID);
+
+                // Si no existe, creamos un nuevo registro de inventario
+                if (!productExists)
                 {
-                    string nombreArchivo = Path.GetFileName(RutaImagenLocal);
-                    string nombreFirebase = $"{SKU}_{NombreProducto}.jpg";
-                    urlImagen = await _dao.StoreImage(RutaImagenLocal, nombreFirebase); 
+                    // Crear nuevo producto en inventario
+                    inventari = new ProductesInventari
+                    {
+                        ProducteID = ProductoSeleccionado.Producte.ProducteID,
+                        EmpresaID = ZonaSeleccionada.EmpresaID,
+                        Quantitat = 0,
+                        Estat = "Nuevo", // O el estado que corresponda
+                        ZonaID = zona.ZonaEmmagatzematgeID,
+                        MagatzemID = zona.MagatzemPertanyent,
+                        CodiReferencia = ProductoSeleccionado.Producte.SKU
+                    };
+
+                    // Generamos un ID para el nuevo producto pero no lo guardamos aún
+                    inventariID = GenerateInventoryId();
+                    inventari.IDProducteInventari = inventariID;
+                }
+                else
+                {
+                    // Si existe, obtenemos el objeto actual
+                    inventari = await _dao.GetProductoInventario(
+                        zona.EmpresaID,
+                        zona.MagatzemPertanyent,
+                        zona.ZonaEmmagatzematgeID,
+                        inventariID);
                 }
 
-                ProducteGeneral producteGeneral = new ProducteGeneral
+                // Si tenemos un ID válido (existente o recién creado)
+                if (!string.IsNullOrEmpty(inventariID))
                 {
-                    Nom = NombreProducto,
-                    CodiReferencia = SKU,
-                    Descripcio = DescripcionProducto,
-                    CategoriaID = CategoriaSeleccionada,
-                    SubCategoriaID = SubcategoriaSeleccionada,
-                    ImatgeURL = urlImagen,
-                    SKU = SKU,
-                };
-
-                DetallProducte detall = new DetallProducte
-                {
-                    Preu = PrecioProducto,
-                    Disponible = CantidadInicial > 0,
-                    EnVenda = EstaEnVenta
-                };
-
-                ProductesInventari inventari = new ProductesInventari
-                {
-                    IDProducteInventari = "",
-                    Quantitat = CantidadInicial,
-                    EmpresaID = zona.EmpresaID,
-                    Estat = EsNuevo ? "Nuevo" : (EsSeminuevo ? "Seminuevo" : "Desconocido"),
-                    MagatzemID = zona.MagatzemPertanyent,
-                    ZonaID = zona.ZonaEmmagatzematgeID,
-                    CodiReferencia = SKU
-                };
-
-
-                bool resultat = await _dao.AddProducts2Zone(producteGeneral, detall, inventari);
-
-                if (resultat)
-                {
-                    MovimentsInventari movimiento = new MovimentsInventari
+                    MovimentsInventari moviment = new MovimentsInventari
                     {
-                        ProducteInventariID = inventari.IDProducteInventari,
+                        ProducteInventariID = inventariID,
                         EmpresaIDOrigen = zona.EmpresaID,
                         EmpresaIDDesti = zona.EmpresaID,
                         MagatzemIDOrigen = zona.MagatzemPertanyent,
@@ -278,65 +387,33 @@ namespace SYNKROAPP.ViewModel
                         ZonaOrigenID = zona.ZonaEmmagatzematgeID,
                         ZonaDestiID = zona.ZonaEmmagatzematgeID,
                         Tipus = TipusMoviment.Entrada,
-                        Quantitat = CantidadInicial,
+                        Quantitat = CantidadAIngresar,
                         Data = DateTime.UtcNow,
-                        Notes = "Movimiento entrada de nuevos productos"
+                        Notes = productExists ? "Entrada adicional de producto existente" : "Nueva entrada de producto"
                     };
-                    await _dao.GuardarMovimientoInventariAsync(movimiento, inventari);
 
-                    MessageBox.Show("Producto agregado correctamente a la zona.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    return true;
-                }
-                else
-                {
-                    MessageBox.Show("Error al guardar el producto.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                    // La transacción creará o actualizará el producto según corresponda
+                    await _dao.GuardarMovimientoInventariAsync(moviment, inventari, productExists);
+                    inventarioAgregado = true;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Excepción al guardar el producto: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
+                MessageBox.Show($"Error al registrar la entrada: {ex.Message}");
             }
+
+            return inventarioAgregado;
+        }
+
+        private string GenerateInventoryId()
+        {
+            // Genera un ID único para el inventario (similar a lo que hace Firestore)
+            return Guid.NewGuid().ToString();
         }
 
         public void GenerarSKU()
         {
             SKU = $"SKU-{DateTime.Now:yyyyMMddHHmmss}-{new Random().Next(100, 999)}";
-        }
-
-        public void SeleccionarImagen()
-        {
-            var dlg = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Archivos de imagen|*.jpg;*.jpeg;*.png;*.bmp",
-                Title = "Seleccionar imagen"
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                try
-                {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(dlg.FileName);
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-                    ImagenProducto = bitmap;
-                    RutaImagenLocal = dlg.FileName;
-                    TieneImagen = true;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error al cargar la imagen: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        public void EliminarImagen()
-        {
-            ImagenProducto = null;
-            TieneImagen = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -38,7 +38,7 @@
                 <RowDefinition Height="*"/>
                 <!-- Catálogo -->
             </Grid.RowDefinitions>
-            
+
             <!-- Barra de búsqueda y filtros -->
             <Grid Grid.Row="0" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
@@ -71,7 +71,7 @@
                      PlacementTarget="{Binding ElementName=btnUbicacion}" StaysOpen="False">
                     <Border Background="White" BorderBrush="#e5e7eb" BorderThickness="1" 
                             CornerRadius="6" Width="200">
-                        
+
                         <Border.Effect>
                             <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
                         </Border.Effect>
@@ -107,13 +107,13 @@
                     </Border>
                 </Popup>
             </Grid>
-            
+
             <!-- Catálogo de empresas -->
             <Border Grid.Row="1" Background="White" CornerRadius="12">
                 <Border.Effect>
                     <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
                 </Border.Effect>
-                
+
                 <Grid Margin="20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -135,7 +135,7 @@
                         <TextBlock Grid.Column="1" Text="{Binding TextoResultados}" Foreground="#6b7280" 
                                  VerticalAlignment="Center" FontSize="14"/>
                     </Grid>
-                    
+
                     <!-- Grid con las tarjetas -->
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <ItemsControl x:Name="icEmpresas" ItemsSource="{Binding EmpresasFiltradas}">
@@ -147,10 +147,8 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Button Margin="8" 
-                                            Command="{Binding DataContext.VerProductosCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                                            CommandParameter="{Binding}">
-                                        
+                                    <Button Margin="8"
+                                            x:Name="btnVerProductosEmpresa" Click="btnVerProductosEmpresa_Click">
                                         <Border Width="280" Height="340" CornerRadius="10" Background="White" 
                                                 BorderBrush="#e5e7eb" BorderThickness="1">
                                             <Border.Effect>
@@ -228,10 +226,9 @@
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
-                
+
             </Border>
         </Grid>
-       
     </Grid>
     
 </UserControl>

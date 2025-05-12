@@ -123,7 +123,7 @@ namespace SYNKROAPP.ViewModel
                     Notes = "Movimiento interno desde interfaz"
                 };
 
-                await dao.GuardarMovimientoInventariAsync(movimiento, producteInventari);
+                await dao.GuardarMovimientoInventariAsync(movimiento, producteInventari, false);
                 MessageBox.Show("Movimiento registrado con éxito.", "Confirmación", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
