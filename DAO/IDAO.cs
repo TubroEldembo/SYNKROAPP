@@ -40,7 +40,11 @@ namespace SYNKROAPP.DAO
 
         //AGREGAR PRODUCTS:
         Task<DocumentSnapshot> GetProducteGeneralPorID(string producteID);
+
         Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari inventari, bool productAlreadyExists);
+
+        Task AddInventariToZona(ProductesInventari inventari);
+
 
 
         //CARGAR CATEGORIAS Y SUBCATEGORIAS (GENERICAS Y PERSONALIZADAS):
@@ -71,7 +75,7 @@ namespace SYNKROAPP.DAO
         Task<string> CheckProductInZona(string productoID, string empresaID, string magazemID, string zonaID);
 
         #region IMPORTAR PRODUCTOS
-
+        List<ProducteAmbDetall> LlegeixProductesJson(string filePath);
         #endregion
     }
 }

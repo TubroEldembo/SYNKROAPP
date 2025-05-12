@@ -1,6 +1,7 @@
 ﻿using Firebase.Storage;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
+using Newtonsoft.Json;
 using SYNKROAPP.CLASES;
 using System.IO;
 using System.Linq;
@@ -581,31 +582,178 @@ namespace SYNKROAPP.DAO
         #endregion
 
         #region MOVIMIENTO DE PRODUCTOS
+        //public async Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari producte, bool productAlreadyExists = false)
+        //{
+        //    // Sirve para hacer multiples operaciones a la vez, de esta manera no tendremos
+        //    // que ir coleccion x coleccion obteniendo los datos.
+
+        //    await db.RunTransactionAsync(async transaction =>
+        //    {
+        //        // 1r OPERACIONES DE LECTURA 
+        //        DocumentReference movimentRef = db.Collection("Empreses")
+        //            .Document(movimentTraslado.EmpresaIDOrigen)
+        //            .Collection("MovimentsInventari")
+        //            .Document();
+
+        //        // Inicializar variables para almacenar los snapshots
+        //        DocumentSnapshot origenSnapshot = null;
+        //        DocumentSnapshot destinoSnapshot = null;
+
+        //        // Referencias a los documentos que necesitamos leer
+        //        DocumentReference productoZonaOrigenRef = null;
+        //        DocumentReference productoZonaDestinoRef = null;
+
+        //        switch (movimentTraslado.Tipus)
+        //        {
+        //            case TipusMoviment.Entrada:
+        //                // Solo leer la zona de destino
+        //                productoZonaDestinoRef = db.Collection("Empreses")
+        //                    .Document(movimentTraslado.EmpresaIDOrigen)
+        //                    .Collection("Magatzems")
+        //                    .Document(movimentTraslado.MagatzemIDDesti)
+        //                    .Collection("ZonesEmmagatzematge")
+        //                    .Document(movimentTraslado.ZonaDestiID)
+        //                    .Collection("ProductesInventari")
+        //                    .Document(movimentTraslado.ProducteInventariID);
+
+        //                destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
+        //                break;
+
+        //            case TipusMoviment.Sortida:
+        //                // Solo leer la zona de origen
+        //                productoZonaOrigenRef = db.Collection("Empreses")
+        //                    .Document(movimentTraslado.EmpresaIDOrigen)
+        //                    .Collection("Magatzems")
+        //                    .Document(movimentTraslado.MagatzemIDOrigen)
+        //                    .Collection("ZonesEmmagatzematge")
+        //                    .Document(movimentTraslado.ZonaOrigenID)
+        //                    .Collection("ProductesInventari")
+        //                    .Document(movimentTraslado.ProducteInventariID);
+
+        //                origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
+        //                break;
+
+        //            case TipusMoviment.TrasllatIntern:
+        //                // Leer ambas zonas
+        //                productoZonaOrigenRef = db.Collection("Empreses")
+        //                    .Document(movimentTraslado.EmpresaIDOrigen)
+        //                    .Collection("Magatzems")
+        //                    .Document(movimentTraslado.MagatzemIDOrigen)
+        //                    .Collection("ZonesEmmagatzematge")
+        //                    .Document(movimentTraslado.ZonaOrigenID)
+        //                    .Collection("ProductesInventari")
+        //                    .Document(movimentTraslado.ProducteInventariID);
+
+        //                productoZonaDestinoRef = db.Collection("Empreses")
+        //                    .Document(movimentTraslado.EmpresaIDOrigen)
+        //                    .Collection("Magatzems")
+        //                    .Document(movimentTraslado.MagatzemIDDesti)
+        //                    .Collection("ZonesEmmagatzematge")
+        //                    .Document(movimentTraslado.ZonaDestiID)
+        //                    .Collection("ProductesInventari")
+        //                    .Document(movimentTraslado.ProducteInventariID);
+
+        //                origenSnapshot = await transaction.GetSnapshotAsync(productoZonaOrigenRef);
+        //                destinoSnapshot = await transaction.GetSnapshotAsync(productoZonaDestinoRef);
+        //                break;
+        //        }
+
+        //        // 2. DESPUÉS TODAS LAS ESCRITURAS (WRITES)
+
+        //        // Guardar el movimiento
+        //        movimentTraslado.MovimentID = movimentRef.Id;
+        //        transaction.Set(movimentRef, movimentTraslado);
+
+        //        // Actualizar inventarios según tipo de movimiento
+        //        switch (movimentTraslado.Tipus)
+        //        {
+        //            case TipusMoviment.Entrada:
+        //                // Solo actualizar cantidad si el producto ya existe
+        //                if (productAlreadyExists)
+        //                {
+        //                    if (destinoSnapshot.Exists)
+        //                    {
+        //                        Dictionary<string, object> productoData = destinoSnapshot.ToDictionary();
+        //                        int cantidadActual = Convert.ToInt32(productoData["Quantitat"]);
+        //                        int nuevaCantidad = cantidadActual + movimentTraslado.Quantitat;
+
+        //                        // Actualizamos solo el campo de cantidad
+        //                        transaction.Update(productoZonaDestinoRef, new Dictionary<string, object>
+        //                        {
+        //                            { "Quantitat", nuevaCantidad }
+        //                        });
+        //                            }
+        //                            // No hacemos nada si el producto no existe, porque ya debería existir
+        //                }
+        //                else
+        //                {
+        //                    // Comportamiento original - crear o actualizar
+        //                    ActualizarZonaEnTransaccion(
+        //                        transaction,
+        //                        producte,
+        //                        productoZonaDestinoRef,
+        //                        destinoSnapshot,
+        //                        movimentTraslado.ProducteInventariID,
+        //                        movimentTraslado.Quantitat,
+        //                        movimentTraslado.ZonaDestiID);
+        //                }
+        //                break;
+
+        //            case TipusMoviment.Sortida:
+        //                // Actualizar zona origen
+        //                ActualizarZonaEnTransaccion(
+        //                    transaction,
+        //                    producte,
+        //                    productoZonaOrigenRef,
+        //                    origenSnapshot,
+        //                    movimentTraslado.ProducteInventariID,
+        //                    -movimentTraslado.Quantitat,
+        //                    movimentTraslado.ZonaOrigenID);
+        //                break;
+
+        //            case TipusMoviment.TrasllatIntern:
+        //                // Actualizar ambas zonas
+        //                ActualizarZonaEnTransaccion(
+        //                    transaction,
+        //                    producte,
+        //                    productoZonaOrigenRef,
+        //                    origenSnapshot,
+        //                    movimentTraslado.ProducteInventariID,
+        //                    -movimentTraslado.Quantitat,
+        //                    movimentTraslado.ZonaOrigenID);
+
+        //                ActualizarZonaEnTransaccion(
+        //                    transaction,
+        //                    producte,
+        //                    productoZonaDestinoRef,
+        //                    destinoSnapshot,
+        //                    movimentTraslado.ProducteInventariID,
+        //                    movimentTraslado.Quantitat,
+        //                    movimentTraslado.ZonaDestiID);
+        //                break;
+        //        }
+
+        //    });
+        //}
+
         public async Task GuardarMovimientoInventariAsync(MovimentsInventari movimentTraslado, ProductesInventari producte, bool productAlreadyExists = false)
         {
-            // Sirve para hacer multiples operaciones a la vez, de esta manera no tendremos
-            // que ir coleccion x coleccion obteniendo los datos.
-
             await db.RunTransactionAsync(async transaction =>
             {
-                // 1r OPERACIONES DE LECTURA 
                 DocumentReference movimentRef = db.Collection("Empreses")
                     .Document(movimentTraslado.EmpresaIDOrigen)
                     .Collection("MovimentsInventari")
                     .Document();
 
-                // Inicializar variables para almacenar los snapshots
                 DocumentSnapshot origenSnapshot = null;
                 DocumentSnapshot destinoSnapshot = null;
 
-                // Referencias a los documentos que necesitamos leer
                 DocumentReference productoZonaOrigenRef = null;
                 DocumentReference productoZonaDestinoRef = null;
 
                 switch (movimentTraslado.Tipus)
                 {
                     case TipusMoviment.Entrada:
-                        // Solo leer la zona de destino
                         productoZonaDestinoRef = db.Collection("Empreses")
                             .Document(movimentTraslado.EmpresaIDOrigen)
                             .Collection("Magatzems")
@@ -619,7 +767,6 @@ namespace SYNKROAPP.DAO
                         break;
 
                     case TipusMoviment.Sortida:
-                        // Solo leer la zona de origen
                         productoZonaOrigenRef = db.Collection("Empreses")
                             .Document(movimentTraslado.EmpresaIDOrigen)
                             .Collection("Magatzems")
@@ -633,7 +780,6 @@ namespace SYNKROAPP.DAO
                         break;
 
                     case TipusMoviment.TrasllatIntern:
-                        // Leer ambas zonas
                         productoZonaOrigenRef = db.Collection("Empreses")
                             .Document(movimentTraslado.EmpresaIDOrigen)
                             .Collection("Magatzems")
@@ -657,36 +803,26 @@ namespace SYNKROAPP.DAO
                         break;
                 }
 
-                // 2. DESPUÉS TODAS LAS ESCRITURAS (WRITES)
-
                 // Guardar el movimiento
                 movimentTraslado.MovimentID = movimentRef.Id;
                 transaction.Set(movimentRef, movimentTraslado);
 
-                // Actualizar inventarios según tipo de movimiento
                 switch (movimentTraslado.Tipus)
                 {
                     case TipusMoviment.Entrada:
-                        // Solo actualizar cantidad si el producto ya existe
-                        if (productAlreadyExists)
+                        if (destinoSnapshot.Exists)
                         {
-                            if (destinoSnapshot.Exists)
-                            {
-                                Dictionary<string, object> productoData = destinoSnapshot.ToDictionary();
-                                int cantidadActual = Convert.ToInt32(productoData["Quantitat"]);
-                                int nuevaCantidad = cantidadActual + movimentTraslado.Quantitat;
+                            var productoData = destinoSnapshot.ToDictionary();
+                            int cantidadActual = Convert.ToInt32(productoData["Quantitat"]);
+                            int nuevaCantidad = cantidadActual + movimentTraslado.Quantitat;
 
-                                // Actualizamos solo el campo de cantidad
-                                transaction.Update(productoZonaDestinoRef, new Dictionary<string, object>
-                                {
-                                    { "Quantitat", nuevaCantidad }
-                                });
-                                    }
-                                    // No hacemos nada si el producto no existe, porque ya debería existir
+                            transaction.Update(productoZonaDestinoRef, new Dictionary<string, object>
+                            {
+                                { "Quantitat", nuevaCantidad }
+                            });
                         }
                         else
                         {
-                            // Comportamiento original - crear o actualizar
                             ActualizarZonaEnTransaccion(
                                 transaction,
                                 producte,
@@ -699,7 +835,6 @@ namespace SYNKROAPP.DAO
                         break;
 
                     case TipusMoviment.Sortida:
-                        // Actualizar zona origen
                         ActualizarZonaEnTransaccion(
                             transaction,
                             producte,
@@ -711,7 +846,6 @@ namespace SYNKROAPP.DAO
                         break;
 
                     case TipusMoviment.TrasllatIntern:
-                        // Actualizar ambas zonas
                         ActualizarZonaEnTransaccion(
                             transaction,
                             producte,
@@ -731,7 +865,6 @@ namespace SYNKROAPP.DAO
                             movimentTraslado.ZonaDestiID);
                         break;
                 }
-
             });
         }
 
@@ -791,7 +924,6 @@ namespace SYNKROAPP.DAO
                 {
                     { "Productes", FieldValue.ArrayUnion(producteGeneralID) }
                 });
-
             }
             else
             {
@@ -876,13 +1008,15 @@ namespace SYNKROAPP.DAO
 
         public async Task AddProductoGeneral(ProducteGeneral producto, DetallProducte detall)
         {
-            DocumentReference productRef = await db.Collection("ProducteGeneral").AddAsync(producto);
-            string productID = productRef.Id;
+            // Usamos el ID que viene desde el JSON
+            DocumentReference productRef = db.Collection("ProducteGeneral").Document(producto.ProducteID);
+            await productRef.SetAsync(producto); // Ahora el documento tendrá el ID que tú quieras
 
-            // Paso 2: Agregar detall como subcolección del producto
-            detall.ProducteID = productID;
+            // Añadir detalle como subcolección
+            detall.ProducteID = producto.ProducteID;
             await productRef.Collection("DetallProducte").AddAsync(detall);
         }
+
 
         public async Task<List<ProducteAmbDetall>> GetProductosCatagalogoD1Empresa(string empresaID, bool soloEnVenta)
         {
@@ -921,7 +1055,6 @@ namespace SYNKROAPP.DAO
 
             return productos;
         }
-        
         
 
         public async Task<ProductesInventari> GetProductoInventario(string empresaID, string magatzemPertanyent, string zonaEmmagatzematgeID, string inventariID)
@@ -963,6 +1096,65 @@ namespace SYNKROAPP.DAO
 
             return null;
         }
+
+        #region IMPORTAR PRODUCTOS
+        public List<ProducteAmbDetall> LlegeixProductesJson(string filePath)
+        {
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException("No s'ha trobat el fitxer: " + filePath);
+
+            try
+            {
+                StreamReader sr = new StreamReader(filePath);
+                string json = sr.ReadToEnd();
+                List<ProducteDetallJson> productesAmbDetall = JsonConvert.DeserializeObject<List<ProducteDetallJson>>(json);
+
+                if (productesAmbDetall == null)
+                    throw new InvalidOperationException("El fitxer JSON no conté una llista vàlida de productes.");
+
+                List<ProducteAmbDetall> resultat = new List<ProducteAmbDetall>();
+                foreach (var item in productesAmbDetall)
+                {
+                    //Cargar imagen 
+                    //BitmapImage bit = LoadImageFromUrl(item.Producte.ImatgeURL);
+                    ProducteAmbDetall producteAmbDetall = new ProducteAmbDetall
+                    {
+                        Producte = item.Producte,
+                        EmpresaID = item.Detall.EmpresaID,
+                        Preu = item.Detall.Preu,
+                        Cantidad = 0, 
+                        ImagenProducto = null,
+                        Detall = item.Detall,
+                    };
+
+                    resultat.Add(producteAmbDetall);
+                }
+                sr.Close();
+                return resultat;
+            }
+            catch(Exception ex) 
+            {
+                throw new ArgumentException(ex.Message);
+            }
+
+        }
+
+        public async Task AddInventariToZona(ProductesInventari inventari)
+        {
+            var zonaRef = db
+            .Collection("Empreses")
+            .Document(inventari.EmpresaID)
+            .Collection("Magatzems")
+            .Document(inventari.MagatzemID)
+            .Collection("ZonesEmmagatzematge")
+            .Document(inventari.ZonaID)
+            .Collection("ProductesInventari")
+            .Document();
+
+            await zonaRef.SetAsync(inventari);
+        }
+
+        #endregion
     }
 
 }

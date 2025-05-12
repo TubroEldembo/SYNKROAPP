@@ -2,6 +2,7 @@
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas;
+using SYNKROAPP.Vistes.Vista_Movimientos;
 using SYNKROAPP.Vistes.Vista_Productos;
 using System;
 using System.Collections.Generic;
@@ -62,23 +63,6 @@ namespace SYNKROAPP.Vistes.Vista_Home
             contentArea.Content = new VistaResumen(dao, empresa);
         }
 
-       
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void btnInicio_Click(object sender, RoutedEventArgs e)
         {
 
@@ -103,7 +87,15 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnImportar_Click(object sender, RoutedEventArgs e)
         {
+            if (isMenuOpen)
+            {
+                ToggleMenu();
+            }
 
+            var vista = new VistaImportarProductos(dao, empresa);
+
+            // Suscribimos al evento para quitar el UserControl cuando se cierre
+            contentArea.Content = vista;
         }
 
         private void btnAlmacenes_Click(object sender, RoutedEventArgs e)
@@ -122,13 +114,18 @@ namespace SYNKROAPP.Vistes.Vista_Home
             };
 
             contentArea.Content = vista;
-            
-
         }
 
         private void btnMovimientos_Click(object sender, RoutedEventArgs e)
         {
+            if (isMenuOpen)
+            {
+                ToggleMenu();
+            }
 
+            VistaMovimientos vista = new VistaMovimientos(dao, empresa);
+
+            contentArea.Content = vista;
         }
 
         private void btnMercado_Click(object sender, RoutedEventArgs e)
@@ -153,10 +150,6 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         private void btnToggleSlider_Click(object sender, RoutedEventArgs e)
         {
-            //isMenuVisible = !isMenuVisible;
-            //sliderBar.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
-            //overlay.Visibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
-
             ToggleMenu();
         }
         private void overlay_MouseDown(object sender, MouseButtonEventArgs e)

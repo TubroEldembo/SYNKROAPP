@@ -2,16 +2,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:clases="clr-namespace:SYNKROAPP.CLASES"
              mc:Ignorable="d" 
              d:DesignHeight="832" d:DesignWidth="1280">
-    
+
     <UserControl.Resources>
         <!-- Aquí se incluye el diccionario de recursos -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- ObjectDataProvider para TipusMoviment (igual que en VistaMovimientos) -->
+            <ObjectDataProvider x:Key="tiposMovimiento" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="clases:TipusMoviment"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -20,7 +29,7 @@
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#4A5793" Offset="0"/>
             <GradientStop Color="#6F7ABC" Offset="1"/>
-            
+
         </LinearGradientBrush>
     </UserControl.Background>
 
@@ -171,7 +180,7 @@
                                        Text="PRODUCTOS EN ALMACENES:" 
                                        FontWeight="SemiBold" 
                                        Foreground="#666666"/>
-                            
+
                             <TextBlock Grid.Column="1" 
                                        Text="{Binding ProductosEnAlmacenes}" 
                                        FontWeight="Bold" 
@@ -282,29 +291,33 @@
                                    Foreground="#4A5793"
                                    VerticalAlignment="Center"/>
 
-                        <!-- Combo para filtrar movimientos -->
+                        <!-- ComboBox para filtrar movimientos usando TipusMoviment -->
                         <ComboBox Grid.Column="1"
-                                  Width="150" 
+                                  x:Name="cmbTipoMovimiento"
+                                  Width="180" 
                                   Height="32"
-                                  SelectedIndex="0">
-                            <ComboBoxItem Content="Todos"/>
-                            <ComboBoxItem Content="Entradas"/>
-                            <ComboBoxItem Content="Salidas"/>
+                                  ItemsSource="{Binding Source={StaticResource tiposMovimiento}}"
+                                  SelectedItem="{Binding TipoMovimientoSeleccionado}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
                         </ComboBox>
                     </Grid>
 
                     <!-- Lista de movimientos con estilo mejorado -->
                     <ListView Grid.Row="1" Margin="0,15,0,0"
-          BorderThickness="0"
-          Background="Transparent"
-          ItemsSource="{Binding Movimientos}">
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ItemsSource="{Binding MovimientosFiltrados}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="#F8F9FE" 
-                    CornerRadius="8" 
-                    Padding="15" 
-                    Margin="0,5" 
-                    Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}">
+                                        CornerRadius="8" 
+                                        Padding="15" 
+                                        Margin="0,5" 
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -322,14 +335,14 @@
                                             <TextBlock Text="{Binding Notes}" FontWeight="SemiBold" FontSize="16"/>
                                             <TextBlock>
                                                 <Run Text="Almacén: " />
-                                                <Run Text="{Binding MagatzemIDOrigen}" />   
+                                                <Run Text="{Binding MagatzemIDOrigen}" />
                                             </TextBlock>
                                             <TextBlock>
                                                 <Run Text="Producto: " />
                                                 <Run Text="{Binding ProducteInventariID}" />
                                             </TextBlock>
                                             <TextBlock Text="{Binding Quantitat, StringFormat='Productos: {0} unidades'}" />
-                                            
+
                                         </StackPanel>
 
                                         <!-- Fecha/Hora -->

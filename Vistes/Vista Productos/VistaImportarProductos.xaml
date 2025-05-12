@@ -1,13 +1,12 @@
-﻿<UserControl x:Class="SYNKROAPP.Vistes.Vista_Importar.VistaImportarProductos"
+﻿<UserControl x:Class="SYNKROAPP.Vistes.Vista_Productos.VistaImportarProductos"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Importar"
-             mc:Ignorable="d"
+             xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Productos"
+             mc:Ignorable="d" 
              d:DesignHeight="832" d:DesignWidth="1280">
 
-    <!-- Fondo con gradiente para un aspecto más moderno -->
     <UserControl.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#4A5793" Offset="0"/>
@@ -22,7 +21,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Encabezado de Importación -->
+        <!-- Encabezado -->
         <Border Grid.Row="0" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="20,15">
             <Border.Effect>
                 <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
@@ -41,7 +40,7 @@
             </Grid>
         </Border>
 
-        <!-- Área principal de importación -->
+        <!-- Zona central -->
         <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="20">
             <Border.Effect>
                 <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
@@ -49,18 +48,40 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Selector de archivo y configuraciones -->
-                <Border Grid.Row="0" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,15">
+                <!-- Selector Almacén y Zona -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Almacén" FontWeight="SemiBold" Foreground="#4A5793" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="cmbAlmacen" Height="32"
+                                  ItemsSource="{Binding ListaAlmacenes}"
+                                  SelectedItem="{Binding AlmacenSeleccionado}"
+                                  IsEnabled="True" Width="155">
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Height="53">
+                        <TextBlock Text="Zona de Almacenamiento" FontWeight="SemiBold" Foreground="#4A5793" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="cmbZonaAlmacenamiento" Height="32"
+                                  ItemsSource="{Binding ListaZonas}"
+                                  SelectedItem="{Binding ZonaSeleccionada}" 
+                                  IsEnabled="True">
+
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Selector de archivo -->
+                <Border Grid.Row="1" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,15">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Ruta del archivo -->
                         <Border Grid.Column="0" Background="White" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="8" Margin="0,0,15,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -75,7 +96,6 @@
                             </Grid>
                         </Border>
 
-                        <!-- Botón de selección de archivo -->
                         <Button Grid.Column="1" Name="btnSeleccionarArchivo" Content="Seleccionar Archivo" Width="200" Height="40"
                                 Background="#4A5793" Foreground="White" BorderThickness="0"
                                 Click="btnSeleccionarArchivo_Click">
@@ -91,24 +111,21 @@
                     </Grid>
                 </Border>
 
-                <!-- Vista previa de productos -->
-                <Border Grid.Row="1" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20">
+                <!-- DataGrid -->
+                <Border Grid.Row="2" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Título de vista previa -->
                         <TextBlock Grid.Row="0" Text="VISTA PREVIA DE PRODUCTOS" 
-                                   FontSize="20" 
-                                   FontWeight="Bold" 
-                                   Foreground="#4A5793"
+                                   FontSize="20" FontWeight="Bold" Foreground="#4A5793"
                                    Margin="0,0,0,15"/>
 
-                        <!-- DataGrid de vista previa -->
-                        <DataGrid Grid.Row="1" Name="dgVistaPrevia" 
+                        <DataGrid Grid.Row="1" Name="dgVistaPrevia"
                                   AutoGenerateColumns="False" 
+                                  ItemsSource="{Binding ProductosImportados}"
                                   HeadersVisibility="Column"
                                   IsReadOnly="True" 
                                   CanUserAddRows="False" 
@@ -136,11 +153,11 @@
                                 </Style>
                             </DataGrid.Resources>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="CÓDIGO" Width="100"/>
-                                <DataGridTextColumn Header="NOMBRE" Width="200"/>
-                                <DataGridTextColumn Header="CATEGORÍA" Width="150"/>
-                                <DataGridTextColumn Header="PRECIO" Width="100"/>
-                                <DataGridTextColumn Header="DESCRIPCIÓN" Width="*"/>
+                                <DataGridTextColumn Header="CÓDIGO" Binding="{Binding Producte.CodiReferencia}" Width="100"/>
+                                <DataGridTextColumn Header="NOMBRE" Width="200" Binding="{Binding Producte.Nom}"/>
+                                <DataGridTextColumn Header="CATEGORÍA" Width="150" Binding="{Binding Producte.CategoriaID}"/>
+                                <DataGridTextColumn Header="PRECIO" Width="100" Binding="{Binding Preu}"/>
+                                <DataGridTextColumn Header="DESCRIPCIÓN" Width="*" Binding="{Binding Producte.Descripcio}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
@@ -148,7 +165,7 @@
             </Grid>
         </Border>
 
-        <!-- Área de botones de acción -->
+        <!-- Botones -->
         <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="15" Padding="20">
             <Border.Effect>
                 <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>

@@ -33,7 +33,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
         {
             InitializeComponent();
             this.dao = dao;
-            this.DataContext = new AlmacenesViewModel(dao);
+            this.DataContext = new AlmacenesViewModel(dao, empresa);
             this.loggedUser = loggedUser;
             this.empresa = empresa;
             DetallesAlmacenes();
@@ -41,7 +41,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
         private async void DetallesAlmacenes()
         {
-            await ((AlmacenesViewModel)this.DataContext).CargarDetallesAlmacenes(empresa);
+            await ((AlmacenesViewModel)this.DataContext).CargarDetallesAlmacenes();
         }
 
         private void btnCrearAlmacen_Click(object sender, RoutedEventArgs e)

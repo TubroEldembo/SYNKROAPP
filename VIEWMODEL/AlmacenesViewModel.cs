@@ -2,6 +2,7 @@
 using SYNKROAPP.DAO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -13,15 +14,19 @@ namespace SYNKROAPP.VIEWMODEL
     {
         private IDAO _dao;
         private List<Magatzems> _almacenes;
+        private Empreses _empresa;
         private string _totalAlmacenes;
         private string _movimientosRecientes;
         private string _productosEnAlmacenes;
         private int _numeroDeZonas;
+        private ObservableCollection<MovimentsInventari> _todosLosMovimientos;
 
-        public AlmacenesViewModel(IDAO _dao)
+        public AlmacenesViewModel(IDAO _dao, Empreses empresa)
         {
             this._dao = _dao;
+            this._empresa = empresa;
             this._almacenes = new List<Magatzems>();
+            CargarMovimientosAsync();
         }
 
         private List<MovimentsInventari> _movimientos;
@@ -33,6 +38,29 @@ namespace SYNKROAPP.VIEWMODEL
             {
                 _movimientos = value;
                 OnPropertyChanged(nameof(Movimientos));
+            }
+        }
+
+        private ObservableCollection<MovimentsInventari> _movimientosFiltrados = new ObservableCollection<MovimentsInventari>();
+        public ObservableCollection<MovimentsInventari> MovimientosFiltrados
+        {
+            get => _movimientosFiltrados;
+            set
+            {
+                _movimientosFiltrados = value;
+                OnPropertyChanged(nameof(MovimientosFiltrados));
+            }
+        }
+
+        private TipusMoviment? _tipoMovimientoSeleccionado;
+        public TipusMoviment? TipoMovimientoSeleccionado
+        {
+            get => _tipoMovimientoSeleccionado;
+            set
+            {
+                _tipoMovimientoSeleccionado = value;
+                OnPropertyChanged(nameof(TipoMovimientoSeleccionado));
+                AplicarFiltros();
             }
         }
 
@@ -101,11 +129,35 @@ namespace SYNKROAPP.VIEWMODEL
             }
         }
 
-
-        public async Task CargarDetallesAlmacenes(Empreses empresa)
+        public async Task CargarMovimientosAsync()
         {
-            List<Magatzems> almacenes = await _dao.DetallesAlmacenes(empresa);
+            List<MovimentsInventari> movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(_empresa.EmpresaID);
+            _todosLosMovimientos = new ObservableCollection<MovimentsInventari>(movimientos);
 
+            // Aplicar filtros iniciales
+            AplicarFiltros();
+        }
+        public void AplicarFiltros()
+        {
+            if (_todosLosMovimientos == null)
+                return;
+
+            List<MovimentsInventari> movimientosFiltrados = _todosLosMovimientos.ToList();
+
+            if (TipoMovimientoSeleccionado.HasValue)
+            {
+                movimientosFiltrados = movimientosFiltrados
+                    .Where(m => m.Tipus == TipoMovimientoSeleccionado.Value)
+                    .ToList();
+            }
+
+            // Actualizar la colección observable
+            MovimientosFiltrados = new ObservableCollection<MovimentsInventari>(movimientosFiltrados);
+        }
+        public async Task CargarDetallesAlmacenes()
+        {
+            List<Magatzems> almacenes = await _dao.DetallesAlmacenes(_empresa);
+            
             if (almacenes != null)
             {
                 // Actualizamos la lista de almacenes en el ViewModel
@@ -117,7 +169,6 @@ namespace SYNKROAPP.VIEWMODEL
                 // ✅ Calcular el número total de zonas
                 NumeroDeZonas = almacenes.Sum(a => a.Zones?.Count ?? 0);
 
-                Movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(empresa.EmpresaID);
             }
 
         }

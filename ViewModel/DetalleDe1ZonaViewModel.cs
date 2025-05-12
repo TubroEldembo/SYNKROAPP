@@ -188,7 +188,7 @@ namespace SYNKROAPP.ViewModel
             {
                 // Obtener el producto general por ID
                 DocumentSnapshot docSnap = await _dao.GetProducteGeneralPorID(item.ProducteID); // Este método lo creas abajo
-                var producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
+                ProducteGeneral producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
 
                 string nom = producteGeneral?.Nom ?? "Sin nombre";
                 string subcategoria = producteGeneral?.SubCategoriaID ?? "Sin subcategoría";
