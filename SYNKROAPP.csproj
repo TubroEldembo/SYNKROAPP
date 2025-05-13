@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FICHEROS\**" />
     <Compile Remove="Vistes\Vista Almacenes\Vista Categorias y SubCat\**" />
+    <EmbeddedResource Remove="FICHEROS\**" />
     <EmbeddedResource Remove="Vistes\Vista Almacenes\Vista Categorias y SubCat\**" />
+    <None Remove="FICHEROS\**" />
     <None Remove="Vistes\Vista Almacenes\Vista Categorias y SubCat\**" />
+    <Page Remove="FICHEROS\**" />
     <Page Remove="Vistes\Vista Almacenes\Vista Categorias y SubCat\**" />
   </ItemGroup>
 
@@ -31,10 +35,6 @@
     <None Update="IMAGES\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="FICHEROS\" />
   </ItemGroup>
 
 </Project>

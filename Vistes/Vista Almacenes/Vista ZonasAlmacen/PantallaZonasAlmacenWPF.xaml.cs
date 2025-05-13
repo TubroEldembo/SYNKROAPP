@@ -57,9 +57,9 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
             if (zonaSeleccionada != null)
             {
-                // Crear el ViewModel y cargar los datos
+                
                 DetalleDe1ZonaViewModel viewModel = new DetalleDe1ZonaViewModel(dao, zonaSeleccionada, magatzemSeleccionat);
-                await viewModel.CargarProductos(); // ✅ ESTA LÍNEA ES LA CLAVE
+                await viewModel.CargarProductos();
 
                 // Pasar ese ViewModel ya cargado a la ventana
                 PantallaDetalleZonaWPF detallesDeLaZona = new PantallaDetalleZonaWPF(viewModel);
@@ -70,34 +70,8 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
         private void btnVolver_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnEliminar_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnEditar_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         
     }
 }

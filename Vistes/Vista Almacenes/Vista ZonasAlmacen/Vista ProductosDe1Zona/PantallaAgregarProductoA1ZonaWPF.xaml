@@ -149,7 +149,7 @@
                                        Margin="0,0,15,0"/>
                             <ComboBox Width="250" Height="35"
                                       ItemsSource="{Binding ListaCategorias}"
-                                      SelectedItem="{Binding CategoriaFiltroSeleccionada}"
+                                      SelectedItem="{Binding CategoriaSeleccionada}"
                                       SelectionChanged="cmbCategoria_SelectionChanged"
                                       x:Name="cmbCategoria"/>
                         </StackPanel>

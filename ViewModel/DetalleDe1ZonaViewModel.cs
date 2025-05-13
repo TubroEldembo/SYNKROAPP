@@ -6,25 +6,24 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.ViewModel
 {
-    public class DetalleDe1ZonaViewModel: INotifyPropertyChanged
+    public class DetalleDe1ZonaViewModel : INotifyPropertyChanged
     {
-        public IDAO _dao;
-
-        public readonly ZonaEmmagatzematge _zonaSeleccionada;
-        public ObservableCollection<Categories> Categories { get; set; } = new();
-        public ObservableCollection<Subcategories> Subcategories { get; set; } = new();
-
+        private readonly IDAO _dao;
+        private readonly ZonaEmmagatzematge _zonaSeleccionada;
+        private readonly Magatzems _magatzemSeleccionat;
         private Dictionary<string, List<Subcategories>> _diccionarioSubcategorias;
+        private List<ProducteInventariAmbNom> _todosLosProductes;
 
-        public readonly Magatzems _magatzemSeleccionat;
+        public IDAO Dao => _dao;
+
+        public ZonaEmmagatzematge ZonaSeleccionada => _zonaSeleccionada;
+
+        public Magatzems MagatzemSeleccionat => _magatzemSeleccionat;
 
 
         public DetalleDe1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zonaSeleccionada, Magatzems magatzemSeleccionat)
@@ -34,115 +33,20 @@ namespace SYNKROAPP.ViewModel
             _magatzemSeleccionat = magatzemSeleccionat;
         }
 
-        private string _nomZona;
-        public string NomZona
+        #region Propiedades públicas
+
+        public ObservableCollection<Categories> Categories { get; set; } = new();
+        public ObservableCollection<Subcategories> Subcategories { get; set; } = new();
+        public ObservableCollection<string> Estats { get; set; } = new();
+
+        private ObservableCollection<ProducteInventariAmbNom> _productesFiltrats = new();
+        public ObservableCollection<ProducteInventariAmbNom> ProductesFiltrats
         {
-            get => _nomZona;
+            get => _productesFiltrats;
             set
             {
-                _nomZona = value;
-                OnPropertyChanged(nameof(NomZona));  
-            }
-        }
-
-        private string _zonaID;
-        public string ZonaID
-        {
-            get => _zonaID;
-            set
-            {
-                _zonaID = value;
-                OnPropertyChanged(nameof(ZonaID));
-            }
-        }
-
-        private string _almacenPerteneciente;
-        public string AlmacenPerteneciente
-        {
-            get => _almacenPerteneciente;
-            set
-            {
-                _almacenPerteneciente = value;
-                OnPropertyChanged(nameof(AlmacenPerteneciente));
-            }
-        }
-
-        private int _nProductos;
-        public int NProductos
-        {
-            get => _nProductos;
-            set
-            {
-                _nProductos = value;
-                OnPropertyChanged(nameof(NProductos));
-            }
-        }
-
-        private int _capacitat;
-        public int Capacitat
-        {
-            get=> _capacitat;
-            set
-            {
-                _capacitat = value;
-                OnPropertyChanged(nameof(Capacitat));
-            }
-        }
-
-        private int _quantitat;
-        public int Quantitat
-        {
-            get => _quantitat;
-            set
-            {
-                _quantitat = value;
-                OnPropertyChanged(nameof(Quantitat));
-            }
-        }
-
-        private string _almacenID;
-        public string AlmacenID
-        {
-            get => _almacenID;
-            set
-            {
-                _almacenID = value;
-                OnPropertyChanged(nameof(AlmacenID));
-            }
-        }
-
-        private ObservableCollection<ProducteInventariAmbNom> _productes = new();
-        public ObservableCollection<ProducteInventariAmbNom> Productes
-        {
-            get => _productes;
-            set
-            {
-                _productes = value;
-                OnPropertyChanged(nameof(Productes));
-            }
-        }
-
-
-        private ObservableCollection<string> _estats = new();
-        public ObservableCollection<string> Estats
-        {
-            get => _estats;
-            set
-            {
-                _estats = value;
-                OnPropertyChanged(nameof(Estats));
-            }
-        }
-
-
-        private string _estatSeleccionat;
-        public string EstatSeleccionat
-        {
-            get => _estatSeleccionat;
-            set
-            {
-                _estatSeleccionat = value;
-                OnPropertyChanged(nameof(EstatSeleccionat));
+                _productesFiltrats = value;
+                OnPropertyChanged(nameof(ProductesFiltrats));
             }
         }
 
@@ -155,6 +59,147 @@ namespace SYNKROAPP.ViewModel
                 _categoriaSeleccionada = value;
                 OnPropertyChanged(nameof(CategoriaSeleccionada));
                 ActualizarSubcategorias();
+                AplicarFiltros();
+            }
+        }
+
+        private Subcategories _subCategoriaSeleccionada;
+        public Subcategories SubCategoriaSeleccionada
+        {
+            get => _subCategoriaSeleccionada;
+            set
+            {
+                _subCategoriaSeleccionada = value;
+                OnPropertyChanged(nameof(SubCategoriaSeleccionada));
+                AplicarFiltros();
+            }
+        }
+
+        private string _estatSeleccionat;
+        public string EstatSeleccionat
+        {
+            get => _estatSeleccionat;
+            set
+            {
+                _estatSeleccionat = value;
+                OnPropertyChanged(nameof(EstatSeleccionat));
+                AplicarFiltros();
+            }
+        }
+
+        // Otras propiedades de zona
+        public string NomZona { get; set; }
+        public string ZonaID { get; set; }
+        public string AlmacenPerteneciente { get; set; }
+        public int NProductos { get; set; }
+        public int Capacitat { get; set; }
+        public int Quantitat { get; set; }
+        public string AlmacenID { get; set; }
+
+        #endregion
+
+        #region Métodos de carga y filtro
+
+        public async Task CargarProductos()
+        {
+            try
+            {
+                var productesInventari = await _dao.ProductosEn1Zona(_zonaSeleccionada);
+                _todosLosProductes = new List<ProducteInventariAmbNom>();
+
+                foreach (var item in productesInventari)
+                {
+                    var docSnap = await _dao.GetProducteGeneralPorID(item.ProducteID);
+                    var producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
+
+                    var p = new ProducteInventariAmbNom
+                    {
+                        ProducteID = item.ProducteID,
+                        Nom = producteGeneral?.Nom ?? "Sin nombre",
+                        SKU = producteGeneral?.SKU ?? "N/A",
+                        UrlImagen = producteGeneral?.ImatgeURL ?? "",
+                        Descripcio = producteGeneral?.Descripcio ?? "",
+                        Estat = item.Estat,
+                        Categoria = producteGeneral?.CategoriaID,
+                        SubCategoria = producteGeneral?.SubCategoriaID,
+                        Quantitat = item.Quantitat
+                    };
+
+                    _todosLosProductes.Add(p);
+                }
+
+                // Actualizar datos de la zona
+                NomZona = _zonaSeleccionada.Nom;
+                ZonaID = _zonaSeleccionada.ZonaEmmagatzematgeID;
+                AlmacenID = _zonaSeleccionada.MagatzemPertanyent;
+                NProductos = _zonaSeleccionada.NProductos;
+                Capacitat = _zonaSeleccionada.Capacitat;
+
+                AplicarFiltros();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error cargando productos: {ex.Message}");
+            }
+        }
+
+        public async Task CargarListasParaCombosAsync()
+        {
+            try
+            {
+                Categories.Clear();
+                _diccionarioSubcategorias = new Dictionary<string, List<Subcategories>>();
+
+                // Opción 'Todas las categorías'
+                var categoriaTodas = new Categories { CategoriaID = "TODAS", Nom = "Todas las categorías" };
+                Categories.Add(categoriaTodas);
+
+                var (categoriasGenericas, subcategoriasGenericasDictionary) = await _dao.ObtenirCategoriesGeneriques();
+
+                foreach (var catGen in categoriasGenericas)
+                {
+                    var categoria = new Categories { CategoriaID = catGen.CategoriaID, Nom = catGen.Nom + " (Genérica)" };
+                    Categories.Add(categoria);
+
+                    if (subcategoriasGenericasDictionary.TryGetValue(catGen.CategoriaID, out var subList))
+                    {
+                        _diccionarioSubcategorias[catGen.CategoriaID] = subList.Select(s => new Subcategories
+                        {
+                            SubCategoriaID = s.SubCategoriaID,
+                            Nom = s.Nom,
+                            CategoriaID = catGen.CategoriaID
+                        }).ToList();
+                    }
+                }
+
+                string empresaID = _zonaSeleccionada.EmpresaID;
+                if (!string.IsNullOrEmpty(empresaID))
+                {
+                    var (categoriasPers, subcatsPersDict) = await _dao.ObtenirCategoriesPersonalitzades(empresaID);
+
+                    foreach (Categories catPers in categoriasPers)
+                    {
+                        Categories.Add(catPers);
+                        if (subcatsPersDict.TryGetValue(catPers.CategoriaID, out var subcats))
+                        {
+                            _diccionarioSubcategorias[catPers.CategoriaID] = subcats;
+                        }
+                    }
+                }
+
+                Estats.Clear();
+                Estats.Add("Todos");
+                Estats.Add("Nuevo");
+                Estats.Add("Usado");
+                Estats.Add("Defectuoso");
+                Estats.Add("En reparación");
+
+                EstatSeleccionat = "Todos";
+                CategoriaSeleccionada = categoriaTodas; // Selección por defecto
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error cargando listas: {ex.Message}");
             }
         }
 
@@ -162,145 +207,57 @@ namespace SYNKROAPP.ViewModel
         {
             Subcategories.Clear();
 
-            if (_categoriaSeleccionada != null && _diccionarioSubcategorias.TryGetValue(_categoriaSeleccionada.CategoriaID, out var lista))
+            // Opción 'Todas las subcategorías'
+            Subcategories todasSub = new Subcategories { SubCategoriaID = "TODAS", Nom = "Todas las subcategorías" };
+            Subcategories.Add(todasSub);
+
+            if (CategoriaSeleccionada != null &&
+                CategoriaSeleccionada.CategoriaID != "TODAS" &&
+                _diccionarioSubcategorias.TryGetValue(CategoriaSeleccionada.CategoriaID, out var lista))
             {
-                foreach (var subcat in lista)
+                foreach (Subcategories subcat in lista)
                 {
                     Subcategories.Add(subcat);
                 }
             }
+
+            SubCategoriaSeleccionada = todasSub;
         }
 
+        private void AplicarFiltros()
+        {
+            if (_todosLosProductes == null) return;
+
+            var filtrados = _todosLosProductes.AsEnumerable();
+
+            if (EstatSeleccionat != "Todos" && !string.IsNullOrWhiteSpace(EstatSeleccionat))
+            {
+                filtrados = filtrados.Where(p => p.Estat == EstatSeleccionat);
+            }
+
+            if (CategoriaSeleccionada != null && CategoriaSeleccionada.CategoriaID != "TODAS")
+            {
+                filtrados = filtrados.Where(p => p.Categoria == CategoriaSeleccionada.CategoriaID);
+            }
+
+            if (SubCategoriaSeleccionada != null && SubCategoriaSeleccionada.SubCategoriaID != "TODAS")
+            {
+                filtrados = filtrados.Where(p => p.SubCategoria == SubCategoriaSeleccionada.SubCategoriaID);
+            }
+
+            ProductesFiltrats = new ObservableCollection<ProducteInventariAmbNom>(filtrados);
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task CargarProductos()
-        {
-            List<ProductesInventari> productesInventari = await _dao.ProductosEn1Zona(_zonaSeleccionada);
-
-            Productes.Clear();
-            foreach (ProductesInventari item in productesInventari)
-            {
-                // Obtener el producto general por ID
-                DocumentSnapshot docSnap = await _dao.GetProducteGeneralPorID(item.ProducteID); // Este método lo creas abajo
-                ProducteGeneral producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
-
-                string nom = producteGeneral?.Nom ?? "Sin nombre";
-                string subcategoria = producteGeneral?.SubCategoriaID ?? "Sin subcategoría";
-
-                Productes.Add(new ProducteInventariAmbNom
-                {
-                    ProducteID = item.ProducteID,
-                    Nom = nom,
-                    SKU = producteGeneral?.SKU ?? "N/A",
-                    UrlImagen = producteGeneral?.ImatgeURL ?? "",
-                    Descripcio = producteGeneral?.Descripcio ?? "",
-                    Estat = item.Estat,
-                    Categoria = producteGeneral?.CategoriaID,
-                    SubCategoria = subcategoria,
-                    Quantitat = item.Quantitat
-                });
-
-            }
-
-            NomZona = _zonaSeleccionada.Nom;
-            ZonaID = _zonaSeleccionada.ZonaEmmagatzematgeID;
-            AlmacenID = _zonaSeleccionada.MagatzemPertanyent;
-            NProductos = _zonaSeleccionada.NProductos;
-            Capacitat = _zonaSeleccionada.Capacitat;
-        }
-
-        public async Task CargarListasParaCombosAsync()
-        {
-            try
-            {
-                // Inicializar el diccionario de subcategorías
-                _diccionarioSubcategorias = new Dictionary<string, List<Subcategories>>();
-                Categories.Clear();
-
-                // 1. Cargar categorías genéricas
-                var (categoriasGenericas, subcategoriasGenericasDictionary) = await _dao.ObtenirCategoriesGeneriques();
-
-                // Convertir categorías genéricas al formato Categories y agregarlas
-                foreach (var categoriaGenerica in categoriasGenericas)
-                {
-                    var categoria = new Categories
-                    {
-                        CategoriaID = categoriaGenerica.CategoriaID,
-                        Nom = categoriaGenerica.Nom + " (Genérica)" // Opcional: añadir indicador que es genérica
-                                                                    // Otros campos necesarios
-                    };
-
-                    Categories.Add(categoria);
-
-                    // Convertir y añadir subcategorías genéricas al diccionario
-                    var listaSubcategorias = new List<Subcategories>();
-                    if (subcategoriasGenericasDictionary.TryGetValue(categoriaGenerica.CategoriaID, out var subList))
-                    {
-                        foreach (var subcategoriaGenerica in subList)
-                        {
-                            listaSubcategorias.Add(new Subcategories
-                            {
-                                SubCategoriaID = subcategoriaGenerica.SubCategoriaID,
-                                Nom = subcategoriaGenerica.Nom,
-                                CategoriaID = categoriaGenerica.CategoriaID
-                                // Otros campos necesarios
-                            });
-                        }
-
-                        _diccionarioSubcategorias[categoriaGenerica.CategoriaID] = listaSubcategorias;
-                    }
-                }
-
-                // 2. Cargar categorías personalizadas si hay una empresa válida
-                string empresaID = _zonaSeleccionada.EmpresaID;
-
-                if (!string.IsNullOrEmpty(empresaID))
-                {
-                    var (categoriasPersonalizadas, subcategoriasPersonalizadasDictionary) = await _dao.ObtenirCategoriesPersonalitzades(empresaID);
-
-                    // Agregar categorías personalizadas
-                    foreach (var categoriaPersonalizada in categoriasPersonalizadas)
-                    {
-                        // Opcional: marcar como personalizada en el nombre
-                        // categoriaPersonalizada.Nom += " (Personalizada)";
-
-                        Categories.Add(categoriaPersonalizada);
-
-                        // Añadir subcategorías personalizadas al diccionario
-                        if (subcategoriasPersonalizadasDictionary.TryGetValue(categoriaPersonalizada.CategoriaID, out var subcategorias))
-                        {
-                            _diccionarioSubcategorias[categoriaPersonalizada.CategoriaID] = subcategorias;
-                        }
-                    }
-                }
-
-                // 3. Cargar estados disponibles
-                Estats.Clear();
-                Estats.Add("Todos");
-                Estats.Add("Nuevo");
-                Estats.Add("Usado");
-                Estats.Add("Defectuoso");
-                Estats.Add("En reparación");
-                EstatSeleccionat = "Todos"; // Estado por defecto
-
-                // Si ya hay una categoría seleccionada, actualizar las subcategorías
-                if (CategoriaSeleccionada != null)
-                {
-                    ActualizarSubcategorias();
-                }
-            }
-            catch (Exception ex)
-            {
-               MessageBox.Show($"Error cargando listas para combos: {ex.Message}");
-            }
-        }
-
-
+        #endregion
     }
 }

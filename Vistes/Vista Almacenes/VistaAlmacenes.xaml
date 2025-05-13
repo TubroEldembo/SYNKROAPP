@@ -153,41 +153,8 @@
                             </StackPanel>
                         </Border>
 
-                        <Border Background="#F8F9FE" CornerRadius="10" Margin="10,0,0,0" Padding="15">
-                            <StackPanel>
-                                <TextBlock Text="CAPACIDAD OCUPADA" 
-                                           FontWeight="SemiBold" 
-                                           Foreground="#666666" 
-                                           FontSize="12"/>
-                                <TextBlock Text="{Binding CapacidadOcupada}" 
-                                           FontSize="24" 
-                                           FontWeight="Bold" 
-                                           Foreground="#4A5793" 
-                                           Margin="0,5,0,0"/>
-                            </StackPanel>
-                        </Border>
+
                     </UniformGrid>
-
-                    <!-- Indicador de productos -->
-                    <Border Background="#F8F9FE" CornerRadius="10" Margin="0,15,0,0" Padding="15">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Column="0" 
-                                       Text="PRODUCTOS EN ALMACENES:" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="#666666"/>
-
-                            <TextBlock Grid.Column="1" 
-                                       Text="{Binding ProductosEnAlmacenes}" 
-                                       FontWeight="Bold" 
-                                       Foreground="#4A5793" 
-                                       Margin="10,0,0,0"/>
-                        </Grid>
-                    </Border>
                 </StackPanel>
             </Border>
 
@@ -213,21 +180,6 @@
                                    FontWeight="Bold" 
                                    Foreground="#4A5793"
                                    VerticalAlignment="Center"/>
-
-                        <!-- Botón de filtrado opcional -->
-                        <Button Grid.Column="1" 
-                                Content="🔍 Filtrar" 
-                                Width="100" 
-                                Height="32" 
-                                Background="#F0F2FF" 
-                                Foreground="#4A5793" 
-                                BorderThickness="0">
-                            <Button.Resources>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
                     </Grid>
 
                     <!-- DataGrid con estilo mejorado -->
@@ -297,7 +249,8 @@
                                   Width="180" 
                                   Height="32"
                                   ItemsSource="{Binding Source={StaticResource tiposMovimiento}}"
-                                  SelectedItem="{Binding TipoMovimientoSeleccionado}">
+                                  SelectedItem="{Binding TipoMovimientoSeleccionado}"
+                                  SelectedIndex="0">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding}"/>

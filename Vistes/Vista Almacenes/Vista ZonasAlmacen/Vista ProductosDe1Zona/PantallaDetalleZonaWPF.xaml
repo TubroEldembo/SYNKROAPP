@@ -136,7 +136,7 @@
                                 <!-- DataGrid -->
                                 <DataGrid Grid.Row="1" x:Name="dgProductosDeLaZona" AutoGenerateColumns="False" 
                                           Background="White" BorderBrush="#CCC" BorderThickness="1"
-                                          ItemsSource="{Binding Productes}" 
+                                          ItemsSource="{Binding ProductesFiltrats}" 
                                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                                           SelectionChanged="dgProductosDeLaZona_SelectionChanged"
                                           MinHeight="400" Margin="0,0,0,10">
@@ -165,8 +165,8 @@
 
                                 <!-- Botón Agregar nuevo producto -->
                                 <Button Grid.Row="2" Content="+ Agregar nuevo producto" Width="200" Height="45"
-                    HorizontalAlignment="Right" Click="btnAgregarZona_Click"
-                    Style="{StaticResource PrimaryButton}"/>
+                                        HorizontalAlignment="Right" Click="btnAgregarZona_Click"
+                                        Style="{StaticResource PrimaryButton}"/>
                             </Grid>
                         </Border>
                     </Grid>

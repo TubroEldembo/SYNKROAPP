@@ -36,6 +36,18 @@ namespace SYNKROAPP.VIEWMODEL
 
         #region Propiedades del formulario
 
+        private string _precioSeleccionado;
+        public string PrecioSeleccionado
+        {
+            get => _precioSeleccionado;
+            set
+            {
+                _precioSeleccionado = value;
+                OnPropertyChanged(nameof(PrecioSeleccionado));
+                FiltrarProductos();
+            }
+        }
+
         private string _codigoProducto;
         public string CodigoProducto
         {
@@ -110,7 +122,6 @@ namespace SYNKROAPP.VIEWMODEL
             set { _subcategoriaSeleccionada = value; OnPropertyChanged(nameof(SubcategoriaSeleccionada)); }
         }
 
-
         public ObservableCollection<string> ListaCategorias { get; set; }
 
         #endregion
@@ -134,10 +145,17 @@ namespace SYNKROAPP.VIEWMODEL
             set { _textoBusqueda = value; OnPropertyChanged(nameof(TextoBusqueda)); FiltrarProductos(); }
         }
 
+
         private async void CargarDatosIniciales()
         {
             try
             {
+                CategoriaSeleccionada = "Todas las categorías";
+                PrecioSeleccionado = "Todos los precios";
+
+                ListaCategorias.Clear();
+                ListaCategorias.Add("Todas las categorías"); // ✅ Añadir al principio
+
                 var (categoriasGenericas, subcategoriasGenericas) = await _dao.ObtenirCategoriesGeneriques();
 
                 foreach (var cat in categoriasGenericas)
@@ -155,8 +173,7 @@ namespace SYNKROAPP.VIEWMODEL
                     }
                 }
 
-
-                List<ProducteAmbDetall> productos = await _dao.GetProductosCatagalogoD1Empresa(_empresa.EmpresaID, false); // deberás implementar este método
+                List<ProducteAmbDetall> productos = await _dao.GetProductosCatagalogoD1Empresa(_empresa.EmpresaID, false);
 
                 foreach (ProducteAmbDetall prod in productos)
                 {
@@ -165,13 +182,12 @@ namespace SYNKROAPP.VIEWMODEL
                         Producte = prod.Producte,
                         Cantidad = prod.Cantidad,
                         Preu = prod.Preu,
-
-
                     });
                 }
 
                 ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(ListaProductos);
 
+                CategoriaSeleccionada = "Todas las categorías"; // ✅ Valor por defecto
 
             }
             catch (Exception ex)
@@ -182,14 +198,54 @@ namespace SYNKROAPP.VIEWMODEL
 
         private void FiltrarProductos()
         {
-           
+            if (ListaProductos == null)
+                return;
+
+            IEnumerable<ProducteAmbDetall> productos = ListaProductos;
+
+            // Filtrar por texto de búsqueda
+            if (!string.IsNullOrWhiteSpace(TextoBusqueda))
+            {
+                string textoBusqueda = TextoBusqueda.ToLower();
+                productos = productos.Where(p =>
+                    (p.Producte?.Nom?.ToLower()?.Contains(textoBusqueda) ?? false) ||
+                    (p.Producte?.CodiReferencia?.ToLower()?.Contains(textoBusqueda) ?? false) ||
+                    (p.Producte?.Descripcio?.ToLower()?.Contains(textoBusqueda) ?? false));
+            }
+
+            // Filtrar por categoría
+            if (!string.IsNullOrWhiteSpace(CategoriaSeleccionada))
+            {
+                if (_mapCategoriaNombreToID.TryGetValue(CategoriaSeleccionada, out var categoriaId))
+                {
+                    productos = productos.Where(p => p.Producte?.CategoriaID == CategoriaSeleccionada).ToList();
+                }
+
+            }
+
+            // Filtrar por rango de precio
+            if (!string.IsNullOrWhiteSpace(PrecioSeleccionado) && PrecioSeleccionado != "Todos los precios")
+            {
+                switch (PrecioSeleccionado)
+                {
+                    case "Menor a $100":
+                        productos = productos.Where(p => p.Preu < 100);
+                        break;
+                    case "$100 - $500":
+                        productos = productos.Where(p => p.Preu >= 100 && p.Preu <= 500);
+                        break;
+                    case "$500 - $1000":
+                        productos = productos.Where(p => p.Preu > 500 && p.Preu <= 1000);
+                        break;
+                    case "Mayor a $1000":
+                        productos = productos.Where(p => p.Preu > 1000);
+                        break;
+                }
+            }
+
+            // Actualizar la colección observable de productos filtrados
+            ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(productos);
         }
-
-        #endregion
-
-        #region Propiedades del grid
-
-
         #endregion
 
         #region Métodos públicos

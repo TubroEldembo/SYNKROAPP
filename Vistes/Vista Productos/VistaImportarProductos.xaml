@@ -59,7 +59,7 @@
                         <ComboBox x:Name="cmbAlmacen" Height="32"
                                   ItemsSource="{Binding ListaAlmacenes}"
                                   SelectedItem="{Binding AlmacenSeleccionado}"
-                                  IsEnabled="True" Width="155">
+                                  IsEnabled="True" Width="155" SelectedIndex="0">
                         </ComboBox>
                     </StackPanel>
 
@@ -68,7 +68,7 @@
                         <ComboBox x:Name="cmbZonaAlmacenamiento" Height="32"
                                   ItemsSource="{Binding ListaZonas}"
                                   SelectedItem="{Binding ZonaSeleccionada}" 
-                                  IsEnabled="True">
+                                  IsEnabled="True" SelectedIndex="0">
 
                         </ComboBox>
                     </StackPanel>

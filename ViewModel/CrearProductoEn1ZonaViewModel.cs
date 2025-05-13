@@ -84,8 +84,7 @@ namespace SYNKROAPP.ViewModel
             set
             {
                 _categoriaSeleccionada = value;
-                OnPropertyChanged(nameof(CategoriaSeleccionada));
-                FiltrarSubcategorias();
+                OnPropertyChanged(nameof(CategoriaSeleccionada)); FiltrarSubcategorias(); FiltrarProductos();
             }
         }
 
@@ -261,64 +260,36 @@ namespace SYNKROAPP.ViewModel
 
         private void FiltrarProductos()
         {
+            if (ListaProductos == null)
+                return;
 
+            IEnumerable<ProducteAmbDetall> productos = ListaProductos;
+
+            // Filtrar por texto de búsqueda
+            if (!string.IsNullOrWhiteSpace(TextoBusqueda))
+            {
+                string textoBusqueda = TextoBusqueda.ToLower();
+                productos = productos.Where(p =>
+                    (p.Producte?.Nom?.ToLower()?.Contains(textoBusqueda) ?? false) ||
+                    (p.Producte?.CodiReferencia?.ToLower()?.Contains(textoBusqueda) ?? false) ||
+                    (p.Producte?.Descripcio?.ToLower()?.Contains(textoBusqueda) ?? false));
+            }
+
+            // Filtrar por categoría
+            if (!string.IsNullOrWhiteSpace(CategoriaSeleccionada))
+            {
+                if (_mapCategoriaNombreToID.TryGetValue(CategoriaSeleccionada, out var categoriaId))
+                {
+                    productos = productos.Where(p => p.Producte?.CategoriaID == CategoriaSeleccionada).ToList();
+                }
+
+            }
+
+            // Actualizar la colección observable de productos filtrados
+            ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(productos);
         }
 
         #endregion
-
-        //public async Task<bool> GuardarProductoAsync()
-        //{
-        //    bool productoGuardado = false;
-        //    if (CantidadAIngresar <= 0 || string.IsNullOrWhiteSpace(ZonaSeleccionada?.ZonaEmmagatzematgeID) || ProductoSeleccionado == null)
-        //    {
-        //        MessageBox.Show("Complete los campos correctamente.");
-        //        return false;
-        //    }
-        //    try
-        //    {
-        //        var zona = ZonaSeleccionada;
-        //        // Crear el inventario con los detalles del producto seleccionado
-        //        ProductesInventari inventari = new ProductesInventari
-        //        {
-        //            ProducteID = ProductoSeleccionado.Producte.ProducteID,
-        //            EmpresaID = ZonaSeleccionada.EmpresaID,
-        //            Quantitat = CantidadAIngresar,
-        //            Estat = "Nuevo", // O el estado que corresponda
-        //            ZonaID = zona.ZonaEmmagatzematgeID,
-        //            MagatzemID = zona.MagatzemPertanyent,
-        //            CodiReferencia = ProductoSeleccionado.Producte.SKU
-        //        };
-        //        // Guardar el inventario en la zona
-        //        string inventariID = await _dao.AddInventariToZona(inventari);
-        //        if (!string.IsNullOrEmpty(inventariID))
-        //        {
-        //            inventari.IDProducteInventari = inventariID;
-        //            // Crear el movimiento de inventario
-        //            MovimentsInventari moviment = new MovimentsInventari
-        //            {
-        //                ProducteInventariID = inventariID,
-        //                EmpresaIDOrigen = ZonaSeleccionada.EmpresaID,
-        //                EmpresaIDDesti = ZonaSeleccionada.EmpresaID,
-        //                MagatzemIDOrigen = zona.MagatzemPertanyent,
-        //                MagatzemIDDesti = zona.MagatzemPertanyent,
-        //                ZonaOrigenID = zona.ZonaEmmagatzematgeID,
-        //                ZonaDestiID = zona.ZonaEmmagatzematgeID,
-        //                Tipus = TipusMoviment.Entrada,
-        //                Quantitat = CantidadAIngresar,
-        //                Data = DateTime.UtcNow,
-        //                Notes = "Entrada inicial del producto"
-        //            };
-        //            // Pasamos true para indicar que el producto ya existe en el inventario
-        //            await _dao.GuardarMovimientoInventariAsync(moviment, inventari, true);
-        //            productoGuardado = true;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Error al guardar el producto: {ex.Message}");
-        //    }
-        //    return productoGuardado;
-        //}
 
         public async Task<bool> GuardarEntradaAsync()
         {

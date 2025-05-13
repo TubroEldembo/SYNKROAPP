@@ -64,7 +64,8 @@
                             <TextBlock Grid.Column="0" Text="🔍" FontSize="16" Margin="15,0,0,0" 
                                        Foreground="#757575" VerticalAlignment="Center"/>
                             <!-- Cuadro de búsqueda -->
-                            <TextBox Grid.Column="1" Name="txtBusqueda" BorderThickness="0" 
+                            <TextBox Grid.Column="1" Name="txtBusqueda" BorderThickness="0"
+                                     Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"
                                      Background="Transparent" Padding="10,0" Margin="5,0,0,0"
                                      TextChanged="txtBusqueda_TextChanged" 
                                      ToolTip="Buscar por código o nombre" VerticalContentAlignment="Center">
@@ -96,7 +97,7 @@
             <Border.Effect>
                 <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
             </Border.Effect>
-            <Expander Header="GESTIÓN DE PRODUCTO" IsExpanded="True" 
+            <Expander Header="GESTIÓN DE PRODUCTO" IsExpanded="False" 
                       FontSize="20" FontWeight="Bold" Foreground="#4A5793">
                 <Grid Margin="0,15,0,0">
                     <Grid.ColumnDefinitions>
@@ -280,43 +281,27 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Categoría:" FontWeight="SemiBold" Foreground="#666666" 
                               VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <Border Background="White" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="8" Width="200">
-                        <ComboBox Name="cmbFiltroCategoria" BorderThickness="0" Padding="8" Background="Transparent"
-                                 SelectionChanged="cmbFiltroCategoria_SelectionChanged">
-                            <ComboBoxItem Content="Todas las categorías" IsSelected="True"/>
-                        </ComboBox>
+                    <Border Background="#4A5793"  BorderThickness="1" CornerRadius="8" Width="200">
+                        <ComboBox ItemsSource="{Binding ListaCategorias}"
+                                  SelectedItem="{Binding CategoriaSeleccionada, Mode=TwoWay}"
+                                  Background="#4A5793" Foreground="White" Padding="8" Height="27" SelectedIndex="0"/>
                     </Border>
                 </StackPanel>
 
                 <!-- Filtro por precio -->
                 <TextBlock Grid.Column="2" Text="Precio:" FontWeight="SemiBold" Foreground="#666666" 
-                          VerticalAlignment="Center" Margin="15,0,10,0"/>
-                <Border Grid.Column="3" Background="White" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="8" Width="200">
-                    <ComboBox Name="cmbFiltroPrecio" BorderThickness="0" Padding="8" Background="Transparent"
-                             SelectionChanged="cmbFiltroPrecio_SelectionChanged">
-                        <ComboBoxItem Content="Todos los precios" IsSelected="True"/>
-                        <ComboBoxItem Content="Menor a $100"/>
-                        <ComboBoxItem Content="$100 - $500"/>
-                        <ComboBoxItem Content="$500 - $1000"/>
-                        <ComboBoxItem Content="Mayor a $1000"/>
+                          VerticalAlignment="Center" Margin="125,0,371,0" Grid.ColumnSpan="2"/>
+                <Border Grid.Column="3" Background="#4A5793"  BorderThickness="1" CornerRadius="8" Width="200">
+                    <ComboBox SelectedValue="{Binding PrecioSeleccionado, Mode=TwoWay}" 
+                              SelectedValuePath="Content"
+                              Background="Transparent" Padding="8" Height="27" SelectedIndex="0">
+                        <ComboBoxItem Content="Todos los precios" />
+                        <ComboBoxItem Content="Menor a $100" />
+                        <ComboBoxItem Content="$100 - $500" />
+                        <ComboBoxItem Content="$500 - $1000" />
+                        <ComboBoxItem Content="Mayor a $1000" />
                     </ComboBox>
                 </Border>
-
-                <!-- Stats básicas -->
-                <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="15,0,0,0">
-                    <Border Background="#F8F9FE" CornerRadius="8" Padding="15,8" Margin="0,0,10,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Total: " FontWeight="SemiBold" Foreground="#666666"/>
-                            <TextBlock Text="{Binding TotalProductos}" FontWeight="Bold" Foreground="#4A5793"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#F8F9FE" CornerRadius="8" Padding="15,8">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="En venta: " FontWeight="SemiBold" Foreground="#666666"/>
-                            <TextBlock Text="{Binding ProductosEnVenta}" FontWeight="Bold" Foreground="#4A5793"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
             </Grid>
         </Border>
 

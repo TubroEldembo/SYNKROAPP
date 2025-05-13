@@ -16,7 +16,7 @@ namespace SYNKROAPP.VIEWMODEL
         private List<Magatzems> _almacenes;
         private Empreses _empresa;
         private string _totalAlmacenes;
-        private string _movimientosRecientes;
+        private int _movimientosRecientes;
         private string _productosEnAlmacenes;
         private int _numeroDeZonas;
         private ObservableCollection<MovimentsInventari> _todosLosMovimientos;
@@ -29,17 +29,7 @@ namespace SYNKROAPP.VIEWMODEL
             CargarMovimientosAsync();
         }
 
-        private List<MovimentsInventari> _movimientos;
-
-        public List<MovimentsInventari> Movimientos
-        {
-            get => _movimientos;
-            set
-            {
-                _movimientos = value;
-                OnPropertyChanged(nameof(Movimientos));
-            }
-        }
+     
 
         private ObservableCollection<MovimentsInventari> _movimientosFiltrados = new ObservableCollection<MovimentsInventari>();
         public ObservableCollection<MovimentsInventari> MovimientosFiltrados
@@ -77,7 +67,7 @@ namespace SYNKROAPP.VIEWMODEL
             }
         }
 
-        public string MovimientosRecientes
+        public int MovimientosRecientes
         {
             get => _movimientosRecientes;
             set
@@ -111,7 +101,7 @@ namespace SYNKROAPP.VIEWMODEL
                 if (_numeroDeZonas != value)
                 {
                     _numeroDeZonas = value;
-                    OnPropertyChanged(nameof(ProductosEnAlmacenes));
+                    OnPropertyChanged(nameof(NumeroDeZonas));
                 }
             }
         }
@@ -133,7 +123,7 @@ namespace SYNKROAPP.VIEWMODEL
         {
             List<MovimentsInventari> movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(_empresa.EmpresaID);
             _todosLosMovimientos = new ObservableCollection<MovimentsInventari>(movimientos);
-
+            MovimientosRecientes = _todosLosMovimientos.Count;
             // Aplicar filtros iniciales
             AplicarFiltros();
         }
@@ -168,9 +158,7 @@ namespace SYNKROAPP.VIEWMODEL
 
                 // ✅ Calcular el número total de zonas
                 NumeroDeZonas = almacenes.Sum(a => a.Zones?.Count ?? 0);
-
             }
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

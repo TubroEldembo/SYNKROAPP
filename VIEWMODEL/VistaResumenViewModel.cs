@@ -136,7 +136,6 @@ namespace SYNKROAPP.VIEWMODEL
             }
 
             TotalProductos = productosTotales;
-            //ProductosEnMovimiento = producosEnMovimiento;
 
             if (capacidadTotal > 0)
             {

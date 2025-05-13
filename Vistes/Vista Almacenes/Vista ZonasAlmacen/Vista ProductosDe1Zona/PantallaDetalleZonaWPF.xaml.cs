@@ -17,13 +17,15 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
         public IDAO _dao;
         ZonaEmmagatzematge _zona;
         Magatzems _magatzem;
+
+
         public  PantallaDetalleZonaWPF(DetalleDe1ZonaViewModel viewModel)
         {
             InitializeComponent();
             this.DataContext = viewModel;
-            _zona = viewModel._zonaSeleccionada;
-            _dao = viewModel._dao;
-            _magatzem = viewModel._magatzemSeleccionat;
+            _zona = viewModel.ZonaSeleccionada;
+            _dao = viewModel.Dao;
+            _magatzem = viewModel.MagatzemSeleccionat;
             CargarListas();
         }
 
