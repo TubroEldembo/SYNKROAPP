@@ -40,7 +40,7 @@ namespace SYNKROAPP.Vistes.Vista_Productos
 
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private async void btnImportar_Click(object sender, RoutedEventArgs e)

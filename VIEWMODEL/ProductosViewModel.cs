@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static Steema.TeeChart.Styles.SquarifiedMap;
 
 namespace SYNKROAPP.VIEWMODEL
 {
@@ -83,18 +82,19 @@ namespace SYNKROAPP.VIEWMODEL
             set { _precioProducto = value; OnPropertyChanged(nameof(PrecioProducto)); }
         }
 
-        private string _rutaImagen;
-        public string RutaImagen
-        {
-            get => _rutaImagen;
-            set { _rutaImagen = value; OnPropertyChanged(nameof(RutaImagen)); }
-        }
 
         private ImageSource _imagenProducto;
         public ImageSource ImagenProducto
         {
             get => _imagenProducto;
             set { _imagenProducto = value; OnPropertyChanged(nameof(ImagenProducto)); }
+        }
+
+        private string _rutaImagen;
+        public string RutaImagen
+        {
+            get => _rutaImagen;
+            set { _rutaImagen = value; OnPropertyChanged(nameof(RutaImagen)); }
         }
 
         private bool _tieneImagen;
@@ -248,6 +248,7 @@ namespace SYNKROAPP.VIEWMODEL
         }
         #endregion
 
+
         #region Métodos públicos
 
         public void SeleccionarImagen()
@@ -297,6 +298,7 @@ namespace SYNKROAPP.VIEWMODEL
 
             ProducteGeneral nuevo = new ProducteGeneral
             {
+                ProducteID = Guid.NewGuid().ToString(), // ID aleatorio
                 Nom = NombreProducto,
                 CodiReferencia = CodigoProducto,
                 Descripcio = DescripcionProducto,

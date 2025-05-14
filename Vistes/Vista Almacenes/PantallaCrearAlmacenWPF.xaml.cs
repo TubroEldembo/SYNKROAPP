@@ -62,7 +62,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
                     string codiPostal = txtCodigoPostal.Text;
 
                     int capacitat = int.Parse(txtCapacidadTotal.Text);
-                    bool perDefecte = chkPorDefecto.IsChecked ?? false;
+                   
                     string empresaId = txtEmpresaPert.Text;
                     TipusVia tipusSeleccionat = (TipusVia)cmbTipoVia.SelectedItem;
 
@@ -85,7 +85,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
                     {
                         NomMagatzem = nombreAlmacen,
                         Zones = new List<string>(),
-                        MagatzemPerDefecte = perDefecte,
+                        MagatzemPerDefecte = false,
                         Ubicacio = direccioMagatzem
                     };
 
@@ -126,6 +126,11 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
 
         private void btnSoloGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

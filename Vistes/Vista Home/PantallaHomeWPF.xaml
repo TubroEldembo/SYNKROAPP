@@ -206,6 +206,11 @@
                                    FontSize="12" 
                                    FontWeight="SemiBold" 
                                    Margin="10,15,0,5"/>
+                        <Button Tag="🗃️" 
+                                Name="btnGestionarCatalogo"
+                                Content="Gestionar catalogo" 
+                                Style="{StaticResource MenuButtonStyle}" 
+                                Click="btnGestionarCatalogo_Click"/>
                         <Button Tag="🛒" 
                                 Content="Mercado" 
                                 Style="{StaticResource MenuButtonStyle}" 

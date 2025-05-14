@@ -7,24 +7,32 @@
         mc:Ignorable="d"
         Title="Detalle Producto"
         Height="832" Width="1280"
-        Background="#6F7ABC"
         WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         ResizeMode="NoResize">
 
+    <!-- Fondo con gradiente para un aspecto más moderno consistente con otras vistas -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/RESOURCES/ConvertersResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid>
+    <Grid Margin="40,30,40,30">
         <!-- Definición de las filas -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="70" />
+            <RowDefinition Height="Auto" />
             <!-- Fila para la navegación superior -->
             <RowDefinition Height="*" />
             <!-- Fila para el contenido principal -->
@@ -32,19 +40,49 @@
             <!-- Fila para los botones inferiores -->
         </Grid.RowDefinitions>
 
-        <!-- Barra superior con el botón de regresar y título -->
-        <Grid Grid.Row="0" Background="#5965AA">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0">
-                <Button x:Name="btnRegresar" Width="40" Height="40" Background="Transparent" BorderThickness="0" Click="btnRegresar_Click">
-                    <TextBlock Text="←" FontSize="22" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <!-- Encabezado con sombra y estilo moderno -->
+        <Border Grid.Row="0"
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Botón Regresar -->
+                <Button x:Name="btnRegresar" Grid.Column="0" Width="50" Height="50" 
+                        Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0"
+                        Margin="0,0,20,0" Click="btnRegresar_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="25"/>
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock Text="←" FontSize="24" FontWeight="Bold" 
+                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Button>
-                <TextBlock Text="DETALLE DEL PRODUCTO" FontSize="20" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="15,0,0,0"/>
-            </StackPanel>
-        </Grid>
+
+                <!-- Título con efecto de texto -->
+                <TextBlock Grid.Column="1" FontSize="28" FontWeight="Bold" 
+                           Foreground="#4A5793" VerticalAlignment="Center"
+                           Text="DETALLE DEL PRODUCTO">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+            </Grid>
+        </Border>
 
         <!-- Contenido principal -->
-        <Border Grid.Row="1" Background="White" Margin="20" CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1">
-            <Grid Margin="20">
+        <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="30">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <!-- Título con nombre del producto -->
@@ -53,7 +91,8 @@
                 </Grid.RowDefinitions>
 
                 <!-- Título del producto -->
-                <TextBlock Grid.Row="0" Text="{Binding NombreProducto}" FontSize="24" FontWeight="Bold" Foreground="#333333" Margin="0,0,0,20"/>
+                <TextBlock Grid.Row="0" Text="{Binding NombreProducto}" 
+                           FontSize="24" FontWeight="Bold" Foreground="#4A5793" Margin="0,0,0,20"/>
 
                 <!-- Contenido principal (imagen a la izquierda y detalles a la derecha) -->
                 <Grid Grid.Row="1">
@@ -65,51 +104,76 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Columna izquierda: Imagen y datos básicos -->
-                    <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                        <!-- Imagen del producto con mejoras visuales -->
-                        <Border Background="#FFFFFF" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="8" 
-                                Height="300" Width="320" HorizontalAlignment="Left">
-                            <Grid>
-                                <!-- Imagen con efecto de sombra -->
-                                <Border Margin="10">
-                                    <Image x:Name="imgProducto" Source="{Binding ImagenProducto}" Stretch="Uniform"/>
-                                </Border>
+                    <ScrollViewer Grid.Column="0" Margin="0,0,20,0" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- Imagen del producto con mejoras visuales -->
+                            <Border Background="#FFFFFF" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" 
+                                    Height="300" Width="320" HorizontalAlignment="Left">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#DDDDDD" BlurRadius="10" ShadowDepth="1" Opacity="0.5"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <!-- Imagen con efecto de sombra -->
+                                    <Border Margin="10" CornerRadius="10">
+                                        <Image x:Name="imgProducto" Source="{Binding ImagenProducto}" Stretch="Uniform"/>
+                                    </Border>
 
-                                <!-- Mensaje cuando no hay imagen -->
-                                <TextBlock Text="Sin imagen disponible" FontSize="16" Foreground="#AAAAAA" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           />
-                            </Grid>
-                        </Border>
-
-                        <TextBlock Text="Información básica" Style="{StaticResource TituloSeccion}" Margin="0,25,0,15"/>
-
-                        <!-- SKU con estilo badge -->
-                        <TextBlock Text="SKU" Style="{StaticResource EtiquetaCampo}"/>
-                        <Border Background="#F0F4F8" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="4" Margin="0,0,0,15" HorizontalAlignment="Left">
-                            <TextBlock Text="{Binding SKU}" Padding="10,5" FontFamily="Consolas" FontSize="14" Foreground="#0066CC"/>
-                        </Border>
-
-                        <!-- Estado del producto como badge de color -->
-                        <TextBlock Text="Estado" Style="{StaticResource EtiquetaCampo}"/>
-                        <!--<Border Style="{StaticResource BadgeEstado}" 
-                                Background="{Binding EstadoProducto, Converter={StaticResource EstadoColorConverter}}">
-                            <TextBlock Text="{Binding EstadoProducto}" Foreground="White" FontWeight="SemiBold" FontSize="13"/>
-                        </Border>-->
-
-                        <!-- Información adicional básica del producto -->
-                        <TextBlock Text="Categoría" Style="{StaticResource EtiquetaCampo}"/>
-                        <TextBlock Text="{Binding Categoria}" Style="{StaticResource DatoValor}"/>
-
-                        <TextBlock Text="Precio" Style="{StaticResource EtiquetaCampo}" 
-                                   Visibility="{Binding EstaEnVenta, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <StackPanel Orientation="Horizontal" 
-                                    Visibility="{Binding EstaEnVenta, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Border Background="#EEFAEF" BorderBrush="#CCEBD0" BorderThickness="1" CornerRadius="4" Margin="0,0,0,15">
-                                <TextBlock Text="{Binding PrecioFormateado}" Padding="10,5" FontWeight="SemiBold" FontSize="14" Foreground="#28A745"/>
+                                    <!-- Mensaje cuando no hay imagen -->
+                                    <TextBlock Text="Sin imagen disponible" FontSize="16" Foreground="#AAAAAA" 
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
                             </Border>
+
+                            <TextBlock Text="Información básica" FontSize="20" FontWeight="Bold" 
+                                       Foreground="#4A5793" Margin="0,25,0,15"/>
+
+                            <!-- SKU con estilo badge -->
+                            <TextBlock Text="SKU" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="#F0F4F8" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="8" 
+                                    Margin="0,0,0,15" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding SKU}" Padding="15,8" FontFamily="Consolas" 
+                                           FontSize="14" Foreground="#0066CC"/>
+                            </Border>
+
+                            <!-- Estado del producto como badge de color -->
+                            <TextBlock Text="Estado" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="{Binding EstadoProducto, Converter={StaticResource EstadoColorConverter}}" 
+                                    CornerRadius="8" Margin="0,0,0,15" HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding EstadoProducto}" Padding="15,8" 
+                                           Foreground="White" FontWeight="SemiBold" FontSize="13"/>
+                            </Border>
+
+                            <!-- Información adicional básica del producto -->
+                            <TextBlock Text="Categoría" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" 
+                                    CornerRadius="8" Margin="0,0,0,15" HorizontalAlignment="Left" MinWidth="200">
+                                <TextBlock Text="{Binding Categoria}" Padding="15,8" FontSize="14"/>
+                            </Border>
+                            <!-- Subcategoría -->
+                            <TextBlock Text="Subcategoría" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" 
+                                    CornerRadius="8" Margin="0,0,0,15" HorizontalAlignment="Left" MinWidth="200">
+                                <TextBlock Text="{Binding Subcategoria}" Padding="15,8" FontSize="14"/>
+                            </Border>
+
+                            <!-- Precio del producto -->
+                            <TextBlock Text="Precio" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" 
+                                    CornerRadius="8" Margin="0,0,0,15" HorizontalAlignment="Left" MinWidth="200">
+                                <TextBlock Text="{Binding Preu, StringFormat={}{0:C2}}" Padding="15,8" FontSize="14"/>
+                            </Border>
+
+                            <!-- Estado de venta -->
+                            <TextBlock Text="En venta" FontWeight="SemiBold" Foreground="#666666" Margin="0,0,0,5"/>
+                            <Border Background="{Binding EnVenda, Converter={StaticResource BooleanToColorConverter}}" 
+                                    CornerRadius="8" Margin="0,0,0,15" HorizontalAlignment="Left" MinWidth="200">
+                                <TextBlock Text="{Binding EnVenda, Converter={StaticResource BooleanToTextConverter}}" 
+                                            Padding="15,8" FontSize="14" Foreground="White" FontWeight="SemiBold"/>
+                            </Border>
+
                         </StackPanel>
-                    </StackPanel>
+                    </ScrollViewer>
+
 
                     <!-- Columna derecha: Detalles del producto y ubicaciones -->
                     <Grid Grid.Column="1">
@@ -122,73 +186,88 @@
 
                         <!-- Descripción y detalles -->
                         <StackPanel Grid.Row="0">
-                            <TextBlock Text="Descripción" Style="{StaticResource TituloSeccion}"/>
-                            <Border Background="#F8F8F8" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="4" Margin="0,0,0,20">
-                                <TextBlock Text="{Binding Descripcion}" TextWrapping="Wrap" Padding="10" 
-                                           FontSize="14" Height="Auto" MinHeight="80"/>
+                            <TextBlock Text="Descripción" FontSize="20" FontWeight="Bold" 
+                                      Foreground="#4A5793" Margin="0,0,0,15"/>
+                            <Border Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" 
+                                   CornerRadius="10" Margin="0,0,0,20">
+                                <TextBlock Text="{Binding Descripcion}" TextWrapping="Wrap" Padding="15" 
+                                          FontSize="14" Height="Auto" MinHeight="80"/>
                             </Border>
                         </StackPanel>
 
                         <!-- Zonas donde se encuentra el producto con diseño mejorado -->
                         <StackPanel Grid.Row="1">
-                            <TextBlock Text="Ubicaciones del producto" Style="{StaticResource TituloSeccion}"/>
+                            <TextBlock Text="Ubicaciones del producto" FontSize="20" FontWeight="Bold" 
+                                      Foreground="#4A5793" Margin="0,0,0,15"/>
 
                             <!-- Indicador de cantidad total -->
-                            <Border Background="#F0F4F8" BorderBrush="#D0DCE8" BorderThickness="1" CornerRadius="4" 
-                                    Margin="0,0,0,15" Padding="10" HorizontalAlignment="Left">
+                            <Border Background="#F0F4F8" BorderBrush="#D0DCE8" BorderThickness="1" 
+                                   CornerRadius="10" Margin="0,0,0,15" Padding="15" HorizontalAlignment="Left" 
+                                   MinWidth="300">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Cantidad total disponible: " FontSize="14"/>
-                                    <TextBlock Text="{Binding CantidadTotalDisponible}" FontWeight="Bold" FontSize="14" Foreground="#0066CC"/>
+                                    <TextBlock Text="{Binding Quantitat}" FontWeight="Bold" 
+                                              FontSize="14" Foreground="#0066CC"/>
                                 </StackPanel>
                             </Border>
 
                             <!-- DataGrid con estilos mejorados -->
-                            <DataGrid x:Name="dgZonasProducto" AutoGenerateColumns="False"
-                                      ItemsSource="{Binding ZonasProducto}"
-                                      Style="{StaticResource DataGridEstilo}"
-                                      MaxHeight="300">
-                                <DataGrid.Resources>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="#F0F4F8"/>
-                                        <Setter Property="Foreground" Value="#333333"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="Padding" Value="10,8"/>
-                                        <Setter Property="BorderBrush" Value="#DDDDDD"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    </Style>
-                                </DataGrid.Resources>
+                            <Border Background="#F8F9FE" CornerRadius="10" Padding="15">
+                                <DataGrid x:Name="dgZonasProducto" AutoGenerateColumns="False"
+                                          ItemsSource="{Binding ZonasProducto}"
+                                          HeadersVisibility="Column"
+                                          BorderThickness="0"
+                                          Background="Transparent"
+                                          RowBackground="#FFFFFF"
+                                          AlternatingRowBackground="#F0F2FF"
+                                          GridLinesVisibility="None"
+                                          RowHeight="40"
+                                          SelectionMode="Single"
+                                          MaxHeight="300">
+                                    <DataGrid.Resources>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#F0F2FF"/>
+                                            <Setter Property="Foreground" Value="#4A5793"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Height" Value="40"/>
+                                            <Setter Property="Padding" Value="10,0"/>
+                                            <Setter Property="BorderBrush" Value="#DDDDDD"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        </Style>
+                                    </DataGrid.Resources>
 
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Almacén" Binding="{Binding Almacen}" Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Padding" Value="10,0"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Almacén" Binding="{Binding Almacen}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Padding" Value="10,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                    <DataGridTextColumn Header="Zona" Binding="{Binding Zona}" Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Padding" Value="10,0"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Zona" Binding="{Binding Zona}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Padding" Value="10,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
 
-                                    <DataGridTextColumn Header="Cantidad Disponible" Binding="{Binding QuantitatDisponible}" Width="*">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Padding" Value="10,0"/>
-                                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                        <DataGridTextColumn Header="Cantidad Disponible" Binding="{Binding QuantitatDisponible}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Padding" Value="10,0"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Border>
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -196,29 +275,52 @@
         </Border>
 
         <!-- Botones inferiores -->
-        <Border Grid.Row="2" Background="#F0F2F5" Padding="20" BorderBrush="#DDDDDD" BorderThickness="0,1,0,0">
+        <Border Grid.Row="2" Background="#F0F2F5" CornerRadius="15" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.2"/>
+            </Border.Effect>
             <Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button x:Name="btnRegresar2" Content="Volver" Width="120" Height="40" 
-                            Background="White" Foreground="#555555" BorderBrush="#CCCCCC" BorderThickness="1"
-                            Click="btnRegresar_Click"/>
-                </StackPanel>
-
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="btnEditar" Content="Editar" Width="120" Height="40" 
-                            Background="#6F7ABC" Foreground="White" BorderThickness="0" Margin="0,0,10,0"
-                            Click="btnEditar_Click"/>
-
+                            Background="#4A5793" Foreground="White" BorderThickness="0" Margin="0,0,10,0"
+                            Click="btnEditar_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
 
                     <Button x:Name="btnMoverProducto" Content="Mover" Width="120" Height="40" 
                             Background="#17A2B8" Foreground="White" BorderThickness="0" Margin="0,0,10,0"
-                            Click="btnMoverProducto_Click"/>
-                    
-                    <Button x:Name="btnEliminar" Content="Eliminar" Width="120" Height="40" 
+                            Click="btnMoverProducto_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <!--<Button x:Name="btnEliminar" Content="Eliminar" Width="120" Height="40" 
                             Background="#DC3545" Foreground="White" BorderThickness="0"
-                            Click="btnEliminar_Click"/>
-
-
+                            Click="btnEliminar_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>-->
+                    
+                    
                 </StackPanel>
             </Grid>
         </Border>

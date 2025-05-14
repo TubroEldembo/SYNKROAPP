@@ -2,6 +2,7 @@
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas;
+using SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas.Vista_Catalogo;
 using SYNKROAPP.Vistes.Vista_Movimientos;
 using SYNKROAPP.Vistes.Vista_Productos;
 using System;
@@ -148,6 +149,16 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
         }
 
+
+        private void btnGestionarCatalogo_Click(object sender, RoutedEventArgs e)
+        {
+            if (isMenuOpen)
+            {
+                ToggleMenu();
+            }
+
+            contentArea.Content = new VistaGestionarCatalogo(dao, empresa);
+        }
         private void btnToggleSlider_Click(object sender, RoutedEventArgs e)
         {
             ToggleMenu();
@@ -160,7 +171,6 @@ namespace SYNKROAPP.Vistes.Vista_Home
                 ToggleMenu();
             }
         }
-
         private void ToggleMenu()
         {
             if (isMenuOpen)

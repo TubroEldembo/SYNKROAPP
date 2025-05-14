@@ -34,9 +34,12 @@ namespace SYNKROAPP.CLASES
         [FirestoreProperty]
         public string FotoEmpresalUrl { get; set; }
 
+        [FirestoreProperty]
+        public int RetencionDiesMoviments { get; set; } = 30;
+
         public Empreses() { }
 
-        public Empreses(string empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<string> magatzems, List<string> usuaris, Adreça ubicacio, string fotoEmpresalUrl)
+        public Empreses(string empresaID, bool estatVerificacio, string nomEmpresa, string tipus, List<string> magatzems, List<string> usuaris, Adreça ubicacio, string fotoEmpresalUrl, int retencionDiesMoviments)
         {
             EmpresaID = empresaID;
             EstatVerificacio = estatVerificacio;
@@ -46,6 +49,7 @@ namespace SYNKROAPP.CLASES
             Usuaris = usuaris;
             Ubicacio = ubicacio;
             FotoEmpresalUrl = fotoEmpresalUrl;
+            RetencionDiesMoviments = retencionDiesMoviments; 
         }
     }
 }

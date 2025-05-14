@@ -37,27 +37,11 @@ namespace SYNKROAPP.Vistes.Vista_Productos
             this.empresa = empresa;
             _viewModel = new ProductosViewModel(dao, empresa);
             DataContext = _viewModel;
-            
-        }
-
-        private void btnImportar_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
            _viewModel.GuardarProducto();
-        }
-
-        private void cmbFiltroCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void cmbFiltroPrecio_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
 
         private void txtBusqueda_TextChanged(object sender, TextChangedEventArgs e)
@@ -77,6 +61,7 @@ namespace SYNKROAPP.Vistes.Vista_Productos
                 if (seleccion != null)
                 {
                     CrearEntradaProductoExistenteViewModel viewModel = new CrearEntradaProductoExistenteViewModel(dao, seleccion, empresa.EmpresaID);
+
                     PantallaAgregarProductoA1ZonaWPF pantallaAgregarProducto = new PantallaAgregarProductoA1ZonaWPF(viewModel);
                     pantallaAgregarProducto.ShowDialog();
                 }

@@ -1,12 +1,11 @@
-﻿using SYNKROAPP.CLASES;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -14,9 +13,9 @@ using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.ViewModel
 {
-    public class CrearProductoEn1ZonaViewModel : INotifyPropertyChanged
+    public partial class CrearProductoEn1ZonaViewModel : ObservableObject
     {
-        public IDAO _dao;
+        private readonly IDAO _dao;
         private ZonaEmmagatzematge zona;
         private Dictionary<string, List<string>> _diccionarioSubcategorias = new();
         private Dictionary<string, string> _mapCategoriaNombreToID = new();
@@ -24,136 +23,114 @@ namespace SYNKROAPP.ViewModel
 
         public CrearProductoEn1ZonaViewModel(IDAO dao, ZonaEmmagatzematge zona)
         {
-            this._dao = dao;
+            _dao = dao;
             this.zona = zona;
             ListaProductos = new ObservableCollection<ProducteAmbDetall>();
+
+            // Initialize with default
+            CantidadAIngresar = 1;
+
+            FiltrarProductos();
         }
 
-        private string _nomZona;
-        public string NomZona
-        {
-            get => _nomZona;
-            set { _nomZona = value; OnPropertyChanged(nameof(NomZona)); }
-        }
+        [ObservableProperty]
+        private string nomZona;
 
-        private string _nombreProducto;
-        public string NombreProducto
-        {
-            get => _nombreProducto;
-            set { _nombreProducto = value; OnPropertyChanged(nameof(NombreProducto)); }
-        }
+        [ObservableProperty]
+        private string nombreProducto;
 
-        private string _descripcionProducto;
-        public string DescripcionProducto
-        {
-            get => _descripcionProducto;
-            set { _descripcionProducto = value; OnPropertyChanged(nameof(DescripcionProducto)); }
-        }
+        [ObservableProperty]
+        private string descripcionProducto;
 
-        private string _sku;
-        public string SKU
-        {
-            get => _sku;
-            set { _sku = value; OnPropertyChanged(nameof(SKU)); }
-        }
+        [ObservableProperty]
+        private string sku;
 
-        private int _cantidadInicial;
-        public int CantidadAIngresar
-        {
-            get => _cantidadInicial;
-            set { _cantidadInicial = value; OnPropertyChanged(nameof(CantidadAIngresar)); }
-        }
+        [ObservableProperty]
+        private int cantidadAIngresar;
 
+        // Modified property with manual change notification
         private ProducteAmbDetall _productoSeleccionado;
         public ProducteAmbDetall ProductoSeleccionado
         {
             get => _productoSeleccionado;
             set
             {
-                _productoSeleccionado = value;
-                OnPropertyChanged(nameof(ProductoSeleccionado));
-            }
-        }
-
-
-        public ObservableCollection<string> ListaCategorias { get; set; } = new ObservableCollection<string>();
-        private string _categoriaSeleccionada;
-        public string CategoriaSeleccionada
-        {
-            get => _categoriaSeleccionada;
-            set
-            {
-                _categoriaSeleccionada = value;
-                OnPropertyChanged(nameof(CategoriaSeleccionada)); FiltrarSubcategorias(); FiltrarProductos();
-            }
-        }
-
-        private void FiltrarSubcategorias()
-        {
-            ListaSubcategoriasFiltradas.Clear();
-            if (!string.IsNullOrEmpty(CategoriaSeleccionada) && _diccionarioSubcategorias.TryGetValue(CategoriaSeleccionada, out var subcategorias))
-            {
-                foreach (var sub in subcategorias)
+                if (SetProperty(ref _productoSeleccionado, value))
                 {
-                    ListaSubcategoriasFiltradas.Add(sub);
+                    // Update dependent properties or perform actions when product changes
+                    OnPropertyChanged(nameof(CanAgregarProducto));
+
+                    // You can also update other properties based on the selected product
+                    if (value != null)
+                    {
+                        NombreProducto = value.Producte?.Nom;
+                        DescripcionProducto = value.Producte?.Descripcio;
+                        Sku = value.Producte?.SKU;
+                        ImagenProducto = value.ImagenProducto;
+                    }
                 }
             }
         }
 
-        public ObservableCollection<string> ListaSubcategoriasFiltradas { get; set; } = new();
+        [ObservableProperty]
+        private ObservableCollection<string> listaCategorias = new();
 
-        private string _subcategoriaSeleccionada;
-        public string SubcategoriaSeleccionada
+        [ObservableProperty]
+        private string categoriaSeleccionada;
+
+        [ObservableProperty]
+        private ObservableCollection<string> listaSubcategoriasFiltradas = new();
+
+        [ObservableProperty]
+        private string subcategoriaSeleccionada;
+
+        [ObservableProperty]
+        private ObservableCollection<string> listaAlmacenes = new();
+
+        [ObservableProperty]
+        private string almacenSeleccionado;
+
+        [ObservableProperty]
+        private ObservableCollection<string> listaZonas = new();
+
+        [ObservableProperty]
+        private ZonaEmmagatzematge zonaSeleccionada;
+
+        [ObservableProperty]
+        private ImageSource imagenProducto;
+
+        [ObservableProperty]
+        private ObservableCollection<ProducteAmbDetall> listaProductos;
+
+        [ObservableProperty]
+        private ObservableCollection<ProducteAmbDetall> productosFiltrados;
+
+        [ObservableProperty]
+        private string textoBusqueda;
+
+        partial void OnTextoBusquedaChanged(string value)
         {
-            get => _subcategoriaSeleccionada;
-            set { _subcategoriaSeleccionada = value; OnPropertyChanged(nameof(SubcategoriaSeleccionada)); }
+            FiltrarProductos();
         }
 
-        public ObservableCollection<string> ListaAlmacenes { get; set; } = new ObservableCollection<string>();
-        private string _almacenSeleccionado;
-        public string AlmacenSeleccionado
+        partial void OnCategoriaSeleccionadaChanged(string value)
         {
-            get => _almacenSeleccionado;
-            set { _almacenSeleccionado = value; OnPropertyChanged(nameof(AlmacenSeleccionado)); }
-        }
-
-        public ObservableCollection<string> ListaZonas { get; set; } = new ObservableCollection<string>();
-        private ZonaEmmagatzematge _zonaSeleccionada;
-        public ZonaEmmagatzematge ZonaSeleccionada
-        {
-            get => _zonaSeleccionada;
-            set
+            // Update subcategories when category changes
+            if (!string.IsNullOrEmpty(value) && _diccionarioSubcategorias.ContainsKey(value))
             {
-                _zonaSeleccionada = value;
-                OnPropertyChanged(nameof(ZonaSeleccionada));
+                ListaSubcategoriasFiltradas.Clear();
+                foreach (var subcategoria in _diccionarioSubcategorias[value])
+                {
+                    ListaSubcategoriasFiltradas.Add(subcategoria);
+                }
             }
-        }
+            else
+            {
+                ListaSubcategoriasFiltradas.Clear();
+            }
 
-
-        private ImageSource _imagenProducto;
-        public ImageSource ImagenProducto
-        {
-            get => _imagenProducto;
-            set { _imagenProducto = value; OnPropertyChanged(nameof(ImagenProducto)); }
-        }
-
-
-        #region Productos
-
-        public ObservableCollection<ProducteAmbDetall> ListaProductos { get; set; }
-
-        private ObservableCollection<ProducteAmbDetall> _productosFiltrados;
-        public ObservableCollection<ProducteAmbDetall> ProductosFiltrados
-        {
-            get => _productosFiltrados;
-            set { _productosFiltrados = value; OnPropertyChanged(nameof(ProductosFiltrados)); }
-        }
-
-        private string _textoBusqueda;
-        public string TextoBusqueda
-        {
-            get => _textoBusqueda;
-            set { _textoBusqueda = value; OnPropertyChanged(nameof(TextoBusqueda)); FiltrarProductos(); }
+            // Also filter products when category changes
+            FiltrarProductos();
         }
 
         public async Task InicializarCamposAsync()
@@ -204,7 +181,7 @@ namespace SYNKROAPP.ViewModel
                     }
                 }
 
-                CargarDatosIniciales();
+                await CargarDatosInicialesAsync();
             }
             catch (Exception ex)
             {
@@ -212,28 +189,13 @@ namespace SYNKROAPP.ViewModel
             }
         }
 
-        private async void CargarDatosIniciales()
+        private async Task CargarDatosInicialesAsync()
         {
             try
             {
-                var (categoriasGenericas, subcategoriasGenericas) = await _dao.ObtenirCategoriesGeneriques();
+                ListaProductos.Clear();
 
-                foreach (var cat in categoriasGenericas)
-                {
-                    ListaCategorias.Add(cat.Nom);
-                    _mapCategoriaNombreToID[cat.Nom] = cat.CategoriaID;
-
-                    if (subcategoriasGenericas.TryGetValue(cat.CategoriaID, out var subs))
-                    {
-                        _diccionarioSubcategorias[cat.Nom] = subs.Select(s => s.Nom).ToList();
-                        foreach (var sub in subs)
-                        {
-                            _mapSubcategoriaNombreToID[sub.Nom] = sub.SubCategoriaID;
-                        }
-                    }
-                }
-
-                List<ProducteAmbDetall> productos = await _dao.GetProductosCatagalogoD1Empresa(zona.EmpresaID, false); // deberás implementar este método
+                List<ProducteAmbDetall> productos = await _dao.GetProductosCatagalogoD1Empresa(zona.EmpresaID, false);
 
                 foreach (ProducteAmbDetall prod in productos)
                 {
@@ -245,12 +207,16 @@ namespace SYNKROAPP.ViewModel
                         Cantidad = prod.Cantidad,
                         Preu = prod.Preu,
                         ImagenProducto = bitmap,
-
                     });
                 }
 
                 ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(ListaProductos);
 
+                // Select the first product if available
+                if (ProductosFiltrados.Count > 0)
+                {
+                    ProductoSeleccionado = ProductosFiltrados[0];
+                }
             }
             catch (Exception ex)
             {
@@ -280,25 +246,48 @@ namespace SYNKROAPP.ViewModel
             {
                 if (_mapCategoriaNombreToID.TryGetValue(CategoriaSeleccionada, out var categoriaId))
                 {
-                    productos = productos.Where(p => p.Producte?.CategoriaID == CategoriaSeleccionada).ToList();
+                    productos = productos.Where(p => p.Producte?.CategoriaID == categoriaId).ToList();
                 }
-
             }
 
             // Actualizar la colección observable de productos filtrados
             ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(productos);
+
+            // Maintain selection if possible or select first item
+            if (ProductoSeleccionado != null)
+            {
+                var matchingProduct = ProductosFiltrados.FirstOrDefault(p =>
+                    p.Producte?.ProducteID == ProductoSeleccionado.Producte?.ProducteID);
+
+                if (matchingProduct != null)
+                {
+                    ProductoSeleccionado = matchingProduct;
+                }
+                else if (ProductosFiltrados.Count > 0)
+                {
+                    ProductoSeleccionado = ProductosFiltrados[0];
+                }
+                else
+                {
+                    ProductoSeleccionado = null;
+                }
+            }
+            else if (ProductosFiltrados.Count > 0)
+            {
+                ProductoSeleccionado = ProductosFiltrados[0];
+            }
         }
 
-        #endregion
-
+        [RelayCommand]
         public async Task<bool> GuardarEntradaAsync()
         {
-            bool inventarioAgregado = false;
-            if (CantidadAIngresar <= 0 || string.IsNullOrWhiteSpace(ZonaSeleccionada?.ZonaEmmagatzematgeID))
+            if (!CanAgregarProducto())
             {
-                MessageBox.Show("Complete los campos correctamente.");
+                MessageBox.Show("Complete los campos correctamente. Debe seleccionar un producto y especificar una cantidad válida.");
                 return false;
             }
+
+            bool inventarioAgregado = false;
 
             try
             {
@@ -360,37 +349,42 @@ namespace SYNKROAPP.ViewModel
                         Tipus = TipusMoviment.Entrada,
                         Quantitat = CantidadAIngresar,
                         Data = DateTime.UtcNow,
-                        Notes = productExists ? "Entrada adicional de producto existente" : "Nueva entrada de producto"
+                        Notes = "Ingreso desde el registro del producto"
                     };
 
-                    // La transacción creará o actualizará el producto según corresponda
                     await _dao.GuardarMovimientoInventariAsync(moviment, inventari, productExists);
+
                     inventarioAgregado = true;
+
+                    MessageBox.Show($"Producto: {ProductoSeleccionado.Producte.Nom} ingresado correctamente.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al registrar la entrada: {ex.Message}");
+                MessageBox.Show($"Error al guardar el producto: {ex.Message}");
             }
 
             return inventarioAgregado;
         }
 
-        private string GenerateInventoryId()
+        public bool CanAgregarProducto()
         {
-            // Genera un ID único para el inventario (similar a lo que hace Firestore)
-            return Guid.NewGuid().ToString();
+            ProductoSeleccionado.Cantidad = CantidadAIngresar;
+            return ProductoSeleccionado != null &&
+                   CantidadAIngresar > 0 &&
+                   (ZonaSeleccionada?.Capacitat == null ||
+                    ProductoSeleccionado.Cantidad < ZonaSeleccionada.Capacitat);
         }
 
-        public void GenerarSKU()
-        {
-            SKU = $"SKU-{DateTime.Now:yyyyMMddHHmmss}-{new Random().Next(100, 999)}";
-        }
+        private string GenerateInventoryId() => Guid.NewGuid().ToString();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        [RelayCommand]
+        public void SelectProduct(ProducteAmbDetall product)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (product != null)
+            {
+                ProductoSeleccionado = product;
+            }
         }
     }
 }

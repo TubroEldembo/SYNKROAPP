@@ -31,14 +31,9 @@ namespace SYNKROAPP.Vistes.Vista_Movimientos
             _ = viewModel.CargarDatosIniciales();
         }
 
-        private void btnConfirmar_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.ConfirmarMovimientoCommand.Execute(null);
-        }
-
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
     }
 }

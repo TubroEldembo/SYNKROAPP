@@ -1,0 +1,356 @@
+﻿<UserControl x:Class="SYNKROAPP.Vistes.Vista_Configuracion.VistaConfiguracion"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Configuracion"
+             mc:Ignorable="d" d:DesignWidth="1280" Height="996">
+
+    <UserControl.Resources>
+        <!-- Estilos para Textos -->
+        <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#4A5793"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SubtitleTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#4A5793"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="LabelTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Margin" Value="0,5,15,5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Estilo para las tarjetas de configuración -->
+        <Style x:Key="ConfigCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo para los botones -->
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4A5793"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="8" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#6F7ABC"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Estilo para los campos de texto -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="Background" Value="#F8F9FE"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#6F7ABC"/>
+                </Trigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#4A5793"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Estilo para el ListView -->
+        <Style x:Key="ModernListViewStyle" TargetType="ListView">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- Estilo para el encabezado del GridView -->
+        <Style x:Key="GridViewColumnHeaderStyle" TargetType="GridViewColumnHeader">
+            <Setter Property="Background" Value="#F0F2FF"/>
+            <Setter Property="Foreground" Value="#4A5793"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E0E4F6"/>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Fondo con gradiente para todo el UserControl -->
+    <UserControl.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
+
+    <Grid Margin="40,30,40,30">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Encabezado Principal -->
+                <Border Style="{StaticResource ConfigCardStyle}" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="CONFIGURACIÓN DE LA EMPRESA" Style="{StaticResource TitleTextBlockStyle}"/>
+                        <TextBlock Text="Gestione los datos de su empresa y los usuarios del sistema" 
+                                   FontSize="16" Foreground="#666666"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Sección de Información de Empresa -->
+                <Border Style="{StaticResource ConfigCardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="INFORMACIÓN DE EMPRESA" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Nombre de la Empresa (Solo lectura) -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="NOMBRE:" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <Border Grid.Row="0" Grid.Column="1" Background="#F8F9FE" CornerRadius="4" Margin="0,5,0,15">
+                                <TextBox Name="txtNombreEmpresa" Style="{StaticResource TextBoxStyle}" 
+                                         IsReadOnly="True" Background="Transparent" BorderThickness="0"/>
+                            </Border>
+
+                            <!-- Foto de la Empresa (Editable) -->
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="FOTO:" Style="{StaticResource LabelTextBlockStyle}" VerticalAlignment="Top" Margin="0,10,15,5"/>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="0,5,0,15">
+                                <Border Width="120" Height="120" BorderBrush="#E5E7EB" BorderThickness="1" 
+                                        Background="#F8F9FE" CornerRadius="8" HorizontalAlignment="Left">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.2"/>
+                                    </Border.Effect>
+                                    <Image Name="imgFotoEmpresa" Stretch="Uniform" Margin="5"/>
+                                </Border>
+                                <Button Content="CAMBIAR FOTO" Style="{StaticResource ButtonStyle}" 
+                                        Width="150" HorizontalAlignment="Left" Margin="0,15,0,0"
+                                        Name="btnCambiarFotoEmpresa" Click="btnCambiarFotoEmpresa_Click"/>
+                            </StackPanel>
+
+                            <!-- Ubicación (Editable) -->
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="UBICACIÓN:" Style="{StaticResource LabelTextBlockStyle}" VerticalAlignment="Top" Margin="0,10,15,5"/>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,5,0,15">
+                                <Border Background="#F8F9FE" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Dirección -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Dirección:" 
+                                                   FontWeight="SemiBold" Foreground="#666666" 
+                                                   Margin="0,0,15,10" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="0" Grid.Column="1" Name="txtDireccion" 
+                                                 Style="{StaticResource TextBoxStyle}" Margin="0,0,0,10"/>
+
+                                        <!-- Código Postal -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Código Postal:" 
+                                                   FontWeight="SemiBold" Foreground="#666666" 
+                                                   Margin="0,0,15,10" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="1" Grid.Column="1" Name="txtCodigoPostal" 
+                                                 Style="{StaticResource TextBoxStyle}" Margin="0,0,0,10"/>
+
+                                        <!-- Ciudad -->
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Ciudad:" 
+                                                   FontWeight="SemiBold" Foreground="#666666" 
+                                                   Margin="0,0,15,10" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="2" Grid.Column="1" Name="txtCiudad" 
+                                                 Style="{StaticResource TextBoxStyle}" Margin="0,0,0,10"/>
+
+                                        <!-- Provincia -->
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Provincia:" 
+                                                   FontWeight="SemiBold" Foreground="#666666" 
+                                                   Margin="0,0,15,10" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="3" Grid.Column="1" Name="txtProvincia" 
+                                                 Style="{StaticResource TextBoxStyle}" Margin="0,0,0,10"/>
+
+                                        <!-- País -->
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="País:" 
+                                                   FontWeight="SemiBold" Foreground="#666666" 
+                                                   Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                        <TextBox Grid.Row="4" Grid.Column="1" Name="txtPais" 
+                                                 Style="{StaticResource TextBoxStyle}" Margin="0"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Retención de Días (Editable) -->
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="RETENCIÓN DE MOVIMIENTOS:" Style="{StaticResource LabelTextBlockStyle}"/>
+                            <Border Grid.Row="3" Grid.Column="1" Background="#F8F9FE" CornerRadius="8" Padding="15" Margin="0,5,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Name="txtRetencionDias" Width="80" Style="{StaticResource TextBoxStyle}" 
+                                             PreviewTextInput="txtRetencionDias_PreviewTextInput"  BorderThickness="0" Background="White"/>
+                                    <TextBlock Text="días" VerticalAlignment="Center" FontWeight="SemiBold" Margin="10,0,0,0" Foreground="#666666"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Sección de Gestión de Usuarios -->
+                <Border Style="{StaticResource ConfigCardStyle}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="GESTIÓN DE USUARIOS" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                            <Button Grid.Column="1" Content="AÑADIR NUEVO USUARIO" Style="{StaticResource ButtonStyle}" 
+                                    Width="200" HorizontalAlignment="Right" Click="Button_Click"/>
+                        </Grid>
+
+                        <Border Background="#F8F9FE" CornerRadius="8" Margin="0,15,0,0" Padding="5">
+                            <ListView Name="lvUsuarios" Style="{StaticResource ModernListViewStyle}" MaxHeight="300">
+                                <ListView.View>
+                                    <GridView ColumnHeaderContainerStyle="{StaticResource GridViewColumnHeaderStyle}">
+                                        <GridViewColumn Header="NOMBRE" Width="120">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Nom}" Margin="8"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="APELLIDOS" Width="160">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Cognoms}" Margin="8"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="EMAIL" Width="220">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Email}" Margin="8"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="ROL" Width="120">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#E0E4F6" CornerRadius="4" Padding="8,4">
+                                                        <TextBlock Text="{Binding Rol}" FontWeight="SemiBold" Foreground="#4A5793"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="" Width="100">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="EDITAR" Tag="{Binding UsuariID}" 
+                                                            Name="btnEditarUser"
+                                                            Click="btnEditarUser_Click" 
+                                                            Style="{StaticResource ButtonStyle}"
+                                                            Height="32" Width="80"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Margin" Value="0,2" />
+                                        <Setter Property="Padding" Value="5" />
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                        <Setter Property="BorderBrush" Value="#E5E7EB" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Botones de Acción -->
+                <Border Style="{StaticResource ConfigCardStyle}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="CANCELAR" Style="{StaticResource ButtonStyle}" 
+                                Background="#95a5a6" Width="150" Margin="0,0,15,0" 
+                                Name="btnCancelar" Click="btnCancelar_Click">
+                            <Button.Effect>
+                                <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                            </Button.Effect>
+                        </Button>
+                        <Button Content="GUARDAR CAMBIOS" Style="{StaticResource ButtonStyle}" 
+                                Width="200" Name="btnGuardar" Click="btnGuardar_Click">
+                            <Button.Effect>
+                                <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                            </Button.Effect>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

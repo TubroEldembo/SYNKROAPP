@@ -5,181 +5,283 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1Zona"
         mc:Ignorable="d"
-        Title="PantallaDetalleZonaWPF" Height="832" Width="1280" 
-        Background="#f0f2f5" 
-        WindowStyle="SingleBorderWindow" 
+        Title="Detalle de Zona" Height="832" Width="1280" 
         WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="NoResize">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid>
+    <!-- Fondo con gradiente para un aspecto más moderno -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid Margin="40,30,40,30">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Encabezado con gradiente -->
-        <Border Grid.Row="0" Padding="20,10,20,15">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#2563eb" Offset="0"/>
-                    <GradientStop Color="#3b82f6" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <StackPanel>
-                <TextBlock FontSize="28" FontWeight="Bold" Foreground="White">
-                    <Run Text="DETALLES DE LA ZONA - " />
-                    <Run Text="{Binding NomZona}" />
-                </TextBlock>
-                <TextBlock FontSize="15" Foreground="#e0f2fe" Margin="0,10,0,0"
-                           Text="Vista detallada de los productos que hay en esta zona"/>
-            </StackPanel>
+        <!-- Encabezado con sombra y efecto más moderno -->
+        <Border Grid.Row="0" 
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Título con efecto de texto -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="32" FontWeight="Bold" Foreground="#4A5793">
+                        <Run Text="DETALLES DE LA ZONA - " />
+                        <Run Text="{Binding NomZona}" />
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Text="Vista detallada de los productos que hay en esta zona"
+                           FontSize="16" Foreground="#666666" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- Botón para agregar producto -->
+                <Button Grid.Column="1" Content="AGREGAR PRODUCTO ➕" 
+                        Width="220" Height="40" 
+                        Background="#4A5793" 
+                        Foreground="White" 
+                        FontWeight="SemiBold"
+                        Click="btnAgregarProducto_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                    </Button.Effect>
+                </Button>
+            </Grid>
         </Border>
 
-        <!-- Contenido principal -->
-        <Grid Grid.Row="1" Margin="40,25,40,25">
-            <Border Background="White" CornerRadius="12">
-                <Border.Effect>
-                    <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
-                </Border.Effect>
+        <!-- Información de la zona -->
+        <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Padding="20" Margin="0,0,0,20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="INFORMACIÓN DE LA ZONA" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#4A5793"
+                           Margin="0,0,0,15"/>
 
-                <Grid Margin="25">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Detalles de la zona -->
-                    <Border Grid.Row="0" Background="#f8fafc" CornerRadius="10" Padding="25" Margin="0,0,0,15">
+                <!-- Cards para detalles -->
+                <UniformGrid Columns="5" Rows="1">
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="0,0,10,0" Padding="15">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                                <Border Background="#3b82f6" Width="4" Height="24" CornerRadius="2" Margin="0,0,8,0"/>
-                                <TextBlock Text="INFORMACIÓN DE LA ZONA" FontWeight="Bold" FontSize="19" Foreground="#1e3a8a"/>
-                            </StackPanel>
-                            <UniformGrid Columns="3" Rows="2" Margin="0,10,0,0">
-                                <StackPanel Margin="0,0,20,10">
-                                    <TextBlock Text="Nombre de la zona" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
-                                    <TextBlock Text="{Binding NomZona}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
-                                </StackPanel>
-
-                                <StackPanel Margin="0,0,20,10">
-                                    <TextBlock Text="Capacidad" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
-                                    <TextBlock>
-                                        <Run Text="{Binding Capacitat}" />
-                                        <Run Text=" productos"/>
-                                    </TextBlock>
-                                </StackPanel>
-
-                                <StackPanel Margin="0,0,20,10">
-                                    <TextBlock Text="Nº Productos almacenados" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
-                                    <TextBlock Text="{Binding NProductos}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
-                                </StackPanel>
-
-                                <StackPanel Margin="0,0,20,10">
-                                    <TextBlock Text="Zona ID" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
-                                    <TextBlock Text="{Binding ZonaID}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
-                                </StackPanel>
-
-                                <StackPanel Margin="0,0,20,10">
-                                    <TextBlock Text="ID Almacén" FontWeight="Medium" FontSize="14" Foreground="#64748b"/>
-                                    <TextBlock Text="{Binding AlmacenID}" FontSize="16" FontWeight="SemiBold" Foreground="#0f172a"/>
-                                </StackPanel>
-                            </UniformGrid>
+                            <TextBlock Text="NOMBRE" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666" 
+                                       FontSize="12"/>
+                            <TextBlock Text="{Binding NomZona}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Productos de la zona -->
-                    <Grid Grid.Row="1" Margin="0">
-                        <Border Background="White" CornerRadius="12">
-                            <Border.Effect>
-                                <DropShadowEffect Color="#1e293b" BlurRadius="15" Opacity="0.1" ShadowDepth="2"/>
-                            </Border.Effect>
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="2,0,2,0" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="CAPACIDAD" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666" 
+                                       FontSize="12"/>
+                            <TextBlock FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0">
+                                <Run Text="{Binding Capacitat}" />
+                                <Run Text=" productos" FontSize="16" FontWeight="Normal" Foreground="#666666"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
 
-                            <Grid Margin="25">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <!-- Filtros -->
-                                    <RowDefinition Height="*"/>
-                                    <!-- DataGrid -->
-                                    <RowDefinition Height="Auto"/>
-                                    <!-- Botón -->
-                                </Grid.RowDefinitions>
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="2,0,2,0" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="PRODUCTOS ALMACENADOS" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666" 
+                                       FontSize="12"/>
+                            <TextBlock Text="{Binding NProductos}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
 
-                                <!-- Filtros -->
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
-                                    <StackPanel>
-                                        <TextBlock Text="Categoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
-                                        <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}"
-                                                  Width="140" Height="28"/>
-                                    </StackPanel>
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="2,0,2,0" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="ZONA ID" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666" 
+                                       FontSize="12"/>
+                            <TextBlock Text="{Binding ZonaID}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
 
-                                    <StackPanel>
-                                        <TextBlock Text="Subcategoría" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
-                                        <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}"
-                                                  Width="140" Height="28" />
-                                    </StackPanel>
+                    <Border Background="#F8F9FE" CornerRadius="10" Margin="10,0,0,0" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="ALMACÉN ID" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#666666" 
+                                       FontSize="12"/>
+                            <TextBlock Text="{Binding AlmacenID}" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
 
-                                    <StackPanel>
-                                        <TextBlock Text="Estado" FontWeight="Medium" FontSize="14" Foreground="#64748b" Margin="0,0,0,5"/>
-                                        <ComboBox ItemsSource="{Binding Estats}" SelectedItem="{Binding EstatSeleccionat}"
-                                                  Width="140" Height="28"/>
-                                    </StackPanel>
-                                </StackPanel>
+        <!-- Lista de Productos con diseño mejorado -->
+        <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="15" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                                <!-- DataGrid -->
-                                <DataGrid Grid.Row="1" x:Name="dgProductosDeLaZona" AutoGenerateColumns="False" 
-                                          Background="White" BorderBrush="#CCC" BorderThickness="1"
-                                          ItemsSource="{Binding ProductesFiltrats}" 
-                                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                          SelectionChanged="dgProductosDeLaZona_SelectionChanged"
-                                          MinHeight="400" Margin="0,0,0,10">
-                                    
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Producto ID" Binding="{Binding ProducteID}" Width="*"/>
-                                        <DataGridTextColumn Header="Nombre Producto" Binding="{Binding Nom}" Width="*"/>
-                                        <DataGridTextColumn Header="Categoría" Binding="{Binding Categoria}" Width="*"/>
-                                        <DataGridTextColumn Header="Subcategoría" Binding="{Binding SubCategoria}" Width="*"/>
-                                        <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantitat}" Width="*"/>
-                                        <DataGridTextColumn Header="Estado" Binding="{Binding Estat}" Width="*"/>
-                                        <DataGridTemplateColumn Width="160">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <Button Content="Editar" Margin="0,0,8,0" Width="70"
-                                            Style="{StaticResource EditButton}" Click="btnEditar_Click"/>
-                                                        <Button Content="Eliminar" Width="70"
-                                            Style="{StaticResource DangerButton}" Click="btnEliminar_Click"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                                <!-- Botón Agregar nuevo producto -->
-                                <Button Grid.Row="2" Content="+ Agregar nuevo producto" Width="200" Height="45"
-                                        HorizontalAlignment="Right" Click="btnAgregarZona_Click"
-                                        Style="{StaticResource PrimaryButton}"/>
-                            </Grid>
+                    <TextBlock Grid.Column="0" Text="PRODUCTOS DE LA ZONA" 
+                               FontSize="20" 
+                               FontWeight="Bold" 
+                               Foreground="#4A5793"
+                               VerticalAlignment="Center"/>
+
+                    <!-- Filtros en formato horizontal con mejor alineación -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Border Background="#F8F9FE" CornerRadius="8" Padding="12,8" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="CATEGORÍA:" FontWeight="SemiBold" Foreground="#4A5793" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox ItemsSource="{Binding Categories}" DisplayMemberPath="Nom" SelectedItem="{Binding CategoriaSeleccionada}"
+                                          Width="140" Height="28" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Border>
-                    </Grid>
 
+                        <Border Background="#F8F9FE" CornerRadius="8" Padding="12,8" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="SUBCATEGORÍA:" FontWeight="SemiBold" Foreground="#4A5793" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox ItemsSource="{Binding Subcategories}" DisplayMemberPath="Nom" SelectedItem="{Binding SubCategoriaSeleccionada}"
+                                          Width="140" Height="28" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
 
+                        <Border Background="#F8F9FE" CornerRadius="8" Padding="12,8">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="ESTADO:" FontWeight="SemiBold" Foreground="#4A5793" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox ItemsSource="{Binding Estats}" SelectedItem="{Binding EstatSeleccionat}"
+                                          Width="140" Height="28" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </Grid>
-            </Border>
-        </Grid>
 
-        <!-- Botón inferior -->
-        <Border Grid.Row="2" Background="White" Padding="25" BorderThickness="0,1,0,0" BorderBrush="#e2e8f0">
+                <!-- DataGrid con estilo mejorado -->
+                <DataGrid Grid.Row="1" 
+                          x:Name="dgProductosDeLaZona"
+                          ItemsSource="{Binding ProductesFiltrats}" 
+                          AutoGenerateColumns="False" 
+                          HeadersVisibility="Column"
+                          IsReadOnly="True" 
+                          CanUserAddRows="False" 
+                          CanUserDeleteRows="False"
+                          BorderThickness="0"
+                          Background="Transparent"
+                          RowBackground="#FFFFFF"
+                          AlternatingRowBackground="#F8F9FE"
+                          GridLinesVisibility="None"
+                          VerticalGridLinesBrush="#EEEEEE"
+                          HorizontalGridLinesBrush="#EEEEEE"
+                          RowHeight="40"
+                          SelectionChanged="dgProductosDeLaZona_SelectionChanged">
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="#F0F2FF"/>
+                            <Setter Property="Foreground" Value="#4A5793"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="Padding" Value="10,0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="PRODUCTO ID" Binding="{Binding ProducteID}" Width="0.8*"/>
+                        <DataGridTextColumn Header="NOMBRE PRODUCTO" Binding="{Binding Nom}" Width="1.5*"/>
+                        <DataGridTextColumn Header="CATEGORÍA" Binding="{Binding Categoria}" Width="*"/>
+                        <DataGridTextColumn Header="SUBCATEGORÍA" Binding="{Binding SubCategoria}" Width="*"/>
+                        <DataGridTextColumn Header="CANTIDAD" Binding="{Binding Quantitat}" Width="0.7*"/>
+                        <DataGridTextColumn Header="ESTADO" Binding="{Binding Estat}" Width="0.8*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Barra de acciones inferior -->
+        <Border Grid.Row="3" 
+                Background="#FFFFFF" 
+                CornerRadius="15"
+                Margin="0,20,0,0" 
+                Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Volver" Width="160" Height="45" Style="{StaticResource SecondaryButton}" Click="btnVolver_Click"/>
+                <Button Content="VOLVER" 
+                        Width="160" Height="45" 
+                        Background="#4A5793" 
+                        Foreground="White" 
+                        FontWeight="SemiBold"
+                        Click="btnVolver_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                    </Button.Effect>
+                </Button>
             </StackPanel>
         </Border>
     </Grid>

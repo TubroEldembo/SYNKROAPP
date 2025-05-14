@@ -10,7 +10,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        
+
         <!-- Estilos reutilizables -->
         <Style x:Key="TitleTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="32"/>
@@ -122,6 +122,10 @@
                 <!-- Producto -->
                 <Border Style="{StaticResource CardStyle}" Grid.Column="0" Margin="0,0,10,0">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="233*"/>
+                            <ColumnDefinition Width="18*"/>
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -138,7 +142,7 @@
                                        VerticalAlignment="Center"/>
                         </Border>
 
-                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                        <StackPanel Grid.Row="1" Margin="0,15,0,0" Grid.ColumnSpan="2">
                             <TextBlock Text="PRODUCTOS" 
                                        FontSize="14" 
                                        FontWeight="SemiBold" 
@@ -164,53 +168,8 @@
                     </Grid>
                 </Border>
 
-                <!-- En Movimiento -->
-                <Border Style="{StaticResource CardStyle}" Grid.Column="1" Margin="5,0,5,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <Border Background="#F0F2FF" 
-                                CornerRadius="10" 
-                                Width="50" 
-                                Height="50" 
-                                HorizontalAlignment="Left">
-                            <TextBlock Text="🔄" 
-                                       FontSize="24" 
-                                       HorizontalAlignment="Center" 
-                                       VerticalAlignment="Center"/>
-                        </Border>
-
-                        <StackPanel Grid.Row="1" Margin="0,15,0,0">
-                            <TextBlock Text="EN MOVIMIENTO" 
-                                       FontSize="14" 
-                                       FontWeight="SemiBold" 
-                                       Foreground="Black"/>
-                            <TextBlock Text="{Binding ProductosEnMovimiento}" 
-                                       FontSize="32" 
-                                       FontWeight="Bold" 
-                                       Foreground="#4A5793" 
-                                       Margin="0,5,0,0"/>
-
-                            <!-- Indicador de tendencia (opcional) -->
-                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                <TextBlock Text="↗" 
-                                           Foreground="#4CAF50" 
-                                           FontSize="14" 
-                                           FontWeight="Bold"/>
-                                <TextBlock Text=" +12% vs mes anterior" 
-                                           Foreground="#666666" 
-                                           FontSize="12" 
-                                           Margin="2,0,0,0"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
                 <!-- Almacenes -->
-                <Border Style="{StaticResource CardStyle}" Grid.Column="2" Margin="5,0,5,0">
+                <Border Style="{StaticResource CardStyle}" Grid.Column="1" Margin="10,0,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -233,7 +192,7 @@
                                        FontSize="14" 
                                        FontWeight="SemiBold" 
                                        Foreground="Black"/>
-                            
+
                             <TextBlock Text="{Binding TotalAlmacenes}" 
                                        FontSize="32" 
                                        FontWeight="Bold" 
@@ -250,7 +209,7 @@
                 </Border>
 
                 <!-- Capacidad Usada -->
-                <Border Style="{StaticResource CardStyle}" Grid.Column="3" Margin="10,0,0,0">
+                <Border Style="{StaticResource CardStyle}" Grid.Column="2" Margin="26,0,284,0" Grid.ColumnSpan="2">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

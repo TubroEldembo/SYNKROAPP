@@ -5,114 +5,305 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas.Vista_Catalogo"
         mc:Ignorable="d"
-        Title="CATÁLOGO DE PRODUCTOS" Height="800" Width="1200" WindowStyle="SingleBorderWindow"
+        Title="CATÁLOGO DE PRODUCTOS" Height="800" Width="1200" 
+        WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen"
-        WindowState="Maximized" Background="#f9fafb" 
+        WindowState="Maximized"
         ResizeMode="NoResize">
-    <Grid>
+
+    <!-- Recursos y estilos -->
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Incluir estilos si están disponibles -->
+                <!-- Si no existen estos recursos, puedes comentar o crear estos archivos -->
+                <!-- <ResourceDictionary Source="/Resources/Styles.xaml"/> -->
+                <!-- <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/> -->
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <!-- Fondo con gradiente moderno, similar a la segunda pantalla -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid Margin="40,30,40,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header -->
+            <!-- Encabezado -->
+            <RowDefinition Height="Auto"/>
+            <!-- Filtros -->
             <RowDefinition Height="*"/>
-            <!-- Main content -->
+            <!-- Catálogo de Productos -->
+            <RowDefinition Height="Auto"/>
+            <!-- Barra de acciones inferior -->
         </Grid.RowDefinitions>
 
-        <!-- Botón Volver --><!--
-        <Button Content="Volver" Width="56" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" 
-                Margin="16,10,0,0" Command="{Binding VolverCommand}" Background="#2563eb" Foreground="White"
-                BorderBrush="#3b82f6" BorderThickness="1" />-->
+        <!-- Encabezado con sombra y efecto moderno -->
+        <Border Grid.Row="0" 
+                Background="#FFFFFF" 
+                CornerRadius="15" 
+                Margin="0,0,0,20" 
+                Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <!-- ENCABEZADO -->
-        <Border Grid.Row="0" Padding="40,30,40,30">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#2563eb" Offset="0"/>
-                    <GradientStop Color="#3b82f6" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <StackPanel>
-                <TextBlock FontSize="32" FontWeight="Bold" Foreground="White" 
-                           Text="CATÁLOGO DE PRODUCTOS"/>
-                <TextBlock Text="{Binding NomEmpresa}" 
-                           FontSize="18" Foreground="#e0f2fe" Margin="0,10,0,0"/>
-            </StackPanel>
+                <!-- Título con efecto de texto -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="32" FontWeight="Bold" Foreground="#4A5793">
+                        <Run Text="CATÁLOGO DE PRODUCTOS" />
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Text="{Binding NomEmpresa}" 
+                               FontSize="16" 
+                               Foreground="#666666" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- FILTROS Y BÚSQUEDA -->
-        <Grid Grid.Row="1" Margin="40,25,40,25">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Sección de filtros -->
+        <Border Grid.Row="1" 
+                Background="#FFFFFF" 
+                CornerRadius="15" 
+                Margin="0,0,0,20" 
+                Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,20">
-                <!-- TextBox de búsqueda -->
-                <StackPanel Orientation="Vertical" Margin="0,10,20,0">
-                    <TextBlock Text="Buscar Producto"
-                               FontSize="14" FontWeight="SemiBold"
-                               Foreground="#4b5563" Margin="0,0,0,5"/>
-                    <TextBox Width="200" Height="32"
-                             Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+                <TextBlock Grid.Row="0" 
+                           Text="FILTROS DE BÚSQUEDA" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#4A5793"
+                           Margin="0,0,0,15"/>
 
-                <!-- ComboBox Estado -->
-                <StackPanel Orientation="Vertical" Margin="0,10,20,0">
-                    <TextBlock Text="Estado"
-                               FontSize="14" FontWeight="SemiBold"
-                               Foreground="#4b5563" Margin="0,0,0,5"/>
-                    <ComboBox Width="140" ItemsSource="{Binding EstadosDisponibles}" 
-                              SelectedItem="{Binding EstadoSeleccionado}" />
-                </StackPanel>
+                <StackPanel Grid.Row="1" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Left">
+                    <!-- Filtro de Búsqueda -->
+                    <Border Background="#F8F9FE" 
+                            CornerRadius="8" 
+                            Padding="12,8" 
+                            Margin="0,0,15,0">
+                        <StackPanel>
+                            <TextBlock Text="BUSCAR PRODUCTO" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#4A5793" 
+                                       FontSize="12"
+                                       Margin="0,0,0,5"/>
+                            <TextBox Width="200" 
+                                     Height="32"
+                                     Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                        </StackPanel>
+                    </Border>
 
-                <!-- ComboBox Categoría -->
-                <StackPanel Orientation="Vertical" Margin="0,10,20,0">
-                    <TextBlock Text="Categoría"
-                               FontSize="14" FontWeight="SemiBold"
-                               Foreground="#4b5563" Margin="0,0,0,5"/>
-                    <ComboBox Width="140" ItemsSource="{Binding CategoriasDisponibles}" 
-                              SelectedItem="{Binding CategoriaSeleccionada}" />
-                </StackPanel>
+                    <!-- Filtro de Estado -->
+                    <Border Background="#F8F9FE" 
+                            CornerRadius="8" 
+                            Padding="12,8" 
+                            Margin="0,0,15,0">
+                        <StackPanel>
+                            <TextBlock Text="ESTADO" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#4A5793" 
+                                       FontSize="12"
+                                       Margin="0,0,0,5"/>
+                            <ComboBox Width="140" 
+                                      Height="32"
+                                      ItemsSource="{Binding EstadosDisponibles}" 
+                                      SelectedItem="{Binding EstadoSeleccionado}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- ComboBox Subcategoría -->
-                <StackPanel Orientation="Vertical" Margin="0,10,0,0">
-                    <TextBlock Text="Subcategoría"
-                               FontSize="14" FontWeight="SemiBold"
-                               Foreground="#4b5563" Margin="0,0,0,5"/>
-                    <ComboBox Width="140" ItemsSource="{Binding SubcategoriasDisponibles}" 
-                              SelectedItem="{Binding SubcategoriaSeleccionada}" />
+                    <!-- Filtro de Categoría -->
+                    <Border Background="#F8F9FE" 
+                            CornerRadius="8" 
+                            Padding="12,8" 
+                            Margin="0,0,15,0">
+                        <StackPanel>
+                            <TextBlock Text="CATEGORÍA" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#4A5793" 
+                                       FontSize="12"
+                                       Margin="0,0,0,5"/>
+                            <ComboBox Width="140" 
+                                      Height="32"
+                                      ItemsSource="{Binding CategoriasDisponibles}" 
+                                      SelectedItem="{Binding CategoriaSeleccionada}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Filtro de Subcategoría -->
+                    <Border Background="#F8F9FE" 
+                            CornerRadius="8" 
+                            Padding="12,8">
+                        <StackPanel>
+                            <TextBlock Text="SUBCATEGORÍA" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#4A5793" 
+                                       FontSize="12"
+                                       Margin="0,0,0,5"/>
+                            <ComboBox Width="140" 
+                                      Height="32"
+                                      ItemsSource="{Binding SubcategoriasDisponibles}" 
+                                      SelectedItem="{Binding SubcategoriaSeleccionada}"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Catálogo de Productos -->
+        <Border Grid.Row="2" 
+                Background="#FFFFFF" 
+                CornerRadius="15" 
+                Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" 
+                           Text="PRODUCTOS" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#4A5793"
+                           Margin="0,0,0,15"/>
+
+                <ScrollViewer Grid.Row="1" 
+                              VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding ProductosFiltrados}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="240" 
+                                        Height="320" 
+                                        Margin="10" 
+                                        Background="White"
+                                        BorderBrush="#E5E7EB" 
+                                        BorderThickness="1" 
+                                        CornerRadius="10">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#202040" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <!-- Imagen del Producto -->
+                                        <Border Height="160" 
+                                                VerticalAlignment="Top" 
+                                                Background="#F8F9FE" 
+                                                CornerRadius="10,10,0,0" 
+                                                ClipToBounds="True">
+                                            <Image Source="{Binding ImatgeURL}" 
+                                                   Stretch="UniformToFill" 
+                                                   Height="160"/>
+                                        </Border>
+
+                                        <!-- Contenido del Producto -->
+                                        <StackPanel Margin="15,170,15,15">
+                                            <TextBlock Text="{Binding Nom}" 
+                                                       FontWeight="Bold" 
+                                                       FontSize="16"
+                                                       TextWrapping="Wrap" 
+                                                       Foreground="#4A5793"/>
+
+                                            <StackPanel Orientation="Horizontal" 
+                                                        Margin="0,8,0,0">
+                                                <TextBlock Text="Categoría:" 
+                                                           FontWeight="SemiBold" 
+                                                           Foreground="#666666" 
+                                                           FontSize="13"
+                                                           Margin="0,0,5,0"/>
+                                                <TextBlock Text="{Binding Categoria}" 
+                                                           Foreground="#6B7280" 
+                                                           FontSize="13"/>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" 
+                                                        Margin="0,5,0,0">
+                                                <TextBlock Text="Subcategoría:" 
+                                                           FontWeight="SemiBold" 
+                                                           Foreground="#666666" 
+                                                           FontSize="13"
+                                                           Margin="0,0,5,0"/>
+                                                <TextBlock Text="{Binding SubCategoria}" 
+                                                           Foreground="#6B7280" 
+                                                           FontSize="13"/>
+                                            </StackPanel>
+
+                                            <TextBlock Text="{Binding Preu, StringFormat={}{0:C}}" 
+                                                       FontWeight="Bold"
+                                                       FontSize="18" 
+                                                       Foreground="#4A5793"
+                                                       Margin="0,12,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- Barra de acciones inferior -->
+        <Border Grid.Row="3" 
+                Background="#FFFFFF" 
+                CornerRadius="15"
+                Margin="0,20,0,0" 
+                Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="VOLVER" 
+                        Width="160" Height="45" 
+                        Background="#4A5793" 
+                        Foreground="White" 
+                        FontWeight="SemiBold"
+                        Command="{Binding VolverCommand}">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                    </Button.Effect>
+                </Button>
             </StackPanel>
-
-            <!--CATALOGO DE PRODUCTOS-->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding ProductosFiltrados}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="240" Height="300" Margin="8" Background="White"
-                                    BorderBrush="#e5e7eb" BorderThickness="1" CornerRadius="8">
-                                <StackPanel>
-                                    <Border Height="140" Background="#f3f4f6" ClipToBounds="True">
-                                        <Image Source="{Binding  ImatgeURL}" Stretch="UniformToFill" Height="140"/>
-                                    </Border>
-                                    <TextBlock Text="{Binding Nom}" FontWeight="Bold" FontSize="16"
-                                               Margin="10,10,10,0" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding }" FontWeight="Bold" FontSize="16"
-                                               Margin="10,10,10,0" TextWrapping="Wrap"/>
-                                    <TextBlock Text="{Binding Categoria}" Margin="10,4,10,0" Foreground="#6b7280"/>
-                                    <TextBlock Text="{Binding Preu, StringFormat={}{0:C}}" 
-                                               Margin="10,4,10,0" Foreground="#2563eb"/>
-                                    
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Grid>
+        </Border>
     </Grid>
 </Window>

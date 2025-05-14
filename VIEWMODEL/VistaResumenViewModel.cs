@@ -118,22 +118,28 @@ namespace SYNKROAPP.VIEWMODEL
             }
 
             ProductosPorAlmacen.Clear();
+
             foreach (Magatzems almacen in almacenes)
             {
                 List<ZonaEmmagatzematge> zonas = await dao.DetallesZonasAlmacen(almacen);
 
-                int productosEnAlmacen = 0;
+                int productosEnAlmacen = 0; // Total por almacén
 
-                foreach(ZonaEmmagatzematge zona in zonas)
+                foreach (ZonaEmmagatzematge zona in zonas)
                 {
-                    int productosZona = zona.Productes?.Count ?? 0;
-                    productosEnAlmacen += productosZona;
-                    productosTotales += productosZona;
+                    List<ProductesInventari> productosZona = await dao.ProductosEn1Zona(zona);
+
+                    // Sumar todas las cantidades de productos en esta zona
+                    int cantidadZona = productosZona.Sum(p => p.Quantitat);
+
+                    productosEnAlmacen += cantidadZona;
+                    productosTotales += cantidadZona;
                     capacidadTotal += zona.Capacitat;
                 }
 
                 ProductosPorAlmacen[almacen.NomMagatzem] = productosEnAlmacen;
             }
+
 
             TotalProductos = productosTotales;
 

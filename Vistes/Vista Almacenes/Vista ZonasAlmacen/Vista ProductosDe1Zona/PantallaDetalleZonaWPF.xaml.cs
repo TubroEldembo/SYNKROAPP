@@ -37,8 +37,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
                 DocumentSnapshot docSnap = await _dao.GetProducteGeneralPorID(seleccion.ProducteID);
                 var producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
 
-
-
                 string estado = seleccion.Estat;
                 string descripcion = seleccion.Descripcio;
                 string categoria = seleccion.Categoria;
@@ -49,7 +47,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
                     DetalleDelProductoViewModel viewModel = new DetalleDelProductoViewModel(_dao, producteGeneral, estado, descripcion, categoria, subcategoria, _magatzem, _zona);
                     PantallaDetalleProductoWPF pantallaDetalleProducto = new PantallaDetalleProductoWPF(viewModel);
                     pantallaDetalleProducto.ShowDialog();
-                    
+
                 }
                 else
                 {
@@ -64,12 +62,12 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
             await viewModel.CargarListasParaCombosAsync();
         }
 
-        private void btnAgregarZona_Click(object sender, RoutedEventArgs e)
+        private void btnAgregarProducto_Click(object sender, RoutedEventArgs e)
         {
             var viewModelAddProducts = new CrearProductoEn1ZonaViewModel(_dao, _zona);
 
-            PantallaAgregarProductoA1ZonaWPF pAgregarProducto = new PantallaAgregarProductoA1ZonaWPF(viewModelAddProducts);
-            pAgregarProducto.Show();
+            PantallaCrearProductoGeneral pCrearProducto = new PantallaCrearProductoGeneral(viewModelAddProducts);
+            pCrearProducto.Show();
 
         }
 
@@ -85,7 +83,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
 
         private void btnVolver_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
     }
 }

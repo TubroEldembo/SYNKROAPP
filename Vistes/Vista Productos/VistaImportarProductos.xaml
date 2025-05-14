@@ -171,18 +171,6 @@
                 <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
             </Border.Effect>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Name="btnCancelar" Content="CANCELAR" Width="120" Height="40" Margin="0,0,10,0"
-                        Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0"
-                        Click="btnCancelar_Click">
-                    <Button.Resources>
-                        <Style TargetType="{x:Type Border}">
-                            <Setter Property="CornerRadius" Value="8"/>
-                        </Style>
-                    </Button.Resources>
-                    <Button.Effect>
-                        <DropShadowEffect Color="#DDDDDD" BlurRadius="5" ShadowDepth="1" Opacity="0.5"/>
-                    </Button.Effect>
-                </Button>
                 <Button Name="btnImportar" Content="IMPORTAR" Width="120" Height="40" 
                         Background="#4A5793" Foreground="White" BorderThickness="0"
                         Click="btnImportar_Click">

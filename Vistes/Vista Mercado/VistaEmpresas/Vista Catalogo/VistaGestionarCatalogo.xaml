@@ -5,8 +5,289 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Mercado.VistaEmpresas.Vista_Catalogo"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="832" d:DesignWidth="1280">
+    <Grid Margin="40,30,40,30">
+        <!-- Definición de las filas -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Fila para la navegación superior -->
+            <RowDefinition Height="Auto" />
+            <!-- Fila para la barra de búsqueda y filtros -->
+            <RowDefinition Height="*" />
+            <!-- Fila para el contenido principal (lista de productos) -->
+            <RowDefinition Height="Auto" />
+            <!-- Fila para los botones inferiores -->
+        </Grid.RowDefinitions>
+
+        <!-- Encabezado con sombra y estilo moderno -->
+        <Border Grid.Row="0"
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Título con efecto de texto -->
+                <TextBlock Grid.Column="1" FontSize="28" FontWeight="Bold" 
+                           Foreground="#4A5793" VerticalAlignment="Center"
+                           Text="GESTIÓN DE CATALOGO PRODUCTOS">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+
+                <!-- Contador de productos -->
+                <Border Grid.Column="2" Background="#F0F2FF" CornerRadius="20" Padding="15,8">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Total: " Foreground="#4A5793" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txtContadorProductos" Text="{Binding TotalProductos}" 
+                                   Foreground="#4A5793" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Barra de búsqueda y filtros -->
+        <Border Grid.Row="1"
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Barra de búsqueda -->
+                <Border Grid.Column="0" Background="#F8F9FE" BorderBrush="#DDDDDD" 
+                        BorderThickness="1" CornerRadius="8" Padding="15,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="🔍" FontSize="16" VerticalAlignment="Center" 
+                                   Margin="0,0,10,0" Foreground="#AAAAAA"/>
+                        <TextBox Grid.Column="1" x:Name="txtBusqueda" BorderThickness="0" Background="Transparent"
+                                 Height="40" VerticalContentAlignment="Center" FontSize="14"
+                                 Text="{Binding FiltroBusqueda, UpdateSourceTrigger=PropertyChanged}"
+                                 KeyUp="txtBusqueda_KeyUp">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Contenido principal: Lista de productos en formato tarjetas -->
+        <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="15" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl x:Name="listaProductos" ItemsSource="{Binding ProductosFiltrados}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="280" Height="320" Margin="10" Background="#F8F9FE" 
+                                    BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" 
+                                    MouseLeftButtonUp="Border_MouseLeftButtonUp">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="#DDDDDD" BlurRadius="5" ShadowDepth="2" Opacity="0.3"/>
+                                </Border.Effect>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="160"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Imagen del producto -->
+                                    <Border Grid.Row="0" Background="#FFFFFF" CornerRadius="15,15,0,0">
+                                        <Image Source="{Binding ImagenProducto}" Stretch="Uniform" 
+                                               Margin="10" MaxHeight="140"/>
+                                    </Border>
+
+                                    <!-- Estado como badge en la esquina superior derecha -->
+                                    <Border Grid.Row="0" Background="{Binding EstadoProducto, Converter={StaticResource BoolToVisibilityConverter}}" 
+                                            CornerRadius="8" Padding="10,5" Margin="0,10,10,0"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top">
+                                        <TextBlock Text="{Binding EstadoProducto}" Foreground="White" 
+                                                   FontWeight="SemiBold" FontSize="12"/>
+                                    </Border>
+
+                                    <!-- Información del producto -->
+                                    <StackPanel Grid.Row="1" Margin="15,10">
+                                        <TextBlock Text="{Binding Nom}" FontWeight="Bold" 
+                                                   FontSize="16" TextWrapping="Wrap" Foreground="#4A5793"/>
+                                        <TextBlock Text="{Binding Sku}" Foreground="#666666" Margin="0,5,0,0"/>
+                                        <TextBlock Text="{Binding Categoria}" Foreground="#666666"/>
+                                    </StackPanel>
+
+                                    <!-- Precio y acciones -->
+                                    <Grid Grid.Row="2" Margin="15,0,15,15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Precio -->
+                                        <TextBlock Grid.Column="0" Text="{Binding Preu, StringFormat={}{0:C2}}" 
+                                                   FontWeight="Bold" FontSize="16" Foreground="#0066CC" 
+                                                   VerticalAlignment="Center"/>
+
+                                        <!-- Menú de acciones -->
+                                        <Button Grid.Column="1" Content="⋮" FontSize="20" Width="36" Height="36" 
+                                                Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0" 
+                                                Click="Button_Click">
+                                            <Button.Resources>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="CornerRadius" Value="18"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Botones inferiores -->
+        <Border Grid.Row="3" Background="#F0F2F5" CornerRadius="15" Padding="20" Margin="0,20,0,0">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.2"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Información de paginación -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Mostrando "/>
+                    <TextBlock Text="{Binding ProductosMostrados}"/>
+                    <TextBlock Text=" de "/>
+                    <TextBlock Text="{Binding TotalProductos}"/>
+                    <TextBlock Text=" productos"/>
+                </StackPanel>
+
+                <!-- Botón Agregar Producto -->
+                <Button Grid.Column="1" x:Name="btnAgregarProducto" Width="180" Height="45" 
+                        Background="#4A5793" Foreground="White" BorderThickness="0"
+                        Click="btnAgregarProducto_Click">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                    </Button.Effect>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="+" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"/>
+                        <TextBlock Text="Agregar Producto" FontSize="16" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Menú contextual para opciones de producto -->
+        <Popup x:Name="popupMenuProducto" StaysOpen="False" Placement="Mouse">
+            <Border Background="White" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="8" 
+                    Width="180">
+                <Border.Effect>
+                    <DropShadowEffect Color="#202040" BlurRadius="10" ShadowDepth="3" Opacity="0.2"/>
+                </Border.Effect>
+                <StackPanel>
+                    <Button Content="Ver detalles" Height="40" BorderThickness="0" Background="Transparent" 
+                            Foreground="#4A5793" HorizontalContentAlignment="Left" Padding="15,0"
+                            Name="btnVerDetalles"
+                            Click="btnVerDetalles_Click"/>
+                    <Separator/>
+                    <Button Content="Editar" Height="40" BorderThickness="0" Background="Transparent" 
+                            Foreground="#4A5793" HorizontalContentAlignment="Left" Padding="15,0" 
+                            Name="btnEditar"
+                            Click="btnEditar_Click"/>
+                    <Separator/>
+                    <Button Content="Duplicar" Height="40" BorderThickness="0" Background="Transparent" 
+                            Foreground="#4A5793" HorizontalContentAlignment="Left" Padding="15,0" 
+                            Name="btnDuplicar"
+                            Click="btnDuplicar_Click"/>
+                    <Separator/>
+                    <Button Content="Eliminar" Height="40" BorderThickness="0" Background="Transparent" 
+                            Foreground="#DC3545" HorizontalContentAlignment="Left" Padding="15,0"
+                            Click="Button_Click_1"/>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- Popup para confirmar eliminación -->
+        <Popup x:Name="popupConfirmarEliminar" StaysOpen="False" Placement="Center" 
+               Width="400" Height="200">
+            <Border Background="White" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" 
+                    Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="3" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Confirmar eliminación" FontSize="18" 
+                               FontWeight="Bold" Foreground="#DC3545"/>
+
+                    <TextBlock Grid.Row="1" Text="¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer." 
+                               TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,15"/>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Cancelar" Width="100" Height="35" Background="#F0F2FF" 
+                                Foreground="#4A5793" BorderThickness="0" Margin="0,0,10,0"
+                                Name="btnCancelar"
+                                Click="btnCancelar_Click">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <Button Content="Eliminar" Width="100" Height="35" Background="#DC3545" 
+                                Foreground="White" BorderThickness="0"
+                                Name="btnConfirmarEliminar"
+                                Click="btnConfirmarEliminar_Click">
+                            <Button.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>

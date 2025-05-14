@@ -40,7 +40,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
             Loaded += PantallaAgregarProductoA1ZonaWPF_Loaded;
         }
 
-
         private async void PantallaAgregarProductoA1ZonaWPF_Loaded(object sender, RoutedEventArgs e)
         {
             if (viewModelAddProducts != null)
@@ -56,51 +55,13 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
 
         private void btnRegresar_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void btnGenerarSKU_Click(object sender, RoutedEventArgs e)
-        {
-            viewModelAddProducts.GenerarSKU();
+            this.Close();
         }
 
         private void btnCancelar_Click_1(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
 
-        private async void btnGuardarProducto_Click(object sender, RoutedEventArgs e)
-        {
-
-            if (viewModelAddProducts != null)
-            {
-                await viewModelAddProducts.GuardarEntradaAsync();
-            }
-            else if (viewModelProductosExistentes != null)
-            {
-                await viewModelProductosExistentes.GuardarEntradaAsync();
-            }
-
-        }
-
-        private void cmbAlmacen_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void btnBuscarProducto_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void cmbCategoria_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void dgProductos_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

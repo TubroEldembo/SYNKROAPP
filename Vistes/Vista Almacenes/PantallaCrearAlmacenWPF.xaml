@@ -85,12 +85,8 @@
                                     <TextBox Height="40" Margin="0,5,20,0" Name="txtCapacidadTotal"/>
                                 </StackPanel>
                             </WrapPanel>
-                            
+
                             <WrapPanel>
-                                <StackPanel Width="300">
-                                    <TextBlock Text="¿Almacén por defecto?" FontSize="16"/>
-                                    <CheckBox Content="Sí" Height="40" Margin="0,5,0,0" Name="chkPorDefecto"/>
-                                </StackPanel>
                                 <StackPanel Width="300">
                                     <TextBlock Text="Empresa perteneciente (ID)" FontSize="16"/>
                                     <TextBox Height="40" Margin="0,5,0,0" Name="txtEmpresaPert"/>
@@ -122,7 +118,7 @@
         <Border Grid.Row="1" Background="#D9D9D9" Padding="20">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Cancelar" Width="120" Height="40"
-                        Margin="0,0,10,0" Background="#CCC" Name="btnCancelar"/>
+                        Margin="0,0,10,0" Background="#CCC" Name="btnCancelar" Click="btnCancelar_Click"/>
                 
                 <Button x:Name="btnGuardar"
                         Content="Guardar"

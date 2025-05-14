@@ -52,5 +52,9 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen
             }
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

@@ -5,57 +5,286 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Movimientos"
         mc:Ignorable="d"
-        Title="PantallaMoverProductosWPF" Height="450" Width="800">
-    <Grid Margin="20">
+        Title="Mover Productos"  d:DesignHeight="832" d:DesignWidth="1280" WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        ResizeMode="NoResize">
+
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid Margin="40,30,40,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Título -->
-        <TextBlock Text="Mover Producto Internamente" FontSize="24" FontWeight="Bold" Foreground="White" />
-
-        <!-- Formulario -->
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Margin="0,20,0,20" Padding="20">
+        <!-- Encabezado -->
+        <Border Grid.Row="0" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <StackPanel>
-                    <TextBlock Text="Producto: " FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding NombreProducto}" FontSize="16" Margin="0,0,0,10"/>
-
-                    <TextBlock Text="Almacén Origen:" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding AlmacenOrigen}" FontSize="16" Margin="0,0,0,10"/>
-
-                    <TextBlock Text="Zona Origen:" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding ZonaOrigen}" FontSize="16" Margin="0,0,0,10"/>
-
-                    <TextBlock Text="Seleccionar Almacen Destino:" FontWeight="Bold" FontSize="16"/>
-                    <ComboBox ItemsSource="{Binding AlmacenesDisponibles}" SelectedItem="{Binding AlmacenSeleccionado}" 
-                              DisplayMemberPath="NomMagatzem" Width="300" Margin="0,0,0,10"/>
-
-                    <TextBlock Text="Seleccionar Zona Destino:" FontWeight="Bold" FontSize="16"/>
-                    <ComboBox ItemsSource="{Binding ZonasDestino}" SelectedItem="{Binding ZonaDestinoSeleccionada}" 
-                             DisplayMemberPath="Nom" Width="300" Margin="0,0,0,10"/>
-
-                    <TextBlock Text="Cantidad a mover:" FontWeight="Bold" FontSize="16"/>
-                    <TextBox Text="{Binding CantidadAMover}" Width="100" Margin="0,0,0,10"/>
-                </StackPanel>
+                <TextBlock Text="MOVER PRODUCTO INTERNAMENTE" 
+                           FontSize="28" 
+                           Foreground="#4A5793"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                    </TextBlock.Effect>
+                </TextBlock>
             </Grid>
         </Border>
 
-        <!-- Botones -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancelar" Width="120" Height="40"
-                   Background="#CCC" Margin="0,0,10,0" Click="btnCancelar_Click"/>
-            <Button Content="Confirmar Movimiento" Width="180" Height="40"
-                   Background="#28A745" Foreground="White" Click="btnConfirmar_Click"/>
-        </StackPanel>
+        <!-- Formulario Principal -->
+        <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Información del Producto -->
+                <Border Grid.Row="0" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="INFORMACIÓN DEL PRODUCTO" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,0,0,15"/>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Producto:" 
+                                           Grid.Column="0" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793"/>
+                                <TextBlock Text="{Binding NombreProducto}" 
+                                           Grid.Column="1" 
+                                           Foreground="#333333"
+                                           FontWeight="SemiBold"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Stock Actual:" 
+                                           Grid.Column="0" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793"/>
+                                <TextBlock Text="{Binding QuantitatProducte}" 
+                                           Grid.Column="1" 
+                                           Foreground="#333333"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Código:" 
+                                           Grid.Column="0" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793"/>
+                                <TextBlock Text="{Binding CodigoProducto}" 
+                                           Grid.Column="1" 
+                                           Foreground="#333333"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="UBICACIÓN ACTUAL" 
+                                       FontSize="18" 
+                                       FontWeight="Bold" 
+                                       Foreground="#4A5793" 
+                                       Margin="0,0,0,15"/>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Almacén:" 
+                                           Grid.Column="0" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793"/>
+                                <TextBlock Text="{Binding AlmacenOrigen}" 
+                                           Grid.Column="1" 
+                                           Foreground="#333333"
+                                           FontWeight="SemiBold"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Zona:" 
+                                           Grid.Column="0" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793"/>
+                                <TextBlock Text="{Binding ZonaOrigen}" 
+                                           Grid.Column="1" 
+                                           Foreground="#333333"
+                                           FontWeight="SemiBold"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Formulario de Movimiento -->
+                <Border Grid.Row="1" Background="#F8F9FE" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="15" Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="CONFIGURACIÓN DE MOVIMIENTO" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#4A5793" 
+                                   Margin="0,0,0,20"/>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Columna Izquierda - Destino -->
+                            <StackPanel Grid.Column="0" Margin="0,0,15,0">
+                                <TextBlock Text="Seleccionar Destino" 
+                                           FontSize="16" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,15"/>
+
+                                <TextBlock Text="Almacén Destino:" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,5"/>
+                                <ComboBox ItemsSource="{Binding AlmacenesDisponibles}" 
+                                          SelectedItem="{Binding AlmacenSeleccionado}" 
+                                          DisplayMemberPath="NomMagatzem" 
+                                          Height="32"
+                                          Margin="0,0,0,15"/>
+
+                                <TextBlock Text="Zona Destino:" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,5"/>
+                                <ComboBox ItemsSource="{Binding ZonasDestino}" 
+                                          SelectedItem="{Binding ZonaDestinoSeleccionada}" 
+                                          DisplayMemberPath="Nom" 
+                                          Height="32"
+                                          Margin="0,0,0,15"/>
+                            </StackPanel>
+
+                            <!-- Columna Derecha - Cantidad y Notas -->
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Detalles del Movimiento" 
+                                           FontSize="16" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,15"/>
+
+                                <TextBlock Text="Cantidad a mover:" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,5"/>
+                                <Grid Margin="0,0,0,15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" 
+                                             Text="{Binding CantidadAMover, UpdateSourceTrigger=PropertyChanged}" 
+                                             Height="32"
+                                             VerticalContentAlignment="Center"/>
+                                </Grid>
+
+                                <TextBlock Text="Notas del movimiento:" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="#4A5793" 
+                                           Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding NotasMovimiento}" 
+                                         Height="100" 
+                                         TextWrapping="Wrap" 
+                                         AcceptsReturn="True"
+                                         VerticalScrollBarVisibility="Auto"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Botones de acción -->
+        <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="15" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnCancelar" 
+                        Content="CANCELAR" 
+                        Width="150" 
+                        Height="40" 
+                        Background="#F0F2FF" 
+                        Foreground="#4A5793" 
+                        BorderThickness="0"
+                        Click="btnCancelar_Click" 
+                        Margin="0,0,15,0">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="5" ShadowDepth="1" Opacity="0.5"/>
+                    </Button.Effect>
+                </Button>
+
+                <Button x:Name="btnConfirmar" 
+                        Content="CONFIRMAR MOVIMIENTO" 
+                        Width="200" 
+                        Height="40" 
+                        Background="#4A5793" 
+                        Foreground="White" 
+                        BorderThickness="0"
+                        Command="{Binding ConfirmarMovimientoCommand}">
+                    
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </Button.Resources>
+                    <Button.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                    </Button.Effect>
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

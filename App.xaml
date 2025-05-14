@@ -4,13 +4,11 @@
              xmlns:conv="clr-namespace:SYNKROAPP.CONVERTERS"
              StartupUri="PantallaInicialAplicacion.xaml">
     <Application.Resources>
-        
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="RESOURCES/Styles.xaml" />
                 <ResourceDictionary Source="RESOURCES/StylesDataGrid.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        
     </Application.Resources>
 </Application>

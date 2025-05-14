@@ -1,9 +1,10 @@
-﻿using SYNKROAPP.CLASES;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -11,7 +12,7 @@ using System.Windows.Media.Imaging;
 
 namespace SYNKROAPP.VIEWMODEL
 {
-    public class CrearEntradaProductoExistenteViewModel : INotifyPropertyChanged
+    public partial class CrearEntradaProductoExistenteViewModel : ObservableObject
     {
         private readonly IDAO _dao;
         private readonly ProducteAmbDetall _producto;
@@ -23,93 +24,55 @@ namespace SYNKROAPP.VIEWMODEL
             _producto = producto;
             _empresaID = empresaID;
 
-            // Asegúrate de que la imagen se carga y se asigna correctamente
             BitmapImage bt = dao.LoadImageFromUrl(_producto.Producte.ImatgeURL);
             ImagenProducto = bt;
-
-            // Asigna el producto al ProductoSeleccionado y asegúrate de que tenga imagen
-            _producto.ImagenProducto = bt; // Esto es lo que faltaba
             ProductoSeleccionado = _producto;
 
+            ListaEstados = new ObservableCollection<string> { "Nuevo", "Seminuevo", "Desconocido" };
         }
 
-        // ✅ NUEVO: propiedad pública para el binding
-        private ProducteAmbDetall _productoSeleccionado;
-        public ProducteAmbDetall ProductoSeleccionado
+        public ObservableCollection<Magatzems> ListaAlmacenes { get; } = new();
+        public ObservableCollection<ZonaEmmagatzematge> ListaZonas { get; } = new();
+
+        public ObservableCollection<string> ListaEstados { get; }
+
+        [ObservableProperty]
+        private ProducteAmbDetall productoSeleccionado;
+
+        [ObservableProperty]
+        private int cantidadAIngresar;
+
+        [ObservableProperty]
+        private Magatzems? almacenSeleccionado;
+
+        partial void OnAlmacenSeleccionadoChanged(Magatzems? value)
         {
-            get => _productoSeleccionado;
-            set
-            {
-                _productoSeleccionado = value;
-                OnPropertyChanged(nameof(ProductoSeleccionado));
-            }
-        }
-
-
-
-        private int _cantidadAIngresar;
-        public int CantidadAIngresar
-        {
-            get => _cantidadAIngresar;
-            set { _cantidadAIngresar = value; OnPropertyChanged(nameof(CantidadAIngresar)); }
-        }
-
-        public ObservableCollection<Magatzems> ListaAlmacenes { get; set; } = new ObservableCollection<Magatzems>();
-
-        private Magatzems _almacenSeleccionado;
-        public Magatzems AlmacenSeleccionado
-        {
-            get => _almacenSeleccionado;
-            set
-            {
-                _almacenSeleccionado = value;
-                OnPropertyChanged(nameof(AlmacenSeleccionado));
+            if (value != null)
                 _ = CargarZonasPorAlmacenAsync();
-            }
         }
 
-        private ImageSource _imagenProducto;
-        public ImageSource ImagenProducto
-        {
-            get => _imagenProducto;
-            set
-            {
-                _imagenProducto = value;
-                OnPropertyChanged(nameof(ImagenProducto));
-            }
-        }
+        [ObservableProperty]
+        private ZonaEmmagatzematge? zonaSeleccionada;
 
-        public ObservableCollection<ZonaEmmagatzematge> ListaZonas { get; set; } = new ObservableCollection<ZonaEmmagatzematge>();
+        [ObservableProperty]
+        private string? estadoSeleccionado = "Nuevo";
 
-        private ZonaEmmagatzematge _zonaSeleccionada;
-        public ZonaEmmagatzematge ZonaSeleccionada
-        {
-            get => _zonaSeleccionada;
-            set { _zonaSeleccionada = value; OnPropertyChanged(nameof(ZonaSeleccionada)); }
-        }
-
-        public ObservableCollection<string> ListaEstados { get; set; } = new ObservableCollection<string> { "Nuevo", "Seminuevo", "Desconocido" };
-
-        private string _estadoSeleccionado;
-        public string EstadoSeleccionado
-        {
-            get => _estadoSeleccionado;
-            set { _estadoSeleccionado = value; OnPropertyChanged(nameof(EstadoSeleccionado)); }
-        }
+        [ObservableProperty]
+        private ImageSource? imagenProducto;
 
         public async Task InicializarAsync()
         {
             var almacenes = await _dao.ObtenerLosAlmacenesTotalesDeLaEmpresa(_empresaID);
             ListaAlmacenes.Clear();
-            foreach (var alm in almacenes)
-                ListaAlmacenes.Add(alm);
+            foreach (var a in almacenes)
+                ListaAlmacenes.Add(a);
 
             ListaZonas.Clear();
             foreach (var alm in almacenes)
             {
                 var zonas = await _dao.DetallesZonasAlmacen(alm);
-                foreach (var zona in zonas)
-                    ListaZonas.Add(zona);
+                foreach (var z in zonas)
+                    ListaZonas.Add(z);
             }
         }
 
@@ -119,103 +82,87 @@ namespace SYNKROAPP.VIEWMODEL
 
             var zonas = await _dao.DetallesZonasAlmacen(AlmacenSeleccionado);
             ListaZonas.Clear();
-            foreach (var zona in zonas)
-                ListaZonas.Add(zona);
+            foreach (var z in zonas)
+                ListaZonas.Add(z);
+        }
+        partial void OnCantidadAIngresarChanged(int value)
+        {
+            GuardarEntradaCommand.NotifyCanExecuteChanged();
         }
 
-        public async Task<bool> GuardarEntradaAsync()
+        partial void OnZonaSeleccionadaChanged(ZonaEmmagatzematge? value)
         {
-            bool inventarioAgregado = false;
-            if (CantidadAIngresar <= 0 || string.IsNullOrWhiteSpace(ZonaSeleccionada?.ZonaEmmagatzematgeID))
-            {
-                MessageBox.Show("Complete los campos correctamente.");
-                return false;
-            }
+            GuardarEntradaCommand.NotifyCanExecuteChanged();
+        }
 
+        [RelayCommand(CanExecute = nameof(PuedeGuardarEntrada))]
+        public async Task GuardarEntradaAsync()
+        {
             try
             {
-                ZonaEmmagatzematge zona = ZonaSeleccionada;
-                string inventariID;
-                bool productExists;
-                ProductesInventari inventari;
+                if (ZonaSeleccionada == null) return;
 
-                // Primero verificamos si el producto ya existe en esta zona
-                inventariID = await _dao.CheckProductInZona(
+                string inventariID = await _dao.CheckProductInZona(
                     _producto.Producte.ProducteID,
                     _empresaID,
-                    zona.MagatzemPertanyent,
-                    zona.ZonaEmmagatzematgeID);
+                    ZonaSeleccionada.MagatzemPertanyent,
+                    ZonaSeleccionada.ZonaEmmagatzematgeID);
 
-                productExists = !string.IsNullOrEmpty(inventariID);
+                bool productExists = !string.IsNullOrEmpty(inventariID);
 
-                // Si no existe, creamos un nuevo registro de inventario
+                ProductesInventari inventari;
+
                 if (!productExists)
                 {
-                    // Solo preparamos el objeto - NO guardamos en base de datos todavía
                     inventari = new ProductesInventari
                     {
                         ProducteID = _producto.Producte.ProducteID,
                         EmpresaID = _empresaID,
-                        Quantitat = 0, // Inicializamos en 0, el movimiento de inventario actualizará la cantidad
-                        Estat = "Nuevo",
-                        ZonaID = zona.ZonaEmmagatzematgeID,
-                        MagatzemID = zona.MagatzemPertanyent,
-                        CodiReferencia = _producto.Producte.SKU
+                        Quantitat = 0,
+                        Estat = EstadoSeleccionado ?? "Nuevo",
+                        ZonaID = ZonaSeleccionada.ZonaEmmagatzematgeID,
+                        MagatzemID = ZonaSeleccionada.MagatzemPertanyent,
+                        CodiReferencia = _producto.Producte.SKU,
+                        IDProducteInventari = Guid.NewGuid().ToString()
                     };
-
-                    // Generamos un ID para el nuevo producto pero no lo guardamos aún
-                    inventariID = GenerateInventoryId();
-                    inventari.IDProducteInventari = inventariID;
+                    inventariID = inventari.IDProducteInventari;
                 }
                 else
                 {
                     inventari = await _dao.GetProductoInventario(
-                       _empresaID,
-                       zona.MagatzemPertanyent,
-                       zona.ZonaEmmagatzematgeID,
-                       inventariID);
+                        _empresaID,
+                        ZonaSeleccionada.MagatzemPertanyent,
+                        ZonaSeleccionada.ZonaEmmagatzematgeID,
+                        inventariID);
                 }
 
-                // Si tenemos un ID válido (existente o recién creado)
-                if (!string.IsNullOrEmpty(inventariID))
+                MovimentsInventari moviment = new MovimentsInventari
                 {
-                    MovimentsInventari moviment = new MovimentsInventari
-                    {
-                        ProducteInventariID = inventariID,
-                        EmpresaIDOrigen = _empresaID,
-                        EmpresaIDDesti = _empresaID,
-                        MagatzemIDOrigen = zona.MagatzemPertanyent,
-                        MagatzemIDDesti = zona.MagatzemPertanyent,
-                        ZonaOrigenID = zona.ZonaEmmagatzematgeID,
-                        ZonaDestiID = zona.ZonaEmmagatzematgeID,
-                        Tipus = TipusMoviment.Entrada,
-                        Quantitat = CantidadAIngresar,
-                        Data = DateTime.UtcNow,
-                        Notes = productExists ? "Entrada adicional de producto existente" : "Nueva entrada de producto"
-                    };
+                    ProducteInventariID = inventariID,
+                    EmpresaIDOrigen = _empresaID,
+                    EmpresaIDDesti = _empresaID,
+                    MagatzemIDOrigen = ZonaSeleccionada.MagatzemPertanyent,
+                    MagatzemIDDesti = ZonaSeleccionada.MagatzemPertanyent,
+                    ZonaOrigenID = ZonaSeleccionada.ZonaEmmagatzematgeID,
+                    ZonaDestiID = ZonaSeleccionada.ZonaEmmagatzematgeID,
+                    Tipus = TipusMoviment.Entrada,
+                    Quantitat = CantidadAIngresar,
+                    Data = DateTime.UtcNow,
+                    Notes = productExists ? "Entrada adicional de producto existente" : "Nueva entrada de producto"
+                };
 
-                    // La transacción creará o actualizará el producto según corresponda
-                    await _dao.GuardarMovimientoInventariAsync(moviment, inventari, productExists);
-                    inventarioAgregado = true;
-                }
+                await _dao.GuardarMovimientoInventariAsync(moviment, inventari, productExists);
+                MessageBox.Show("Entrada registrada correctamente.");
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al registrar la entrada: {ex.Message}");
             }
-
-            return inventarioAgregado;
-        }
-        private string GenerateInventoryId()
-        {
-            // Genera un ID único para el inventario (similar a lo que hace Firestore)
-            return Guid.NewGuid().ToString();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        private bool PuedeGuardarEntrada()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            return CantidadAIngresar > 0 && ZonaSeleccionada != null;
         }
     }
 }

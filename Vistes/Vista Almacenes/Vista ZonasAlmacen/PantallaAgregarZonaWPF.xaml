@@ -4,68 +4,182 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="PantallaAgregarZonaWPF" Height="832" Width="1280"
-        WindowState="Maximized" ResizeMode="NoResize"
-        Background="#6F7ABC">
+        Title="Agregar Zona de Almacenamiento" 
+        Height="832" Width="1280"
+        WindowStyle="SingleBorderWindow"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        ResizeMode="NoResize">
 
-    <Grid Margin="27,49,27,49">
+    <!-- Fondo con gradiente para un aspecto más moderno consistente con otras vistas -->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
 
-        <!-- Título principal (fuera del border blanco) -->
-        <TextBlock Text="AGREGAR NUEVA ZONA DE ALMACENAMIENTO"
-                   FontSize="30" FontWeight="Bold" Foreground="Black"
-                   HorizontalAlignment="Left" Margin="0,0,0,20"/>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
-        <!-- Panel principal blanco -->
-        <Border Background="White" CornerRadius="10" BorderBrush="#CCCCCC"
-                BorderThickness="1" Padding="40" Margin="0,60,0,0">
-            <StackPanel Margin="0,0,0,-38">
-                <TextBlock Text="DETALLES DE LA NUEVA ZONA"
-                   FontSize="24" FontWeight="Bold" Margin="0,0,0,30" Height="34"/>
+    <Grid Margin="40,30,40,30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Encabezado con sombra y estilo moderno -->
+        <Border Grid.Row="0"
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Botón Regresar -->
+                <Button x:Name="btnRegresar" Grid.Column="0" Width="50" Height="50" 
+                        Background="#F0F2FF" Foreground="#4A5793" BorderThickness="0"
+                        Margin="0,0,20,0">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="25"/>
+                        </Style>
+                    </Button.Resources>
+                    <TextBlock Text="←" FontSize="24" FontWeight="Bold" 
+                               VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Button>
+
+                <!-- Título con efecto de texto -->
+                <TextBlock Grid.Column="1" FontSize="28" FontWeight="Bold" 
+                           Foreground="#4A5793" VerticalAlignment="Center"
+                           Text="AGREGAR NUEVA ZONA DE ALMACENAMIENTO">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                    </TextBlock.Effect>
+                </TextBlock>
+            </Grid>
+        </Border>
+
+        <!-- Contenido Principal -->
+        <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Margin="0,0,0,20" Padding="30">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="DETALLES DE LA NUEVA ZONA" 
+                           FontSize="24" FontWeight="Bold" 
+                           Foreground="#4A5793" Margin="0,0,0,30"/>
+
                 <!-- Panel: Nombre de la zona -->
-                <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20">
+                <Border Background="#F8F9FE" CornerRadius="15" Padding="25" Margin="0,0,0,25">
                     <Border.Effect>
-                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        <DropShadowEffect Color="#202040" BlurRadius="10" ShadowDepth="1" Opacity="0.15"/>
                     </Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="Nombre de la zona de almacén *" FontWeight="Bold" FontSize="20" Margin="0,0,0,10"/>
-                        <TextBox Height="40" Width="500" Text="{Binding Nom}"/>
+                        <TextBlock Text="Nombre de la zona de almacén *" 
+                                   FontWeight="SemiBold" FontSize="18" 
+                                   Foreground="#4A5793" Margin="0,0,0,15"/>
+                        <TextBox Height="45" Width="500" HorizontalAlignment="Left" 
+                                 Text="{Binding Nom}" VerticalContentAlignment="Center" Padding="15,0">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
                     </StackPanel>
                 </Border>
 
                 <!-- Panel: Detalles + Almacén + Capacidad -->
-                <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Height="279">
+                <Border Background="#F8F9FE" CornerRadius="15" Padding="25" Margin="0,0,0,25">
                     <Border.Effect>
-                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        <DropShadowEffect Color="#202040" BlurRadius="10" ShadowDepth="1" Opacity="0.15"/>
                     </Border.Effect>
                     <StackPanel>
                         <!-- Detalles -->
-                        <StackPanel>
-                            <TextBlock Text="Detalles de la zona de almacén" FontWeight="Bold" FontSize="20" Margin="0,0,0,10"/>
-                        </StackPanel>
+                        <TextBlock Text="Detalles de la zona de almacén" 
+                                   FontWeight="SemiBold" FontSize="18" 
+                                   Foreground="#4A5793" Margin="0,0,0,20"/>
 
                         <!-- Almacén perteneciente -->
-                        <StackPanel>
-                            <TextBlock Text="Almacén perteneciente" FontWeight="Bold" FontSize="16" Margin="0,10,0,10"/>
-                            <TextBox  Text ="{Binding AlmacenPerteneciente}" Width="500" Height="40" IsReadOnly="True" Background="#E0E0E0"/>
-                        </StackPanel>
+                        <TextBlock Text="Almacén perteneciente" 
+                                   FontWeight="SemiBold" FontSize="16" 
+                                   Foreground="#666666" Margin="0,0,0,10"/>
+                        <TextBox Text="{Binding AlmacenPerteneciente}" 
+                                 Width="500" Height="45" HorizontalAlignment="Left"
+                                 IsReadOnly="True" Background="#F0F2FF" 
+                                 VerticalContentAlignment="Center" Padding="15,0"
+                                 Foreground="#4A5793">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
 
                         <!-- Capacidad máxima -->
-                        <StackPanel>
-                            <TextBlock Text="Capacidad Máxima" FontWeight="Bold" FontSize="16" Margin="0,10,0,10"/>
-                            <TextBox Width="240" Height="40" Text="{Binding Capacitat}"/>
-                        </StackPanel>
+                        <TextBlock Text="Capacidad Máxima" 
+                                   FontWeight="SemiBold" FontSize="16" 
+                                   Foreground="#666666" Margin="0,20,0,10"/>
+                        <TextBox Width="250" Height="45" HorizontalAlignment="Left"
+                                 Text="{Binding Capacitat}" 
+                                 VerticalContentAlignment="Center" Padding="15,0">
+                            <TextBox.Resources>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="8"/>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
                     </StackPanel>
                 </Border>
-                <!-- Panel: Botones -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0">
-                    <Button Content="Cancelar" Width="150" Height="45"
-                            
-                            Background="#D9534F" Foreground="White" FontWeight="SemiBold"/>
-                                <Button Content="Guardar Zona Almacén" Width="200" Height="45"
-                            Background="#5CB85C" Foreground="White" FontWeight="SemiBold" Click="Button_Click"/>    
-                </StackPanel>
             </StackPanel>
-            
+        </Border>
+
+        <!-- Botones inferiores -->
+        <Border Grid.Row="2" Background="#F0F2F5" CornerRadius="15" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.2"/>
+            </Border.Effect>
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Cancelar" Width="150" Height="45"
+                            Background="#DC3545" Foreground="White" 
+                            FontWeight="SemiBold" Margin="0,0,15,0" Click="Button_Click_1">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <Button Content="Guardar Zona Almacén" Width="200" Height="45"
+                            Background="#28A745" Foreground="White" 
+                            FontWeight="SemiBold" Click="Button_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

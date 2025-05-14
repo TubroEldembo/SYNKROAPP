@@ -1,6 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
+using SYNKROAPP.Vistes.Vista_Productos;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -112,7 +113,7 @@ namespace SYNKROAPP.ViewModel
                     var docSnap = await _dao.GetProducteGeneralPorID(item.ProducteID);
                     var producteGeneral = docSnap.Exists ? docSnap.ConvertTo<ProducteGeneral>() : null;
 
-                    var p = new ProducteInventariAmbNom
+                    ProducteInventariAmbNom p = new ProducteInventariAmbNom
                     {
                         ProducteID = item.ProducteID,
                         Nom = producteGeneral?.Nom ?? "Sin nombre",
@@ -122,13 +123,12 @@ namespace SYNKROAPP.ViewModel
                         Estat = item.Estat,
                         Categoria = producteGeneral?.CategoriaID,
                         SubCategoria = producteGeneral?.SubCategoriaID,
-                        Quantitat = item.Quantitat
+                        Quantitat = item.Quantitat,
                     };
-
                     _todosLosProductes.Add(p);
                 }
 
-                // Actualizar datos de la zona
+                //Actualizar datos de la zona
                 NomZona = _zonaSeleccionada.Nom;
                 ZonaID = _zonaSeleccionada.ZonaEmmagatzematgeID;
                 AlmacenID = _zonaSeleccionada.MagatzemPertanyent;
@@ -158,7 +158,7 @@ namespace SYNKROAPP.ViewModel
 
                 foreach (var catGen in categoriasGenericas)
                 {
-                    var categoria = new Categories { CategoriaID = catGen.CategoriaID, Nom = catGen.Nom + " (Genérica)" };
+                    var categoria = new Categories { CategoriaID = catGen.CategoriaID, Nom = catGen.Nom};
                     Categories.Add(categoria);
 
                     if (subcategoriasGenericasDictionary.TryGetValue(catGen.CategoriaID, out var subList))
@@ -190,7 +190,7 @@ namespace SYNKROAPP.ViewModel
                 Estats.Clear();
                 Estats.Add("Todos");
                 Estats.Add("Nuevo");
-                Estats.Add("Usado");
+                Estats.Add("Seminuevo");
                 Estats.Add("Defectuoso");
                 Estats.Add("En reparación");
 

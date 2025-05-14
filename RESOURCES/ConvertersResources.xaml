@@ -5,5 +5,7 @@
     <converters:BoolToVisibilityConverter x:Key="EnumToVisibilityConverter"/>
     <converters:TipusToColorConverter x:Key="TipusToColorConverter"/>
     <converters:TipusToSymbolConverter x:Key="TipusToSymbolConverter"/>
-    
+    <converters:EstadoColorConverter x:Key="EstadoColorConverter"/>
+    <converters:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
+    <converters:BooleanToColorConverter x:Key="BooleanToTextConverter"/>
 </ResourceDictionary>

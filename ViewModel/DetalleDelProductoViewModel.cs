@@ -1,12 +1,6 @@
 ﻿using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -20,6 +14,7 @@ namespace SYNKROAPP.VIEWMODEL
         private string descricpcion;
         private string categoria;
         private string subcategoria;
+        private DetallProducte detallProducte;
 
         public DetalleDelProductoViewModel(IDAO dao, ProducteGeneral productoSeleccionado, string estado, string descripcion, string categoria, string subcategoria, Magatzems magatzem ,ZonaEmmagatzematge zona)
         {
@@ -31,6 +26,7 @@ namespace SYNKROAPP.VIEWMODEL
             this.descricpcion = descripcion;
             this._zona = zona;
             this._magatzem = magatzem;
+
         }
 
 
@@ -43,6 +39,31 @@ namespace SYNKROAPP.VIEWMODEL
             {
                 _nombreProducto = value;
                 OnPropertyChanged(nameof(NombreProducto));
+            }
+        }
+
+        private double _preu;
+        public double Preu
+        {
+            get => _preu;
+            set { _preu = value; OnPropertyChanged(nameof(Preu)); }
+        }
+
+        private bool _enVenda;
+        public bool EnVenda
+        {
+            get => _enVenda;
+            set { _enVenda = value; OnPropertyChanged(nameof(EnVenda)); }
+        }
+
+        private int _quantitat;
+        public int Quantitat
+        {
+            get => _quantitat;
+            set
+            {
+                _quantitat = value;
+                OnPropertyChanged(nameof(Quantitat));
             }
         }
 
@@ -78,8 +99,6 @@ namespace SYNKROAPP.VIEWMODEL
                 OnPropertyChanged(nameof(Zona));
             }
         }
-
-
 
         private string _sku;
         public string SKU
@@ -131,7 +150,7 @@ namespace SYNKROAPP.VIEWMODEL
             get => _subcategoria;
             set
             {
-                _categoria = value;
+                _subcategoria = value;
                 OnPropertyChanged(nameof(Subcategoria));
             }
         }
@@ -161,19 +180,24 @@ namespace SYNKROAPP.VIEWMODEL
         // Método para cargar los detalles del producto
         public async Task CargarDetallesProducto()
         {
+            detallProducte = await dao.GetDetallProducteAsync(_productoSeleccionado.ProducteID);
+
             // Aquí se asignan los valores de la propiedad
             NombreProducto = _productoSeleccionado.Nom;
             SKU = _productoSeleccionado.SKU;
-            EstadoProducto = estado;
+            EstadoProducto = estado.ToUpper();
             Descripcion = descricpcion;
-            Categoria = categoria;
+            Categoria = categoria.ToUpper();
             Subcategoria = subcategoria;
             ProductoSeleccionado = _productoSeleccionado;
             Zona = _zona;   
 
+            EnVenda = detallProducte.EnVenda;
+            Preu = detallProducte.Preu;
+
+
             BitmapImage bitmap = dao.LoadImageFromUrl(_productoSeleccionado.ImatgeURL);
             ImagenProducto = bitmap;
-
 
             List<ZonaProductoViewModel> zonas = await dao.ObtenerZonasDeProducto(_productoSeleccionado.ProducteID);
 
@@ -182,8 +206,11 @@ namespace SYNKROAPP.VIEWMODEL
                 Almacen = z.Almacen,
                 Zona = z.Zona,
                 QuantitatDisponible = z.QuantitatDisponible
-
             }).ToList();
+
+            int totalCantidad = ZonasProducto.Sum(z => z.QuantitatDisponible);
+            Quantitat = totalCantidad;
+
         }
 
         // Notificación de cambios de propiedad

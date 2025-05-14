@@ -17,6 +17,7 @@ namespace SYNKROAPP.CLASES
         public string SubCategoria { get; set; }
         public int Quantitat { get; set; }
         public string Categoria { get; set; }
+        public double Preu {  get; set; }
     }
 
 

@@ -14,7 +14,10 @@ namespace SYNKROAPP.CLASES
         public string EmpresaID { get; set; }
         public double Preu { get; set; }
         public int Cantidad { get; set; }
+          public string Nom { get; set; }
+        public string Sku { get; set; }
         public BitmapImage ImagenProducto { get; set; }
+
     }
 
 }

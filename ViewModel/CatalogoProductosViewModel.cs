@@ -21,6 +21,7 @@ namespace SYNKROAPP.ViewModel
             this.dao = dao;
             this.empresa = empresa;
             ProductosFiltrados = new ObservableCollection<ProducteGeneral>();
+            NomEmpresa = empresa.NomEmpresa;
         }
 
         private ObservableCollection<ProducteGeneral> _productosFiltrados;
@@ -29,6 +30,18 @@ namespace SYNKROAPP.ViewModel
             get => _productosFiltrados;
             set { _productosFiltrados = value; OnPropertyChanged(nameof(ProductosFiltrados)); }
         }
+
+        private string _nomEmpresa;
+        public string NomEmpresa
+        {
+            get => _nomEmpresa;
+            set
+            {
+                _nomEmpresa = value;
+                OnPropertyChanged(NomEmpresa);
+            }
+        }
+
 
         public async Task CargarProductos()
         {

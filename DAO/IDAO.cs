@@ -46,6 +46,11 @@ namespace SYNKROAPP.DAO
         Task AddInventariToZona(ProductesInventari inventari);
 
 
+        //UPDATE PRODUCTO:
+        Task UpdateProduct(ProducteGeneral producteGeneral, double preu, bool enVenda);
+        Task<DetallProducte> GetDetallProducteAsync(string producteID);
+
+
 
         //CARGAR CATEGORIAS Y SUBCATEGORIAS (GENERICAS Y PERSONALIZADAS):
         Task<(List<CategoriaGenerica>, Dictionary<string, List<SubcategoriaGenerica>>)> ObtenirCategoriesGeneriques();
