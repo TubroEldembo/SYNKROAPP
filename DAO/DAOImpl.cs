@@ -986,6 +986,7 @@ namespace SYNKROAPP.DAO
 
         }
 
+
         public async Task AddInventariToZona(ProductesInventari inventari)
         {
             var zonaRef = db

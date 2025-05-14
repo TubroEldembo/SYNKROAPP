@@ -1,173 +1,107 @@
-﻿using SYNKROAPP.CLASES;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using SYNKROAPP.CLASES;
 using SYNKROAPP.DAO;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace SYNKROAPP.VIEWMODEL
+public partial class AlmacenesViewModel : ObservableObject
 {
-    public class AlmacenesViewModel: INotifyPropertyChanged
+    private readonly IDAO _dao;
+    private readonly Empreses _empresa;
+    private ObservableCollection<MovimentsInventari> _todosLosMovimientos;
+
+    public AlmacenesViewModel(IDAO dao, Empreses empresa)
     {
-        private IDAO _dao;
-        private List<Magatzems> _almacenes;
-        private Empreses _empresa;
-        private string _totalAlmacenes;
-        private int _movimientosRecientes;
-        private string _productosEnAlmacenes;
-        private int _numeroDeZonas;
-        private ObservableCollection<MovimentsInventari> _todosLosMovimientos;
+        _dao = dao;
+        _empresa = empresa;
+        Almacenes = new List<Magatzems>();
+        _ = CargarMovimientosAsync();
+    }
 
-        public AlmacenesViewModel(IDAO _dao, Empreses empresa)
+    [ObservableProperty]
+    private ObservableCollection<MovimentsInventari> movimientosFiltrados = new();
+
+    [ObservableProperty]
+    private TipusMoviment? tipoMovimientoSeleccionado;
+
+    partial void OnTipoMovimientoSeleccionadoChanged(TipusMoviment? value)
+    {
+        AplicarFiltros();
+    }
+
+    [ObservableProperty]
+    private string totalAlmacenes;
+
+    [ObservableProperty]
+    private int movimientosRecientes;
+
+    [ObservableProperty]
+    private string productosEnAlmacenes;
+
+    [ObservableProperty]
+    private int numeroDeZonas;
+
+    [ObservableProperty]
+    private List<Magatzems> almacenes;
+
+    [ObservableProperty]
+    private Magatzems? almacenSeleccionado;
+
+
+    public Action? AbrirPantallaCrearAlmacen { get; set; }
+    public Action<Magatzems>? AbrirPantallaZonasAlmacen { get; set; }
+
+    [RelayCommand]
+    private void CrearAlmacen()
+    {
+        AbrirPantallaCrearAlmacen?.Invoke();
+    }
+
+    partial void OnAlmacenSeleccionadoChanged(Magatzems? value)
+    {
+        if (value != null)
         {
-            this._dao = _dao;
-            this._empresa = empresa;
-            this._almacenes = new List<Magatzems>();
-            CargarMovimientosAsync();
-        }
-
-     
-
-        private ObservableCollection<MovimentsInventari> _movimientosFiltrados = new ObservableCollection<MovimentsInventari>();
-        public ObservableCollection<MovimentsInventari> MovimientosFiltrados
-        {
-            get => _movimientosFiltrados;
-            set
-            {
-                _movimientosFiltrados = value;
-                OnPropertyChanged(nameof(MovimientosFiltrados));
-            }
-        }
-
-        private TipusMoviment? _tipoMovimientoSeleccionado;
-        public TipusMoviment? TipoMovimientoSeleccionado
-        {
-            get => _tipoMovimientoSeleccionado;
-            set
-            {
-                _tipoMovimientoSeleccionado = value;
-                OnPropertyChanged(nameof(TipoMovimientoSeleccionado));
-                AplicarFiltros();
-            }
-        }
-
-        public string TotalAlmacenes
-        {
-            get => _totalAlmacenes;
-            set
-            {
-                if (_totalAlmacenes != value)
-                {
-                    _totalAlmacenes = value;
-                    OnPropertyChanged(nameof(TotalAlmacenes));
-                }
-            }
-        }
-
-        public int MovimientosRecientes
-        {
-            get => _movimientosRecientes;
-            set
-            {
-                if (_movimientosRecientes != value)
-                {
-                    _movimientosRecientes = value;
-                    OnPropertyChanged(nameof(MovimientosRecientes));
-                }
-            }
-        }
-
-        public string ProductosEnAlmacenes
-        {
-            get => _productosEnAlmacenes;
-            set
-            {
-                if (_productosEnAlmacenes != value)
-                {
-                    _productosEnAlmacenes = value;
-                    OnPropertyChanged(nameof(ProductosEnAlmacenes));
-                }
-            }
-        }
-
-        public int NumeroDeZonas
-        {
-            get => _numeroDeZonas;
-            set
-            {
-                if (_numeroDeZonas != value)
-                {
-                    _numeroDeZonas = value;
-                    OnPropertyChanged(nameof(NumeroDeZonas));
-                }
-            }
-        }
-
-        public List<Magatzems> Almacenes
-        {
-            get => _almacenes;
-            set
-            {
-                if (_almacenes != value)
-                {
-                    _almacenes = value;
-                    OnPropertyChanged(nameof(Almacenes));
-                }
-            }
-        }
-
-        public async Task CargarMovimientosAsync()
-        {
-            List<MovimentsInventari> movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(_empresa.EmpresaID);
-            _todosLosMovimientos = new ObservableCollection<MovimentsInventari>(movimientos);
-            MovimientosRecientes = _todosLosMovimientos.Count;
-            // Aplicar filtros iniciales
-            AplicarFiltros();
-        }
-        public void AplicarFiltros()
-        {
-            if (_todosLosMovimientos == null)
-                return;
-
-            List<MovimentsInventari> movimientosFiltrados = _todosLosMovimientos.ToList();
-
-            if (TipoMovimientoSeleccionado.HasValue)
-            {
-                movimientosFiltrados = movimientosFiltrados
-                    .Where(m => m.Tipus == TipoMovimientoSeleccionado.Value)
-                    .ToList();
-            }
-
-            // Actualizar la colección observable
-            MovimientosFiltrados = new ObservableCollection<MovimentsInventari>(movimientosFiltrados);
-        }
-        public async Task CargarDetallesAlmacenes()
-        {
-            List<Magatzems> almacenes = await _dao.DetallesAlmacenes(_empresa);
-            
-            if (almacenes != null)
-            {
-                // Actualizamos la lista de almacenes en el ViewModel
-                Almacenes = almacenes;
-
-                // Total de almacenes como string
-                TotalAlmacenes = almacenes.Count.ToString();
-
-                // ✅ Calcular el número total de zonas
-                NumeroDeZonas = almacenes.Sum(a => a.Zones?.Count ?? 0);
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            AbrirPantallaZonasAlmacen?.Invoke(value);
         }
     }
-    
 
+
+    public async Task CargarMovimientosAsync()
+    {
+        var movimientos = await _dao.ObtenerMovimientosInventarioPorEmpresa(_empresa.EmpresaID);
+        _todosLosMovimientos = new ObservableCollection<MovimentsInventari>(movimientos);
+        MovimientosRecientes = _todosLosMovimientos.Count;
+
+        AplicarFiltros();
+    }
+
+    public void AplicarFiltros()
+    {
+        if (_todosLosMovimientos == null)
+            return;
+
+        var filtrados = _todosLosMovimientos.AsEnumerable();
+
+        if (TipoMovimientoSeleccionado.HasValue)
+        {
+            filtrados = filtrados.Where(m => m.Tipus == TipoMovimientoSeleccionado.Value);
+        }
+
+        MovimientosFiltrados = new ObservableCollection<MovimentsInventari>(filtrados);
+    }
+
+    public async Task CargarDetallesAlmacenes()
+    {
+        var almacenes = await _dao.DetallesAlmacenes(_empresa);
+
+        if (almacenes != null)
+        {
+            Almacenes = almacenes;
+            TotalAlmacenes = almacenes.Count.ToString();
+            NumeroDeZonas = almacenes.Sum(a => a.Zones?.Count ?? 0);
+        }
+    }
 }

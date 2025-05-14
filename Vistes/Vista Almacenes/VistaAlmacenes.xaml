@@ -90,7 +90,7 @@
                             Background="#4A5793" 
                             Foreground="White" 
                             FontWeight="SemiBold"
-                            Click="btnCrearAlmacen_Click">
+                            Command="{Binding CrearAlmacenCommand}">
                         <Button.Resources>
                             <Style TargetType="{x:Type Border}">
                                 <Setter Property="CornerRadius" Value="8"/>
@@ -199,7 +199,7 @@
                               VerticalGridLinesBrush="#EEEEEE"
                               HorizontalGridLinesBrush="#EEEEEE"
                               RowHeight="40"
-                              SelectionChanged="DataGrid_SelectionChanged">
+                              SelectedItem="{Binding AlmacenSeleccionado, Mode=TwoWay}">
                         <DataGrid.Resources>
                             <Style TargetType="{x:Type DataGridColumnHeader}">
                                 <Setter Property="Background" Value="#F0F2FF"/>

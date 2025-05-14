@@ -33,52 +33,41 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
         {
             InitializeComponent();
             this.dao = dao;
-            this.DataContext = new AlmacenesViewModel(dao, empresa);
-            this.loggedUser = loggedUser;
             this.empresa = empresa;
+
+            var vm = new AlmacenesViewModel(dao, empresa);
+
+            vm.AbrirPantallaZonasAlmacen = async (almacen) =>
+            {
+                ZonasAlmacenViewModel viewModelZonasAlmacen = new ZonasAlmacenViewModel(dao, almacen);
+                await viewModelZonasAlmacen.CargarZonasAsync();
+
+                PantallaZonasAlmacenWPF ventanaZonas = new PantallaZonasAlmacenWPF(viewModelZonasAlmacen);
+                ventanaZonas.Show();
+                OnCerrar?.Invoke();
+            };
+
+            vm.AbrirPantallaCrearAlmacen = () =>
+            {
+                PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(dao, empresa)
+                {
+                    WindowState = WindowState.Maximized,
+                    ResizeMode = ResizeMode.NoResize,
+                    WindowStyle = WindowStyle.None,
+                };
+
+                pantallaCrearAlmacen.Show();
+                OnCerrar?.Invoke(); // cerrar la vista actual si hace falta
+            };
+            this.DataContext = vm;
+
             DetallesAlmacenes();
         }
+
 
         private async void DetallesAlmacenes()
         {
             await ((AlmacenesViewModel)this.DataContext).CargarDetallesAlmacenes();
-        }
-
-        private void btnCrearAlmacen_Click(object sender, RoutedEventArgs e)
-        {
-            PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(dao, empresa)
-            {
-                WindowState = WindowState.Maximized, 
-                ResizeMode = ResizeMode.NoResize,
-                WindowStyle = WindowStyle.None,
-            };
-
-            pantallaCrearAlmacen.Show();
-            OnCerrar?.Invoke();
-            
-        }
-
-        private async void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var dataGrid = sender as DataGrid;
-            var almacenSeleccionado = dataGrid.SelectedItem as Magatzems;
-
-            if (almacenSeleccionado != null)
-            {
-                // Crear el ViewModel y cargar los datos
-                var viewModelZonasAlmacen = new ZonasAlmacenViewModel(dao, almacenSeleccionado);
-                await viewModelZonasAlmacen.CargarZonasAsync(); // ✅ ESTA LÍNEA ES LA CLAVE
-
-                // Pasar ese ViewModel ya cargado a la ventana
-                var ventanaZonas = new PantallaZonasAlmacenWPF(viewModelZonasAlmacen);
-                ventanaZonas.Show();
-                OnCerrar?.Invoke();
-            }
-        }
-
-        private void DataGrid_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }
