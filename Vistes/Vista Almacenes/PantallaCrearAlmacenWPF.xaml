@@ -5,135 +5,535 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SYNKROAPP.Vistes.Vista_Almacenes"
         mc:Ignorable="d"
-        Title="PantallaCrearAlmacenWPF"
-        Background="#6F7ABC"
-        WindowStartupLocation="CenterScreen"
-        Height="832" Width="1280">
+        Title="Crear Nuevo Almacén" WindowStartupLocation="CenterScreen"
+        Height="832" Width="1280" WindowState="Maximized" ResizeMode="NoResize">
 
-    <Grid>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/ConvertersResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A5793" Offset="0"/>
+            <GradientStop Color="#6F7ABC" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <Grid Margin="40,30,40,30">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- CONTENIDO PRINCIPAL -->
-        <Grid Grid.Row="0" Margin="40">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <!-- Encabezado con sombra y efecto moderno -->
+        <Border Grid.Row="0" 
+                Background="#FFFFFF" CornerRadius="15" 
+                Margin="0,0,0,20" Padding="20,15">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- Columna izquierda -->
-            <ScrollViewer Grid.Column="0" Background="#F2F2F2">
-                <StackPanel Margin="0,0,30,0">
-                    <TextBlock Text="AGREGAR NUEVO ALMACÉN" FontSize="28" FontWeight="Bold" Foreground="Black" Margin="0,0,0,30"/>
-                    <TextBlock Text="DETALLES DEL NUEVO ALMACÉN" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,20"/>
-
-                    <!-- Nombre del almacén -->
-                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="541">
-                        <Border.Effect>
-                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-                        </Border.Effect>
-                        <StackPanel>
-                            <TextBlock Text="Nombre del almacén *" FontWeight="DemiBold" FontSize="20"/>
-                            <TextBox Height="40" Margin="0,10,0,0" Name="txtNombreAlmacen"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Ubicación -->
-                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="538">
-                        <Border.Effect>
-                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-                        </Border.Effect>
-                        <StackPanel>
-                            <TextBlock Text="Ubicación *" FontWeight="SemiBold" FontSize="20"/>
-                            <WrapPanel Margin="0,10,0,0">
-                                
-                                <StackPanel Width="300">
-                                    <TextBlock Text="Tipo de vía" FontSize="16"/>
-                                    <ComboBox Height="40" Margin="0,5,20,0" Name="cmbTipoVia"/>
-                                </StackPanel>
-                                
-                                <StackPanel Width="300">
-                                    <TextBlock Text="Nombre de la calle" FontSize="16"/>
-                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtNombreCalle"/>
-                                </StackPanel>
-                                
-                                <StackPanel Width="150">
-                                    <TextBlock Text="Número" FontSize="16"/>
-                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtNumero"/>
-                                </StackPanel>
-                                
-                                <StackPanel Width="150">
-                                    <TextBlock Text="Código Postal" FontSize="16"/>
-                                    <TextBox Height="40" Margin="0,5,0,0" Name="txtCodigoPostal"/>
-                                </StackPanel>
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Configuración del Almacén -->
-                    <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,0,0,20" Width="537">
-                        <Border.Effect>
-                            <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
-                        </Border.Effect>
-                        <StackPanel>
-                            <TextBlock Text="Configuración del Almacén *" FontWeight="SemiBold" FontSize="20" Margin="0,0,0,10"/>
-                            <WrapPanel Margin="0,0,0,10">
-                                <StackPanel Width="300">
-                                    <TextBlock Text="Capacidad total de productos" FontSize="16"/>
-                                    <TextBox Height="40" Margin="0,5,20,0" Name="txtCapacidadTotal"/>
-                                </StackPanel>
-                            </WrapPanel>
-
-                            <WrapPanel>
-                                <StackPanel Width="300">
-                                    <TextBlock Text="Empresa perteneciente (ID)" FontSize="16"/>
-                                    <TextBox Height="40" Margin="0,5,0,0" Name="txtEmpresaPert"/>
-                                </StackPanel>
-                            </WrapPanel>
-                        </StackPanel>
-                    </Border>
+                <!-- Título con efecto de texto -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="32" FontWeight="Bold" Foreground="#4A5793">
+                        CREAR NUEVO ALMACÉN
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="#DDDDDD" BlurRadius="2" ShadowDepth="1" Opacity="0.7"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock Text="Complete la información para registrar un nuevo almacén en el sistema" 
+                               FontSize="16" Foreground="#666666" Margin="0,5,0,0"/>
                 </StackPanel>
-            </ScrollViewer>
+            </Grid>
+        </Border>
 
-            <!-- Columna derecha modificada -->
-            <StackPanel Grid.Column="1" Background="#F2F2F2" Name="zonaDerechaPanel" Visibility="Collapsed">
-                <Border Background="#D7D6D6" CornerRadius="10" Padding="20" Margin="0,114,0,20" Width="568">
+        <!-- Contenido principal -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Columna izquierda: Información básica del almacén -->
+                <Border Grid.Column="0" Background="#FFFFFF" CornerRadius="15" Padding="20" Margin="0,0,10,0">
                     <Border.Effect>
-                        <DropShadowEffect Color="Black" BlurRadius="10" Opacity="0.2"/>
+                        <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
                     </Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="Zonas del Almacén" FontWeight="DemiBold" FontSize="20" Margin="0,0,0,20"/>
-                        <TextBlock TextWrapping="Wrap" Margin="0,30,0,30" FontSize="16">
-                            Las zonas del almacén se podrán configurar una vez creado el almacén principal. 
-                        Complete los datos del almacén y presione "Guardar" para continuar con la configuración de zonas.
-                        </TextBlock>
+                        <TextBlock Text="INFORMACIÓN GENERAL" 
+                                FontSize="20" 
+                                FontWeight="Bold" 
+                                Foreground="#4A5793"
+                                Margin="0,0,0,20"/>
+
+                        <!-- Nombre del almacén -->
+                        <Border Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="NOMBRE DEL ALMACÉN *" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+                                <TextBox x:Name="txtNombreAlmacen" 
+                                        Height="45" 
+                                        FontSize="16"
+                                        Padding="10,0"
+                                        VerticalContentAlignment="Center"
+                                        BorderThickness="1"
+                                        BorderBrush="#DDDDDD"
+                                        Text="{Binding NombreAlmacen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="6"/>
+                                        </Style>
+                                    </TextBox.Resources>
+                                </TextBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Capacidad total de productos -->
+                        <Border Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="CAPACIDAD TOTAL DE PRODUCTOS *" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+                                <TextBox x:Name="txtCapacidadTotal" 
+                                        Height="45" 
+                                        FontSize="16"
+                                        Padding="10,0"
+                                        VerticalContentAlignment="Center"
+                                        BorderThickness="1"
+                                        BorderBrush="#DDDDDD"
+                                        Text="{Binding CapacidadTotal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="6"/>
+                                        </Style>
+                                    </TextBox.Resources>
+                                </TextBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Empresa perteneciente -->
+                        <Border Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="EMPRESA PERTENECIENTE *" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+                                <ComboBox x:Name="cmbEmpresa" 
+                                        Height="45" 
+                                        FontSize="16"
+                                        Padding="10,0"
+                                        VerticalContentAlignment="Center"
+                                        BorderThickness="1"
+                                        BorderBrush="#DDDDDD"
+                                        ItemsSource="{Binding ListaEmpresas}"
+                                        SelectedItem="{Binding EmpresaSeleccionada, Mode=TwoWay}"
+                                        DisplayMemberPath="NomEmpresa">
+                                    <ComboBox.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="6"/>
+                                        </Style>
+                                    </ComboBox.Resources>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Más información adicional si es necesario -->
+                        <Border Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="DESCRIPCIÓN (OPCIONAL)" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+                                <TextBox x:Name="txtDescripcion" 
+                                        Height="100" 
+                                        FontSize="16"
+                                        Padding="10"
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True"
+                                        VerticalAlignment="Top"
+                                        VerticalContentAlignment="Top"
+                                        BorderThickness="1"
+                                        BorderBrush="#DDDDDD"
+                                        Text="{Binding Descripcion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="6"/>
+                                        </Style>
+                                    </TextBox.Resources>
+                                </TextBox>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Border>
-            </StackPanel>
-        </Grid>
 
-        <!-- BOTONES INFERIORES -->
-        <Border Grid.Row="1" Background="#D9D9D9" Padding="20">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Cancelar" Width="120" Height="40"
-                        Margin="0,0,10,0" Background="#CCC" Name="btnCancelar" Click="btnCancelar_Click"/>
-                
-                <Button x:Name="btnGuardar"
-                        Content="Guardar"
-                        Width="120" Height="40"
-                        Background="#28A745" Foreground="White" FontWeight="Bold"
-                        Click="btnGuardar_Click"/>
+                <!-- Columna derecha: Ubicación -->
+                <Border Grid.Column="1" Background="#FFFFFF" CornerRadius="15" Padding="20" Margin="10,0,0,0">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="UBICACIÓN DEL ALMACÉN" 
+                                FontSize="20" 
+                                FontWeight="Bold" 
+                                Foreground="#4A5793"
+                                Margin="0,0,0,20"/>
 
-                <Button x:Name="btnSoloGuardar"
-                        Content="Guardar y salir"
-                        Width="140" Height="40"
-                        Margin="10,0,0,0"
-                        Visibility="Collapsed"
-                        Background="#007BFF" Foreground="White" FontWeight="Bold"
-                        Click="btnSoloGuardar_Click"/>
-            </StackPanel>
+                        <!-- Selector de origen de ubicación -->
+                        <Border Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <TextBlock Text="ORIGEN DE LA UBICACIÓN *" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <RadioButton x:Name="rbUbicacionNueva" 
+                                            Content="Crear nueva ubicación" 
+                                            FontSize="14"
+                                            Margin="0,0,20,0"
+                                            IsChecked="{Binding UbicacionNueva, Mode=TwoWay}"
+                                            Command="{Binding CambiarAUbicacionNuevaCommand}"/>
+                                    <RadioButton x:Name="rbUbicacionEmpresa" 
+                                            Content="Utilizar ubicación de la empresa" 
+                                            FontSize="14"
+                                            IsChecked="{Binding UbicacionEmpresa, Mode=TwoWay}"
+                                            Command="{Binding CambiarAUbicacionEmpresaCommand}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Panel de búsqueda con Google Places -->
+                        <Border x:Name="panelUbicacionNueva" Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15"
+                               Visibility="{Binding UbicacionNueva, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="BÚSQUEDA DE UBICACIÓN" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,8"/>
+
+                                <!-- Campo de búsqueda con Google Places -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox x:Name="txtGooglePlaces" 
+                                            Grid.Column="0"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Text="{Binding TextoBusqueda, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+
+                                    <Button x:Name="btnBuscar" 
+                                            Grid.Column="1"
+                                            Content="🔍" 
+                                            Width="45" 
+                                            Height="45"
+                                            Margin="5,0,0,0"
+                                            Background="#4A5793" 
+                                            Foreground="White"
+                                            Command="{Binding TextoBusquedaCambiadoCommand}">
+                                        <Button.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </Button.Resources>
+                                    </Button>
+                                </Grid>
+
+                                <!-- ListBox para mostrar sugerencias de Google Places -->
+                                <ListBox x:Name="lstSugerencias" 
+                                        MaxHeight="150" 
+                                        Margin="0,5,0,0"
+                                        BorderThickness="1"
+                                        BorderBrush="#DDDDDD"
+                                        ItemsSource="{Binding SugerenciasLocalizacion}"
+                                        SelectedItem="{Binding SugerenciaSeleccionada, Mode=TwoWay}"
+                                        Visibility="{Binding SugerenciasLocalizacion}">
+                                    <ListBox.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="6"/>
+                                        </Style>
+                                    </ListBox.Resources>
+                                </ListBox>
+
+                                <!-- Campos de la dirección -->
+                                <TextBlock Text="DIRECCIÓN COMPLETA" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,15,0,8"/>
+
+                                <!-- Calle -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtCalle" 
+                                            Grid.Column="0"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Margin="0,0,5,0"
+                                            Text="{Binding Calle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="Calle">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                    <TextBox x:Name="txtNumero" 
+                                            Grid.Column="1"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Text="{Binding Numero, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="Número">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                </Grid>
+
+                                <!-- Ciudad y Código Postal -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtCiudad" 
+                                            Grid.Column="0"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Margin="0,0,5,0"
+                                            Text="{Binding Ciudad, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="Ciudad">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                    <TextBox x:Name="txtCodigoPostal" 
+                                            Grid.Column="1"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Text="{Binding CodigoPostal, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="C.P.">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                </Grid>
+
+                                <!-- Provincia y País -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="txtProvincia" 
+                                            Grid.Column="0"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Margin="0,0,5,0"
+                                            Text="{Binding Provincia, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="Provincia">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                    <TextBox x:Name="txtPais" 
+                                            Grid.Column="1"
+                                            Height="45" 
+                                            FontSize="16"
+                                            Padding="10,0"
+                                            VerticalContentAlignment="Center"
+                                            BorderThickness="1"
+                                            BorderBrush="#DDDDDD"
+                                            Text="{Binding Pais, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Tag="País">
+                                        <TextBox.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="6"/>
+                                            </Style>
+                                        </TextBox.Resources>
+                                    </TextBox>
+                                </Grid>
+
+                                <!-- Campos ocultos para las coordenadas -->
+                                <TextBox x:Name="txtLatitud" Visibility="Collapsed" 
+                                        Text="{Binding Latitud, Mode=TwoWay}"/>
+                                <TextBox x:Name="txtLongitud" Visibility="Collapsed"
+                                        Text="{Binding Longitud, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Panel de ubicación de la empresa (visible cuando se selecciona esa opción) -->
+                        <Border x:Name="panelUbicacionEmpresa" Background="#F8F9FE" CornerRadius="10" Padding="15" Margin="0,0,0,15" 
+                               Visibility="{Binding UbicacionEmpresa, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <StackPanel>
+                                <TextBlock Text="UBICACIÓN DE LA EMPRESA SELECCIONADA" 
+                                        FontWeight="SemiBold" 
+                                        Foreground="#666666" 
+                                        FontSize="14"
+                                        Margin="0,0,0,15"/>
+
+                                <!-- Información de la dirección de la empresa -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Dirección:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="lblDireccionEmpresa" Text="{Binding DireccionEmpresa}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Ciudad:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="lblCiudadEmpresa" Text="{Binding CiudadEmpresa}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="C.P.:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="lblCPEmpresa" Text="{Binding CpEmpresa}" Margin="0,0,0,8"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="País:" FontWeight="SemiBold" Margin="0,0,10,8"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="lblPaisEmpresa" Text="{Binding PaisEmpresa}" Margin="0,0,0,8"/>
+                                </Grid>
+
+                                <!-- Mensaje de confirmación -->
+                                <Border Background="#E8F4FF" CornerRadius="6" Padding="10" Margin="0,10,0,0">
+                                    <TextBlock TextWrapping="Wrap" Foreground="#0066CC">
+                                        Los datos de ubicación se utilizarán automáticamente de la empresa seleccionada.
+                                    </TextBlock>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Botones de acción -->
+        <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="15" Padding="20" Margin="0,20,0,0">
+            <Border.Effect>
+                <DropShadowEffect Color="#202040" BlurRadius="15" ShadowDepth="2" Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="btnCancelar" 
+                            Content="CANCELAR" 
+                            Width="150" Height="45" 
+                            Background="#F2F2F2" 
+                            Foreground="#4A5793" 
+                            FontWeight="SemiBold"
+                            BorderThickness="1"
+                            BorderBrush="#DDDDDD"
+                            Margin="0,0,15,0"
+                            Command="{Binding CancelarCommand}" Click="btnCancelar_Click_1">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button x:Name="btnGuardar" 
+                            Content="GUARDAR ALMACÉN" 
+                            Width="220" Height="45" 
+                            Background="#4A5793" 
+                            Foreground="White" 
+                            FontWeight="SemiBold"
+                            Command="{Binding GuardarCommand}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <Button x:Name="btnGuardarConfig" 
+                            Content="GUARDAR Y CONFIGURAR ZONAS" 
+                            Width="300" Height="45" 
+                            Background="#28A745" 
+                            Foreground="White" 
+                            FontWeight="SemiBold"
+                            Margin="15,0,0,0"
+                            Command="{Binding GuardarConfigCommand}">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect Color="#202040" BlurRadius="5" ShadowDepth="1" Opacity="0.3"/>
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Border>
     </Grid>
 </Window>

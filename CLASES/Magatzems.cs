@@ -27,20 +27,15 @@ namespace SYNKROAPP.CLASES
 
         public int NumeroDeZonas => Zones?.Count ?? 0;
 
-
-        [FirestoreProperty]
-        public bool MagatzemPerDefecte { get; set; }
-
         public Magatzems() { }
 
-        public Magatzems(string idMagatzem, string empresaPertanyent, string nomMagatzem, Adreça ubicacio, List<string> zones, bool magatzemPerDefecte)
+        public Magatzems(string idMagatzem, string empresaPertanyent, string nomMagatzem, Adreça ubicacio, List<string> zones)
         {
             MagatzemID = idMagatzem;
             EmpresaPertanyentID = empresaPertanyent;
             NomMagatzem = nomMagatzem;
             Ubicacio = ubicacio;
             Zones = zones;
-            MagatzemPerDefecte = magatzemPerDefecte;
         }
 
         public override string ToString()

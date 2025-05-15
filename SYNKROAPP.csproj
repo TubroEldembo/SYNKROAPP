@@ -26,14 +26,15 @@
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
     <PackageReference Include="Google.Cloud.Firestore" Version="3.10.0" />
     <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Steema.TeeChart.NET" Version="4.2025.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="credencials.json">
+    <None Update="IMAGES\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="IMAGES\logo.png">
+    <None Update="credencials.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

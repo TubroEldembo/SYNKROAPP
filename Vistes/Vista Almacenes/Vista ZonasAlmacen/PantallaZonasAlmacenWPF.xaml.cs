@@ -33,8 +33,8 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
             InitializeComponent();
             this.viewModel = viewModel;
             this.DataContext = viewModel;
-            dao = viewModel._dao;
-            this.magatzemSeleccionat = viewModel._almacenSeleccionado;
+            dao = viewModel.Dao;
+            this.magatzemSeleccionat = viewModel.AlmacenSeleccionado;
         }
 
         private void btnAgregarZona_Click(object sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
             if (zonaSeleccionada != null)
             {
-                
+
                 DetalleDe1ZonaViewModel viewModel = new DetalleDe1ZonaViewModel(dao, zonaSeleccionada, magatzemSeleccionat);
                 await viewModel.CargarProductos();
 
@@ -72,6 +72,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
         {
             this.Close();
         }
-        
+
     }
 }

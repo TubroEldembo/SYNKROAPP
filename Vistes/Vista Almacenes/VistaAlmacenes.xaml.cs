@@ -49,7 +49,8 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes
 
             vm.AbrirPantallaCrearAlmacen = () =>
             {
-                PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(dao, empresa)
+                CrearAlmacenViewModel crearAlmacenViewModel = new CrearAlmacenViewModel(dao, empresa);
+                PantallaCrearAlmacenWPF pantallaCrearAlmacen = new PantallaCrearAlmacenWPF(crearAlmacenViewModel)
                 {
                     WindowState = WindowState.Maximized,
                     ResizeMode = ResizeMode.NoResize,

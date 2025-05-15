@@ -24,13 +24,6 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
         private CrearProductoEn1ZonaViewModel viewModelAddProducts;
         private CrearEntradaProductoExistenteViewModel viewModelProductosExistentes;
 
-        public PantallaAgregarProductoA1ZonaWPF(CrearProductoEn1ZonaViewModel viewModelAddProducts)
-        {
-            InitializeComponent();
-            this.viewModelAddProducts = viewModelAddProducts;
-            this.DataContext = viewModelAddProducts;
-            Loaded += PantallaAgregarProductoA1ZonaWPF_Loaded;
-        }
 
         public PantallaAgregarProductoA1ZonaWPF(CrearEntradaProductoExistenteViewModel viewModelProductosExistentes)
         {

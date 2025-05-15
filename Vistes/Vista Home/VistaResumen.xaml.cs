@@ -51,7 +51,7 @@ namespace SYNKROAPP.Vistes.Vista_Home
 
             foreach (var kvp in productosXCategoria)
             {
-                pieSeries.Add(kvp.Value, kvp.Key);
+                pieSeries.Add(kvp.Value, kvp.Key.ToUpper());
             }
 
             pieSeries.ShowInEditor = true;

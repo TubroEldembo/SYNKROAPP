@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static Google.Rpc.Context.AttributeContext.Types;
+using SYNKROAPP.GOOGLE_PLACES_SERVICE;
 
 namespace SYNKROAPP.Vistes
 {
@@ -23,12 +24,15 @@ namespace SYNKROAPP.Vistes
         private Usuaris usuari;
         IDAO? dao;
         private string rutaImagenEmpresa = null;
+        private string codigoPais;
+        private GooglePlacesService placesService = new GooglePlacesService();
+
         public PantallaRegisterEmpresaWPF(Usuaris usuari)
         {
             InitializeComponent();
             this.usuari = usuari;
-            cmbTipoVia.ItemsSource = Enum.GetValues(typeof(TipusVia));
-            cmbTipoVia.SelectedIndex = 0; // O el que quieras como predeterminado
+            //cmbTipoVia.ItemsSource = Enum.GetValues(typeof(TipusVia));
+            //cmbTipoVia.SelectedIndex = 0; // O el que quieras como predeterminado
         }
 
         private async void btnRegistrarEmpresa_Click(object sender, RoutedEventArgs e)
@@ -38,50 +42,54 @@ namespace SYNKROAPP.Vistes
                 var auth = await Autentication.SignUp(usuari.Email, usuari.Password);
                 dao = DAOFactory.CreateDAO(auth.FirebaseToken, "projecto-synkroapp");
 
-                TipusVia tipusSeleccionat = (TipusVia)cmbTipoVia.SelectedItem;
+                string direccionCompleta = txtBuscarDireccion.Text;
+
+                // Obtener coordenadas de la dirección
+                var (lat, lng) = await placesService.ObtenerCoordenadasAsync(direccionCompleta);
+
+                // Crear objeto dirección
                 Adreça direccioEmpresa = new Adreça
                 {
                     AdreçaID = Math.Abs(Guid.NewGuid().GetHashCode()),
-                    TipusVia = tipusSeleccionat,
-                    Nom = txtNomCalle.Text,
-                    Numero = int.Parse(txtNumero.Text),
+                    Direccio = direccionCompleta,
+                    Latitud = lat,
+                    Longitud = lng,
                     CodiPostal = txtCodigoPostal.Text,
-                    Provincia = txtProvincia.Text,
-                    Pais = txtPais.Text
+                    Pais = txtBuscarPais.Text,
+
                 };
 
                 string urlImagen = "";
                 if (!string.IsNullOrWhiteSpace(rutaImagenEmpresa) && File.Exists(rutaImagenEmpresa))
                 {
-                    string nombreArchivo = System.IO.Path.GetFileName(rutaImagenEmpresa);
-                    string nombreFirebase = $"{txtNombreEmpresa.Text.Replace(" ", "_")}_{Guid.NewGuid()}.jpg"; // Aseguras nombre único
-                    urlImagen = await dao.StoreImage(rutaImagenEmpresa, nombreFirebase); // Subes a Firebase Storage
+                    string nombreFirebase = $"{txtNombreEmpresa.Text.Replace(" ", "_")}_{Guid.NewGuid()}.jpg";
+                    urlImagen = await dao.StoreImage(rutaImagenEmpresa, nombreFirebase);
                 }
 
                 Empreses novaEmpresa = new Empreses
                 {
                     EstatVerificacio = false,
                     NomEmpresa = txtNombreEmpresa.Text,
-                    Tipus = txtTipoEmpresa.Text,
+                    Tipus = cmbSector.Text, 
                     Magatzems = new List<string>(),
                     Usuaris = new List<string>(),
                     Ubicacio = direccioEmpresa,
-                    FotoEmpresalUrl = urlImagen 
+                    FotoEmpresalUrl = urlImagen
                 };
 
-
                 await dao.RegistrarUsuariAmbEmpresa(usuari, novaEmpresa);
-                MessageBox.Show("Empresa i usuari registrats correctament!");
-                PantallaHomeWPF homeWindow = new PantallaHomeWPF(usuari,auth, dao, novaEmpresa);
+                MessageBox.Show("Empresa y usuario registrados correctamente!");
+
+                PantallaHomeWPF homeWindow = new PantallaHomeWPF(usuari, auth, dao, novaEmpresa);
                 homeWindow.Show();
                 this.Close();
-
             }
-            catch(Exception ex)  
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error al registrar: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void btnUploadImg_Click(object sender, RoutedEventArgs e)
         {
@@ -105,5 +113,86 @@ namespace SYNKROAPP.Vistes
             }
         }
 
+        private void lstSugerenciasDireccion_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lstSugerenciasDireccion.SelectedItem is string seleccion)
+            {
+                txtBuscarDireccion.Text = seleccion;
+                lstSugerenciasDireccion.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void txtBuscarDireccion_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (txtBuscarDireccion.Text.Length < 3)
+            {
+                lstSugerenciasDireccion.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            List<string> sugerencias = await placesService.AutocompletarCiudadAsync(txtBuscarDireccion.Text, codigoPais);
+            if (sugerencias.Any())
+            {
+                lstSugerenciasDireccion.ItemsSource = sugerencias;
+                lstSugerenciasDireccion.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                lstSugerenciasDireccion.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void btnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void txtBuscarDireccion_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                lstSugerenciasDireccion_MouseDoubleClick(sender, null);
+            }
+        }
+
+        private void txtBuscarPais_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                lstSugerenciasPais_MouseDoubleClick(sender, null);
+            }
+        }
+
+        private async void txtBuscarPais_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (txtBuscarPais.Text.Length < 3)
+            {
+                lstSugerenciasPais.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            List<PaisAutocompleteResult> sugerencias = await placesService.AutocompletarPaisAsync(txtBuscarPais.Text);
+
+            if (sugerencias.Any())
+            {
+                lstSugerenciasPais.ItemsSource = sugerencias;
+                lstSugerenciasPais.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                lstSugerenciasPais.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private async void lstSugerenciasPais_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (lstSugerenciasPais.SelectedItem is PaisAutocompleteResult seleccion)
+            {
+                txtBuscarPais.Text = seleccion.Description;
+
+                codigoPais = await placesService.ObtenerCodigoIsoDesdePlaceId(seleccion.PlaceId);
+                lstSugerenciasPais.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

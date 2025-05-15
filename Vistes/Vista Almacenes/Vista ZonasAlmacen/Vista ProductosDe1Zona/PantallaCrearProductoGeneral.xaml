@@ -111,7 +111,7 @@
                              BorderThickness="1"
                              BorderBrush="#DDDDDD"
                              Margin="0,0,10,0"
-                             Text="{Binding BusquedaProducto, UpdateSourceTrigger=PropertyChanged}">
+                             Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}">
                             <TextBox.Resources>
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="CornerRadius" Value="8"/>
@@ -119,17 +119,7 @@
                             </TextBox.Resources>
                         </TextBox>
 
-                        <Button Grid.Column="1" Content="🔍 Buscar" 
-                            Width="120" Height="45" 
-                            Background="#4A5793" 
-                            Foreground="White" 
-                            FontWeight="SemiBold">
-                            <Button.Resources>
-                                <Style TargetType="{x:Type Border}">
-                                    <Setter Property="CornerRadius" Value="8"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
+                        
                     </Grid>
                 </Grid>
 
@@ -184,15 +174,6 @@
                             </DataGrid.Resources>
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn Header="" Width="60">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Border Width="40" Height="40" CornerRadius="20" 
-                                                Background="#F0F2FF" Margin="5">
-                                                <Image Source="{Binding ImagenProducto}" 
-                                                   Stretch="Uniform" Margin="5"/>
-                                            </Border>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn Header="NOMBRE" Binding="{Binding Producte.Nom}" Width="*"/>
                                 <DataGridTextColumn Header="SKU" Binding="{Binding Producte.SKU}" Width="*"/>

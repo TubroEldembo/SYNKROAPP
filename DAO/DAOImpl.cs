@@ -55,8 +55,6 @@ namespace SYNKROAPP.DAO
 
                 // 3. Añadir el ID del usuario a la lista Usuaris de la empresa
                 await empresaRef.UpdateAsync("Usuaris", FieldValue.ArrayUnion(usuariRef.Id));
-
-                MessageBox.Show("Usuari i empresa registrats correctament!", "Èxit", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -231,41 +229,32 @@ namespace SYNKROAPP.DAO
 
         public async Task<List<Magatzems>> DetallesAlmacenes(Empreses empresa)
         {
+            List<Magatzems> resultado = null;
+
             try
             {
                 if (string.IsNullOrEmpty(empresa.EmpresaID))
                     throw new Exception("El ID de la empresa no es válido");
 
-                DocumentReference empresaRef = db.Collection("Empreses").Document((string)empresa.EmpresaID);
+                DocumentReference empresaRef = db.Collection("Empreses").Document(empresa.EmpresaID);
                 CollectionReference almacenesRef = empresaRef.Collection("Magatzems");
 
-                // Obtener todos los documentos (almacenes) de la colección
                 QuerySnapshot snapshot = await almacenesRef.GetSnapshotAsync();
 
-                if (snapshot.Documents.Any())
-                {
-                    List<Magatzems> almacenes = new List<Magatzems>();
+                resultado = new List<Magatzems>();
 
-                    foreach (var document in snapshot.Documents)
-                    {
-                        // Convertir cada documento a un objeto Magatzems
-                        Magatzems almacen = document.ConvertTo<Magatzems>();
-                        almacenes.Add(almacen);
-                    }
-
-                    return almacenes;
-                }
-                else
+                foreach (var document in snapshot.Documents)
                 {
-                    MessageBox.Show("No se encontraron almacenes para esta empresa.");
-                    return new List<Magatzems>(); // Retornar una lista vacía si no hay almacenes
+                    Magatzems almacen = document.ConvertTo<Magatzems>();
+                    resultado.Add(almacen);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error al obtener los almacenes: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null; // En caso de error, retornar null
             }
+
+            return resultado;
         }
 
         public async Task<List<ZonaEmmagatzematge>> DetallesZonasAlmacen(Magatzems unMagatzem)

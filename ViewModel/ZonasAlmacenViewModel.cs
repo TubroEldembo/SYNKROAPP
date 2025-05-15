@@ -10,106 +10,75 @@ using System.Threading.Tasks;
 
 namespace SYNKROAPP.ViewModel
 {
-    public class ZonasAlmacenViewModel : INotifyPropertyChanged
-    {
-        public IDAO _dao;
-        public readonly Magatzems _almacenSeleccionado;
+    using CommunityToolkit.Mvvm.ComponentModel;
+    using CommunityToolkit.Mvvm.Input;
+    using System.Collections.ObjectModel;
+    using System.Threading.Tasks;
 
-        public ZonasAlmacenViewModel(IDAO _dao, Magatzems almacenSeleccionado)
+    public partial class ZonasAlmacenViewModel : ObservableObject
+    {
+        private readonly IDAO _dao;
+        private readonly Magatzems _almacenSeleccionado;
+
+        public ZonasAlmacenViewModel(IDAO dao, Magatzems almacenSeleccionado)
         {
-            this._dao = _dao;
+            _dao = dao;
             _almacenSeleccionado = almacenSeleccionado;
         }
 
-        private string _nombreAlmacen;
-        public string NombreAlmacen
-        {
-            get => _nombreAlmacen;
-            set
-            {
-                _nombreAlmacen = value;
-                OnPropertyChanged(nameof(NombreAlmacen));
-            }
-        }
+        public IDAO Dao => _dao;
+        public Magatzems AlmacenSeleccionado => _almacenSeleccionado;
 
-        private string _direccion;
-        public string Direccion
-        {
-            get => _direccion;
-            set
-            {
-                _direccion = value;
-                OnPropertyChanged(nameof(Direccion));
-            }
-        }
+        [ObservableProperty]
+        private string nombreAlmacen;
 
-        private string _magatzemID;
-        public string MagatzemID
-        {
-            get => _magatzemID;
-            set
-            {
-                _magatzemID = value;
-                OnPropertyChanged(nameof(MagatzemID));
-            }
-        }
+        [ObservableProperty]
+        private int nProductos;
 
-        private int _productosTotales;
-        public int ProductosTotales
-        {
-            get => _productosTotales;
-            set
-            {
-                _productosTotales = value;
-                OnPropertyChanged(nameof(ProductosTotales));
-            }
-        }
+        [ObservableProperty]
+        private string direccion;
 
-        private int _numeroZonas;
-        public int NumeroDeZonas
-        {
-            get => _numeroZonas;
-            set
-            {
-                _numeroZonas = value;
-                OnPropertyChanged(nameof(NumeroDeZonas));
-            }
-        }
+        [ObservableProperty]
+        private string magatzemID;
 
-        private ObservableCollection<ZonaEmmagatzematge> _zonas = new();
-        public ObservableCollection<ZonaEmmagatzematge> Zonas
-        {
-            get => _zonas;
-            set
-            {
-                _zonas = value;
-                OnPropertyChanged(nameof(Zonas));
-            }
-        }
+        [ObservableProperty]
+        private int productosTotales;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        [ObservableProperty]
+        private int numeroDeZonas;
 
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        [ObservableProperty]
+        private ObservableCollection<ZonaEmmagatzematge> zonas = new();
 
+        [RelayCommand]
         public async Task CargarZonasAsync()
         {
             List<ZonaEmmagatzematge> zonasAlmacen = await _dao.DetallesZonasAlmacen(_almacenSeleccionado);
 
+           
             if (zonasAlmacen != null)
             {
+                productosTotales = 0;
+
+                foreach (ZonaEmmagatzematge zona in zonasAlmacen)
+                {
+                    List<ProductesInventari> productosZona = await _dao.ProductosEn1Zona(zona);
+                    foreach (ProductesInventari producte in  productosZona)
+                    {
+                        zona.NProductos = productosZona.Sum(p => p.Quantitat); // <-- AQUÍ
+                        productosTotales += zona.NProductos; // Acumula bien aquí también
+                    }
+                }
+
                 Zonas = new ObservableCollection<ZonaEmmagatzematge>(zonasAlmacen);
 
-                // Aquí puedes actualizar otras propiedades si es necesario
-                ProductosTotales = zonasAlmacen.Sum(z => z.Productes?.Count ?? 0);  
+                ProductosTotales = productosTotales;
                 NumeroDeZonas = zonasAlmacen.Count;
-                Direccion = _almacenSeleccionado.Ubicacio.Nom;
+                //Direccion = _almacenSeleccionado.Ubicacio.Nom;
                 NombreAlmacen = _almacenSeleccionado.NomMagatzem;
                 MagatzemID = _almacenSeleccionado.MagatzemID;
-                
             }
         }
     }
+
 }

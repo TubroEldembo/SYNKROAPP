@@ -30,8 +30,8 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen
         public PantallaAgregarZonaWPF(ZonasAlmacenViewModel zonasVM)
         {
             InitializeComponent();
-            this.dao = zonasVM._dao; // Asumiendo que tienes dao y magatzem como propiedades públicas
-            this.almacenSeleccionado = zonasVM._almacenSeleccionado;
+            this.dao = zonasVM.Dao; // Asumiendo que tienes dao y magatzem como propiedades públicas
+            this.almacenSeleccionado = zonasVM.AlmacenSeleccionado;
             
 
             _viewModel = new CrearZonaViewModel(this.dao, this.almacenSeleccionado);

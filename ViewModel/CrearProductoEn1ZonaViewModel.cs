@@ -27,11 +27,11 @@ namespace SYNKROAPP.ViewModel
             this.zona = zona;
             ListaProductos = new ObservableCollection<ProducteAmbDetall>();
 
-            // Initialize with default
             CantidadAIngresar = 1;
 
             FiltrarProductos();
         }
+
 
         [ObservableProperty]
         private string nomZona;
@@ -107,7 +107,6 @@ namespace SYNKROAPP.ViewModel
 
         [ObservableProperty]
         private string textoBusqueda;
-
         partial void OnTextoBusquedaChanged(string value)
         {
             FiltrarProductos();
@@ -132,11 +131,14 @@ namespace SYNKROAPP.ViewModel
             // Also filter products when category changes
             FiltrarProductos();
         }
-
+        
         public async Task InicializarCamposAsync()
         {
             try
             {
+                ListaCategorias.Clear();
+                ListaCategorias.Add("Todas las categorías"); // Agregar esta línea antes de cargar las demás
+
                 NomZona = zona.Nom;
                 ListaAlmacenes.Clear();
                 ListaZonas.Clear();
@@ -180,6 +182,8 @@ namespace SYNKROAPP.ViewModel
                         }
                     }
                 }
+
+                CategoriaSeleccionada = "Todas las categorías";
 
                 await CargarDatosInicialesAsync();
             }
@@ -231,7 +235,7 @@ namespace SYNKROAPP.ViewModel
 
             IEnumerable<ProducteAmbDetall> productos = ListaProductos;
 
-            // Filtrar por texto de búsqueda
+            
             if (!string.IsNullOrWhiteSpace(TextoBusqueda))
             {
                 string textoBusqueda = TextoBusqueda.ToLower();
@@ -242,21 +246,19 @@ namespace SYNKROAPP.ViewModel
             }
 
             // Filtrar por categoría
-            if (!string.IsNullOrWhiteSpace(CategoriaSeleccionada))
+            if (!string.IsNullOrWhiteSpace(CategoriaSeleccionada) && CategoriaSeleccionada != "Todas las categorías")
             {
                 if (_mapCategoriaNombreToID.TryGetValue(CategoriaSeleccionada, out var categoriaId))
                 {
-                    productos = productos.Where(p => p.Producte?.CategoriaID == categoriaId).ToList();
+                    productos = productos.Where(p => p.Producte?.CategoriaID == CategoriaSeleccionada).ToList();
                 }
             }
 
-            // Actualizar la colección observable de productos filtrados
             ProductosFiltrados = new ObservableCollection<ProducteAmbDetall>(productos);
 
-            // Maintain selection if possible or select first item
             if (ProductoSeleccionado != null)
             {
-                var matchingProduct = ProductosFiltrados.FirstOrDefault(p =>
+                ProducteAmbDetall matchingProduct = ProductosFiltrados.FirstOrDefault(p =>
                     p.Producte?.ProducteID == ProductoSeleccionado.Producte?.ProducteID);
 
                 if (matchingProduct != null)
@@ -369,12 +371,12 @@ namespace SYNKROAPP.ViewModel
 
         public bool CanAgregarProducto()
         {
-            ProductoSeleccionado.Cantidad = CantidadAIngresar;
             return ProductoSeleccionado != null &&
                    CantidadAIngresar > 0 &&
-                   (ZonaSeleccionada?.Capacitat == null ||
-                    ProductoSeleccionado.Cantidad < ZonaSeleccionada.Capacitat);
+                   ZonaSeleccionada != null &&
+                   (ZonaSeleccionada.NProductos + CantidadAIngresar) <= ZonaSeleccionada.Capacitat;
         }
+
 
         private string GenerateInventoryId() => Guid.NewGuid().ToString();
 

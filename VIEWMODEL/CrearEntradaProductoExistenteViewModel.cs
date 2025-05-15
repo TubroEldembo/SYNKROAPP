@@ -40,6 +40,9 @@ namespace SYNKROAPP.VIEWMODEL
         private ProducteAmbDetall productoSeleccionado;
 
         [ObservableProperty]
+        private int nProductes;
+
+        [ObservableProperty]
         private int cantidadAIngresar;
 
         [ObservableProperty]
@@ -73,7 +76,23 @@ namespace SYNKROAPP.VIEWMODEL
                 var zonas = await _dao.DetallesZonasAlmacen(alm);
                 foreach (var z in zonas)
                     ListaZonas.Add(z);
+
             }
+        }
+
+        private async Task CalcularCantidadProductoEnZonaAsync()
+        {
+            if (ZonaSeleccionada == null) return;
+
+            var productosZona = await _dao.ProductosEn1Zona(ZonaSeleccionada);
+            int productosTotales = 0;
+
+            foreach (ProductesInventari prouctes in productosZona)
+            {
+                productosTotales += prouctes.Quantitat;
+            }
+
+            NProductes = productosTotales;
         }
 
         private async Task CargarZonasPorAlmacenAsync()
@@ -84,6 +103,7 @@ namespace SYNKROAPP.VIEWMODEL
             ListaZonas.Clear();
             foreach (var z in zonas)
                 ListaZonas.Add(z);
+
         }
         partial void OnCantidadAIngresarChanged(int value)
         {
@@ -93,7 +113,9 @@ namespace SYNKROAPP.VIEWMODEL
         partial void OnZonaSeleccionadaChanged(ZonaEmmagatzematge? value)
         {
             GuardarEntradaCommand.NotifyCanExecuteChanged();
+            _ = CalcularCantidadProductoEnZonaAsync();
         }
+
 
         [RelayCommand(CanExecute = nameof(PuedeGuardarEntrada))]
         public async Task GuardarEntradaAsync()
@@ -162,7 +184,10 @@ namespace SYNKROAPP.VIEWMODEL
 
         private bool PuedeGuardarEntrada()
         {
-            return CantidadAIngresar > 0 && ZonaSeleccionada != null;
+            return ProductoSeleccionado != null &&
+            CantidadAIngresar > 0 &&
+            ZonaSeleccionada != null &&
+            (ZonaSeleccionada.NProductos + CantidadAIngresar) <= ZonaSeleccionada.Capacitat;
         }
     }
 }

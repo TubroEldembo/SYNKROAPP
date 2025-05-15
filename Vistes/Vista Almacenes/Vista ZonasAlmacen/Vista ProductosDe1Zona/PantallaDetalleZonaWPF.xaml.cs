@@ -59,8 +59,10 @@ namespace SYNKROAPP.Vistes.Vista_Almacenes.Vista_ZonasAlmacen.Vista_ProductosDe1
         private async void CargarListas()
         {
             var viewModel = (DetalleDe1ZonaViewModel)this.DataContext;
-            await viewModel.CargarListasParaCombosAsync();
+            await viewModel.CargarListasParaCombos();
+            await viewModel.CargarProductos();
         }
+
 
         private void btnAgregarProducto_Click(object sender, RoutedEventArgs e)
         {

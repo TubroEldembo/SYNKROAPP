@@ -29,7 +29,7 @@ namespace SYNKROAPP.CLASES
         [FirestoreProperty]
         public List<string> Productes { get; set; } = new List<string>();
 
-        public int NProductos => Productes?.Count ?? 0;
+        public int NProductos { get; set; }
 
         public string AlmacenPerteneciente => MagatzemPertanyent;
 
